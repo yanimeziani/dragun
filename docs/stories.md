@@ -109,7 +109,7 @@ must skip this story.
 
 ## S5 — Client fixture module + Venice Gym data
 
-**Status:** pending
+**Status:** in_progress
 **Estimate:** 2h
 
 **Steps**
