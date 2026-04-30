@@ -1,4 +1,3 @@
-import { LiveCounter } from "./_components/live-counter";
 import { AlphaForm } from "./_components/alpha-form";
 
 export default function Home() {
@@ -7,7 +6,6 @@ export default function Home() {
       <TopBar />
       <Nav />
       <Hero />
-      <Arrivals />
       <Problem />
       <Channels />
       <Mechanism />
@@ -50,16 +48,16 @@ function Mark({ className = "h-5 w-5" }: { className?: string }) {
 function TopBar() {
   return (
     <div className="border-b border-line bg-ink-1/60 backdrop-blur-sm">
-      <div className="mx-auto flex max-w-[1320px] items-center justify-between px-6 py-2 font-mono text-[10.5px] uppercase tracking-[0.18em] text-bone-3">
-        <div className="flex items-center gap-6">
-          <span>Berthed · 04·29·2026</span>
-          <span className="hidden md:inline">Sector · Receivables</span>
-          <span className="hidden lg:inline">Operating window · 08:00–20:59 local</span>
+      <div className="mx-auto flex max-w-[1320px] flex-wrap items-center justify-between gap-x-6 gap-y-1 px-6 py-2 font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] text-bone-3">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
+          <span>Online · 04·30·2026</span>
+          <span className="hidden md:inline">For small businesses</span>
+          <span className="hidden lg:inline">Reminder hours · 08:00–20:59 local</span>
         </div>
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-x-6 gap-y-1">
           <span className="hidden sm:flex items-center gap-2">
             <span className="pulse h-1.5 w-1.5 rounded-full bg-ember" />
-            <span className="text-bone-2">Live · Private alpha</span>
+            <span className="text-bone-2">Public alpha · 50 seats</span>
           </span>
           <span>v.0.4 · Pre-seed</span>
         </div>
@@ -79,21 +77,28 @@ function Nav() {
         <a href="#" className="flex items-center gap-3 text-bone">
           <Mark className="h-5 w-5" />
           <span className="font-display text-xl tracking-tight">Dragun</span>
-          <span className="hidden md:inline font-mono text-[10px] uppercase tracking-[0.22em] text-bone-3">
-            ™ · Receivables
+          <span className="hidden lg:inline font-mono text-[11.5px] uppercase tracking-[0.22em] text-bone-3">
+            ™ · Get paid
           </span>
         </a>
-        <ul className="hidden md:flex items-center gap-8 font-mono text-[11px] uppercase tracking-[0.18em] text-bone-2">
+        <ul className="hidden md:flex items-center gap-5 lg:gap-8 font-mono text-[12px] lg:text-sm uppercase tracking-[0.18em] text-bone-2">
           <li><a href="/demo" className="text-ember hover:text-bone">Live demo</a></li>
-          <li><a href="#mechanism" className="hover:text-bone">Mechanism</a></li>
+          <li><a href="#mechanism" className="hover:text-bone">How it works</a></li>
           <li><a href="#dashboard" className="hover:text-bone">Ledger</a></li>
           <li><a href="#compliance" className="hover:text-bone">Compliance</a></li>
           <li><a href="#alpha" className="hover:text-bone">Alpha</a></li>
           <li><a href="#investor" className="hover:text-bone">Investors</a></li>
         </ul>
         <a
+          href="/demo"
+          className="group inline-flex md:hidden items-center gap-2 border border-ember px-3 py-2 font-mono text-xs uppercase tracking-[0.2em] text-ember"
+        >
+          Live demo
+          <span className="transition-transform group-hover:translate-x-0.5">→</span>
+        </a>
+        <a
           href="#investor"
-          className="group inline-flex items-center gap-2 border border-bone/70 px-4 py-2 font-mono text-[10.5px] uppercase tracking-[0.2em] text-bone hover:border-ember hover:text-ember transition-colors"
+          className="group hidden md:inline-flex items-center gap-2 border border-bone/70 px-4 py-2 font-mono text-xs uppercase tracking-[0.2em] text-bone hover:border-ember hover:text-ember transition-colors"
         >
           Request memo
           <span className="transition-transform group-hover:translate-x-0.5">→</span>
@@ -128,55 +133,55 @@ function Hero() {
       <div className="relative mx-auto max-w-[1320px] px-6 pt-24 pb-32 md:pt-32 md:pb-44">
         <div className="grid gap-16 lg:grid-cols-12">
           <div className="lg:col-span-8">
-            <p className="rise font-mono text-[11px] uppercase tracking-[0.32em] text-bone-3">
-              <span className="text-ember">●</span>&nbsp;&nbsp;Automated debt
-              recovery for SMBs · Est. 2026
+            <p className="rise font-mono text-xs sm:text-sm uppercase tracking-[0.28em] sm:tracking-[0.32em] text-bone-3">
+              <span className="text-ember">●</span>&nbsp;&nbsp;Friendly invoice
+              follow-up for small businesses · Est. 2026
             </p>
             <h1
-              className="rise font-display mt-8 text-[clamp(3.4rem,9.4vw,9.5rem)] leading-[0.92] tracking-[-0.02em] text-bone"
+              className="rise font-display mt-8 text-[clamp(2.6rem,9vw,9.5rem)] leading-[0.92] tracking-[-0.02em] text-bone break-words"
               style={{ animationDelay: "0.08s" }}
             >
-              Money owed,
+              Get paid on time.
               <br />
-              <em className="italic text-bone-2">brought home.</em>
+              <em className="italic text-bone-2">Stay friends.</em>
             </h1>
             <p
-              className="rise mt-10 max-w-[44ch] text-lg leading-[1.55] text-bone-2 md:text-xl"
+              className="rise mt-10 max-w-[44ch] text-base sm:text-lg leading-[1.55] text-bone-2 md:text-xl"
               style={{ animationDelay: "0.18s" }}
             >
-              Dragun is the relentless back-office that recovers accounts
-              receivable for small and medium businesses — across email, SMS
-              and voice — without sounding like a debt collector. We pursue
-              the invoice. You stay in business.
+              Dragun is the back-office that follows up on your unpaid
+              invoices — across email, SMS and a friendly voice agent — so
+              you keep the customer and still get paid. You run the shop.
+              We handle the awkward part.
             </p>
 
             <div
-              className="rise mt-12 flex flex-wrap items-center gap-4"
+              className="rise mt-10 sm:mt-12 flex flex-wrap items-center gap-3 sm:gap-4"
               style={{ animationDelay: "0.28s" }}
             >
               <a
                 href="/demo"
-                className="group inline-flex items-center gap-3 bg-ember px-6 py-4 font-mono text-[11px] uppercase tracking-[0.22em] text-ink transition-colors hover:bg-bone"
+                className="group inline-flex items-center gap-3 bg-ember px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-ink transition-colors hover:bg-bone"
               >
-                Run the live demo
+                See it in action
                 <span className="transition-transform group-hover:translate-x-1">
                   →
                 </span>
               </a>
               <a
-                href="#investor"
-                className="group inline-flex items-center gap-3 border border-bone/50 px-6 py-4 font-mono text-[11px] uppercase tracking-[0.22em] text-bone hover:border-ember hover:text-ember transition-colors"
+                href="#alpha"
+                className="group inline-flex items-center gap-3 border border-bone/50 px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone hover:border-ember hover:text-ember transition-colors"
               >
-                Investor memo
+                Claim a seat
                 <span className="transition-transform group-hover:translate-x-1">
                   →
                 </span>
               </a>
               <a
                 href="#dashboard"
-                className="group inline-flex items-center gap-3 border-b border-bone/40 pb-1 font-mono text-[11px] uppercase tracking-[0.22em] text-bone-2 transition-colors hover:text-bone hover:border-bone"
+                className="group inline-flex items-center gap-3 border-b border-bone/40 pb-1 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone-2 transition-colors hover:text-bone hover:border-bone"
               >
-                See the platform
+                Tour the ledger
                 <span className="transition-transform group-hover:translate-y-0.5">
                   ↓
                 </span>
@@ -184,112 +189,71 @@ function Hero() {
             </div>
           </div>
 
-          {/* Live ledger card */}
+          {/* Ledger preview card */}
           <aside
             className="rise lg:col-span-4 lg:mt-2 self-start"
             style={{ animationDelay: "0.42s" }}
           >
             <div className="border border-line bg-ink-1/70 backdrop-blur-sm">
-              <div className="flex items-center justify-between border-b border-line px-5 py-3 font-mono text-[10.5px] uppercase tracking-[0.18em] text-bone-3">
-                <span>Live ledger · Net 30d</span>
-                <span className="flex items-center gap-2 text-ember">
-                  <span className="pulse h-1.5 w-1.5 rounded-full bg-ember" />
-                  Recovering
+              <div className="flex items-center justify-between border-b border-line px-5 py-3 font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] text-bone-3">
+                <span>Your ledger · Preview</span>
+                <span className="flex items-center gap-2 text-bone-3">
+                  <span className="h-1.5 w-1.5 rounded-full bg-bone-3/60" />
+                  Mockup
                 </span>
               </div>
               <div className="px-5 py-7">
-                <div className="font-display text-[clamp(2.4rem,5vw,3.6rem)] leading-none tracking-tight text-bone">
-                  <LiveCounter />
+                <div className="font-display text-[clamp(2rem,5vw,3.6rem)] leading-[0.96] tracking-tight text-bone break-words">
+                  One inbox.
+                  <br />
+                  <em className="text-bone-2">Three channels.</em>
                 </div>
-                <p className="mt-3 font-mono text-[10.5px] uppercase tracking-[0.18em] text-bone-3">
-                  Recovered to operator accounts
+                <p className="mt-3 font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] text-bone-3">
+                  Public alpha · 50 seats open
                 </p>
               </div>
               <div className="grid grid-cols-3 border-t border-line">
                 {[
-                  { k: "Cases", v: "1,284" },
-                  { k: "Median TTP", v: "9.4d" },
-                  { k: "Recovery", v: "73.2%" },
+                  { k: "Channels", v: "3" },
+                  { k: "Campaign", v: "30d" },
+                  { k: "Pricing", v: "5%" },
                 ].map((s) => (
                   <div
                     key={s.k}
                     className="border-r border-line px-4 py-4 last:border-r-0"
                   >
                     <div className="num font-display text-2xl text-bone">{s.v}</div>
-                    <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-bone-3">
+                    <div className="mt-1 font-mono text-[11.5px] uppercase tracking-[0.18em] text-bone-3">
                       {s.k}
                     </div>
                   </div>
                 ))}
               </div>
               <div className="border-t border-line px-5 py-4">
-                <div className="font-mono text-[10.5px] uppercase tracking-[0.18em] text-bone-3">
-                  Channel mix
+                <div className="font-mono text-xs uppercase tracking-[0.18em] text-bone-3">
+                  Channel arc
                 </div>
                 <div className="mt-3 flex h-1.5 w-full overflow-hidden rounded-[1px] bg-ink-3">
-                  <span className="h-full bg-bone" style={{ width: "44%" }} />
+                  <span className="h-full bg-bone" style={{ width: "33.33%" }} />
                   <span
                     className="h-full bg-ember"
-                    style={{ width: "31%" }}
+                    style={{ width: "33.33%" }}
                   />
-                  <span className="h-full bg-moss" style={{ width: "25%" }} />
+                  <span className="h-full bg-moss" style={{ width: "33.34%" }} />
                 </div>
-                <div className="mt-2 flex justify-between font-mono text-[10px] uppercase tracking-[0.18em] text-bone-3">
-                  <span>Email · 44</span>
-                  <span>SMS · 31</span>
-                  <span>Voice · 25</span>
+                <div className="mt-2 flex justify-between font-mono text-[11.5px] uppercase tracking-[0.18em] text-bone-3">
+                  <span>Email</span>
+                  <span>SMS</span>
+                  <span>Voice</span>
                 </div>
               </div>
             </div>
 
-            <p className="mt-4 font-mono text-[10.5px] uppercase tracking-[0.2em] text-bone-3">
-              Powered by · Resend · Twilio · Dragun voice agent
+            <p className="mt-4 font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-bone-3">
+              Built on · Resend · Twilio · Dragun voice agent
             </p>
           </aside>
         </div>
-      </div>
-    </section>
-  );
-}
-
-/* ────────────────────────────────────────────────────────── */
-/*  Arrivals marquee                                          */
-/* ────────────────────────────────────────────────────────── */
-
-function Arrivals() {
-  const items = [
-    ["DR-1041", "Northridge Plumbing & Heat", "$4,128.00"],
-    ["DR-1039", "Halstead Auto Body", "$1,290.00"],
-    ["DR-1037", "Oakwell Café Group", "$782.50"],
-    ["DR-1034", "Maritime Supply Co.", "$9,402.00"],
-    ["DR-1031", "Waves & Wicks LLC", "$355.00"],
-    ["DR-1029", "Foothill Dental Partners", "$2,140.75"],
-    ["DR-1027", "Bramble Lawn & Garden", "$612.40"],
-    ["DR-1024", "Bering Strait Logistics", "$11,008.20"],
-    ["DR-1021", "Quietwater Marina", "$3,275.00"],
-    ["DR-1018", "Larkfield Bakery Co.", "$478.65"],
-    ["DR-1016", "Granite Roof & Siding", "$5,820.00"],
-    ["DR-1014", "Penobscot Pet Supply", "$294.30"],
-  ];
-  const stream = [...items, ...items];
-  return (
-    <section
-      aria-label="Recent recoveries"
-      className="relative border-y border-line bg-ink-1/40 py-3"
-    >
-      <div className="ticker-track font-mono text-[11px] uppercase tracking-[0.2em] text-bone-2">
-        {stream.map((it, i) => (
-          <span
-            key={i}
-            className="flex items-center gap-3 whitespace-nowrap"
-          >
-            <span className="text-ember">▲ ARRIVED</span>
-            <span className="text-bone-3">{it[0]}</span>
-            <span className="text-bone">{it[1]}</span>
-            <span className="num text-bone">{it[2]}</span>
-            <span className="text-bone-3">·</span>
-          </span>
-        ))}
       </div>
     </section>
   );
@@ -302,33 +266,33 @@ function Arrivals() {
 function Problem() {
   return (
     <section className="relative">
-      <div className="mx-auto max-w-[1320px] px-6 py-32 md:py-44">
-        <div className="grid gap-16 lg:grid-cols-12">
+      <div className="mx-auto max-w-[1320px] px-6 py-24 md:py-44">
+        <div className="grid gap-12 lg:gap-16 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-3">
-              I. The arithmetic of being owed
+            <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
+              I. The math of getting paid
             </p>
-            <p className="mt-6 font-display text-3xl leading-tight text-bone-2">
-              It is not a billing problem.
+            <p className="mt-6 font-display text-2xl sm:text-3xl leading-tight text-bone-2">
+              The invoice isn&rsquo;t the problem.
               <br />
-              <em>It is a follow-up problem.</em>
+              <em>The follow-up is.</em>
             </p>
           </div>
           <div className="lg:col-span-8 lg:pl-12">
-            <p className="font-display text-[clamp(2.6rem,5vw,4.4rem)] leading-[1.05] tracking-tight text-bone">
-              <span className="text-ember">42%</span> of SMB invoices age past
-              thirty days. By day ninety, recovery collapses to{" "}
-              <span className="text-ember">12¢</span> on the dollar.
+            <p className="font-display text-[clamp(2rem,5vw,4.4rem)] leading-[1.08] tracking-tight text-bone break-words">
+              <span className="text-ember">42%</span> of small-business invoices
+              go past thirty days. By day ninety, only{" "}
+              <span className="text-ember">12¢</span> on the dollar comes back.
             </p>
-            <div className="mt-12 grid gap-8 border-t border-line pt-8 md:grid-cols-3">
+            <div className="mt-10 sm:mt-12 grid gap-8 border-t border-line pt-8 sm:grid-cols-2 md:grid-cols-3">
               {[
                 {
                   k: "$825B",
-                  l: "Outstanding US AR held by SMBs",
+                  l: "Outstanding invoices held by US small businesses",
                 },
                 {
                   k: "31 hrs / mo",
-                  l: "A typical owner spends chasing it",
+                  l: "A typical owner spends sending reminders",
                 },
                 {
                   k: "1 in 6",
@@ -336,10 +300,10 @@ function Problem() {
                 },
               ].map((d) => (
                 <div key={d.k}>
-                  <div className="num font-display text-4xl text-bone">
+                  <div className="num font-display text-3xl sm:text-4xl text-bone break-words">
                     {d.k}
                   </div>
-                  <div className="mt-2 font-mono text-[11px] uppercase tracking-[0.18em] text-bone-3">
+                  <div className="mt-2 font-mono text-[12px] sm:text-sm uppercase tracking-[0.18em] text-bone-3">
                     {d.l}
                   </div>
                 </div>
@@ -363,14 +327,12 @@ function Channels() {
       name: "Email",
       vendor: "Resend",
       window: "Day 0 → 7",
-      cadence: "3 touches",
-      voice: "Soft, transactional, tonally aligned to your brand.",
-      stat: { k: "Open", v: "64.8%" },
-      sub: { k: "Pay rate", v: "28.4%" },
+      cadence: "3 reminders",
+      voice: "Warm, transactional, written in your brand voice.",
       detail: [
         "DKIM, SPF & DMARC alignment",
         "Threaded replies routed to your team",
-        "Variable subject + warm-up rotation",
+        "Variable subject + sender warm-up",
       ],
     },
     {
@@ -378,13 +340,11 @@ function Channels() {
       name: "SMS",
       vendor: "Twilio",
       window: "Day 5 → 14",
-      cadence: "2 touches",
-      voice: "Direct, brief, branded. Pay link in one tap.",
-      stat: { k: "Delivery", v: "99.1%" },
-      sub: { k: "Pay rate", v: "19.7%" },
+      cadence: "2 nudges",
+      voice: "Short, kind, branded. Pay link in one tap.",
       detail: [
         "10DLC registered, A2P 10DLC pre-cleared",
-        "Smart quiet hours by debtor timezone",
+        "Quiet hours by your customer's timezone",
         "Inbound STOP / HELP handled",
       ],
     },
@@ -393,14 +353,12 @@ function Channels() {
       name: "Voice",
       vendor: "Dragun agent",
       window: "Day 10 →",
-      cadence: "Up to 3 connects",
-      voice: "Conversational AI. Listens. Negotiates. Documents.",
-      stat: { k: "Connect", v: "41.2%" },
-      sub: { k: "Pay rate", v: "33.6%" },
+      cadence: "Up to 3 calls",
+      voice: "A friendly agent. Listens, helps, leaves a clear record.",
       detail: [
         "Real-time call recording & transcripts",
-        "TCPA-windowed dialing, opt-out aware",
-        "Hand-off to human on signal phrases",
+        "Calls only during local business hours",
+        "Hands off to a human at the right cue",
       ],
     },
   ];
@@ -409,58 +367,38 @@ function Channels() {
       id="channels"
       className="relative border-t border-line bg-ink-1/30"
     >
-      <div className="mx-auto max-w-[1320px] px-6 py-28 md:py-36">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div className="mx-auto max-w-[1320px] px-6 py-24 md:py-36">
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-3">
-              II. Channels of pursuit
+            <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
+              II. Three friendly channels
             </p>
-            <h2 className="mt-4 font-display text-[clamp(2.4rem,5vw,4.2rem)] leading-[1.02] tracking-tight text-bone">
-              Three channels, one campaign, one ledger.
+            <h2 className="mt-4 font-display text-[clamp(2rem,5vw,4.2rem)] leading-[1.04] tracking-tight text-bone break-words">
+              Three channels, one rhythm, one inbox.
             </h2>
           </div>
           <p className="max-w-md font-sans text-bone-2">
-            Every debtor receives the same arc — softly, then firmly. The
-            sequence is automated, compliance-windowed, and tuned per
-            industry.
+            Every customer hears from you the same way — kindly. The cadence
+            is automatic, hours-aware, and tuned to your industry.
           </p>
         </div>
 
-        <div className="mt-16 grid gap-px bg-line border border-line md:grid-cols-3">
+        <div className="mt-12 sm:mt-16 grid gap-px bg-line border border-line md:grid-cols-3">
           {channels.map((c) => (
             <article
               key={c.name}
-              className="group relative bg-ink p-8 transition-colors hover:bg-ink-1"
+              className="group relative bg-ink p-6 sm:p-8 transition-colors hover:bg-ink-1"
             >
-              <div className="flex items-baseline justify-between font-mono text-[10.5px] uppercase tracking-[0.2em] text-bone-3">
+              <div className="flex items-baseline justify-between font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-bone-3">
                 <span>{c.roman} {c.name}</span>
                 <span>{c.vendor}</span>
               </div>
-              <h3 className="mt-6 font-display text-5xl tracking-tight text-bone">
+              <h3 className="mt-5 sm:mt-6 font-display text-4xl sm:text-5xl tracking-tight text-bone">
                 {c.name}
               </h3>
-              <p className="mt-4 max-w-[34ch] text-bone-2">{c.voice}</p>
+              <p className="mt-4 max-w-[34ch] text-bone-2 text-sm sm:text-base">{c.voice}</p>
 
-              <dl className="mt-8 grid grid-cols-2 border-t border-line pt-5">
-                <div>
-                  <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-bone-3">
-                    {c.stat.k}
-                  </dt>
-                  <dd className="num mt-1 font-display text-3xl text-ember">
-                    {c.stat.v}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-bone-3">
-                    {c.sub.k}
-                  </dt>
-                  <dd className="num mt-1 font-display text-3xl text-bone">
-                    {c.sub.v}
-                  </dd>
-                </div>
-              </dl>
-
-              <ul className="mt-8 space-y-2 text-sm text-bone-2">
+              <ul className="mt-7 sm:mt-8 space-y-2 border-t border-line pt-5 text-sm text-bone-2">
                 {c.detail.map((d) => (
                   <li key={d} className="flex gap-3">
                     <span className="mt-2 h-px w-3 shrink-0 bg-bone-3" />
@@ -469,7 +407,7 @@ function Channels() {
                 ))}
               </ul>
 
-              <div className="mt-10 flex items-end justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-bone-3">
+              <div className="mt-8 sm:mt-10 flex flex-wrap items-end justify-between gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-bone-3">
                 <span>Window {c.window}</span>
                 <span>{c.cadence}</span>
               </div>
@@ -510,23 +448,23 @@ function Mechanism() {
 
   return (
     <section id="mechanism" className="relative">
-      <div className="mx-auto max-w-[1320px] px-6 py-28 md:py-36">
-        <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-3">
-          III. The thirty-day arc
+      <div className="mx-auto max-w-[1320px] px-6 py-24 md:py-36">
+        <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
+          III. The thirty-day rhythm
         </p>
-        <h2 className="mt-4 max-w-[24ch] font-display text-[clamp(2.4rem,5vw,4.2rem)] leading-[1.02] tracking-tight text-bone">
-          One campaign. Drafted soft, finished firm.
+        <h2 className="mt-4 max-w-[24ch] font-display text-[clamp(2rem,5vw,4.2rem)] leading-[1.04] tracking-tight text-bone break-words">
+          One rhythm. Friendly start, gentle reminders, polite finish.
         </h2>
-        <p className="mt-6 max-w-[60ch] text-bone-2">
-          Campaigns escalate automatically across email, SMS, and voice.
-          Operators see every touch in a single ledger; debtors hear from one
-          consistent voice.
+        <p className="mt-6 max-w-[60ch] text-bone-2 text-sm sm:text-base">
+          Reminders unfold automatically across email, SMS and voice. You see
+          every touch in a single ledger; your customers hear one consistent,
+          friendly tone.
         </p>
 
-        <div className="mt-16 border border-line bg-ink-1/40">
+        <div className="mt-12 sm:mt-16 border border-line bg-ink-1/40 overflow-hidden">
           {/* Day axis */}
-          <div className="grid grid-cols-[120px_1fr] border-b border-line">
-            <div className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.2em] text-bone-3">
+          <div className="grid grid-cols-[88px_1fr] sm:grid-cols-[120px_1fr] border-b border-line">
+            <div className="px-3 sm:px-4 py-3 font-mono text-[10.5px] sm:text-[11.5px] uppercase tracking-[0.18em] text-bone-3">
               Lane
             </div>
             <div className="relative h-9">
@@ -537,7 +475,7 @@ function Mechanism() {
                     className="relative flex-1 border-l border-line-soft first:border-l-0"
                   >
                     {d % 5 === 0 && (
-                      <span className="absolute left-1 top-2 font-mono text-[10px] uppercase tracking-[0.18em] text-bone-3">
+                      <span className="absolute left-1 top-2 font-mono text-[11.5px] uppercase tracking-[0.18em] text-bone-3">
                         {d === 0 ? "D0" : `D${d}`}
                       </span>
                     )}
@@ -551,13 +489,13 @@ function Mechanism() {
           {lanes.map((lane) => (
             <div
               key={lane.name}
-              className="grid grid-cols-[120px_1fr] border-b border-line last:border-b-0"
+              className="grid grid-cols-[88px_1fr] sm:grid-cols-[120px_1fr] border-b border-line last:border-b-0"
             >
-              <div className="flex flex-col justify-center border-r border-line px-4 py-5">
-                <span className="font-display text-xl text-bone">
+              <div className="flex flex-col justify-center border-r border-line px-3 sm:px-4 py-4 sm:py-5">
+                <span className="font-display text-lg sm:text-xl text-bone">
                   {lane.name}
                 </span>
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-bone-3">
+                <span className="font-mono text-[10px] sm:text-[11.5px] uppercase tracking-[0.18em] text-bone-3">
                   {lane.vendor}
                 </span>
               </div>
@@ -581,7 +519,7 @@ function Mechanism() {
                         }}
                       />
                       <div
-                        className="absolute left-1/2 mt-3 -translate-x-1/2 whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.18em] text-bone-3"
+                        className="hidden md:block absolute left-1/2 mt-3 -translate-x-1/2 whitespace-nowrap font-mono text-[11.5px] uppercase tracking-[0.18em] text-bone-3"
                       >
                         D{d} · #{i + 1}
                       </div>
@@ -593,18 +531,15 @@ function Mechanism() {
           ))}
 
           {/* Outcome bar */}
-          <div className="grid grid-cols-[120px_1fr] border-t border-line bg-ink">
-            <div className="border-r border-line px-4 py-4 font-mono text-[10px] uppercase tracking-[0.2em] text-bone-3">
+          <div className="grid grid-cols-[88px_1fr] sm:grid-cols-[120px_1fr] border-t border-line bg-ink">
+            <div className="border-r border-line px-3 sm:px-4 py-3 sm:py-4 font-mono text-[10px] sm:text-[11.5px] uppercase tracking-[0.18em] text-bone-3">
               Outcome
             </div>
-            <div className="relative px-4 py-4">
-              <div className="flex items-center justify-between font-mono text-[10.5px] uppercase tracking-[0.2em] text-bone-2">
-                <span>Pay link delivered</span>
-                <span>
-                  Average resolution{" "}
-                  <span className="num text-ember">D9.4</span>
-                </span>
-                <span>Escalation if &gt; D27</span>
+            <div className="relative px-3 sm:px-4 py-3 sm:py-4">
+              <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 font-mono text-[10.5px] sm:text-xs uppercase tracking-[0.18em] text-bone-2">
+                <span>Pay link · Day 0</span>
+                <span>Rhythm · 30d</span>
+                <span>Hand-off if &gt; D27</span>
               </div>
             </div>
           </div>
@@ -627,7 +562,7 @@ function Dashboard() {
       amount: "$4,128.00",
       age: "27d",
       mix: ["E", "S", "V"],
-      status: "RECOVERED",
+      status: "PAID",
     },
     {
       id: "DR-1042",
@@ -636,7 +571,7 @@ function Dashboard() {
       amount: "$1,290.00",
       age: "14d",
       mix: ["E", "S"],
-      status: "IN PURSUIT",
+      status: "FOLLOWING UP",
     },
     {
       id: "DR-1043",
@@ -654,7 +589,7 @@ function Dashboard() {
       amount: "$9,402.00",
       age: "41d",
       mix: ["E", "S", "V"],
-      status: "ESCALATED",
+      status: "ATTENTION",
     },
     {
       id: "DR-1045",
@@ -672,7 +607,7 @@ function Dashboard() {
       amount: "$11,008.20",
       age: "19d",
       mix: ["E", "S", "V"],
-      status: "IN PURSUIT",
+      status: "FOLLOWING UP",
     },
     {
       id: "DR-1047",
@@ -681,48 +616,51 @@ function Dashboard() {
       amount: "$2,140.75",
       age: "31d",
       mix: ["E", "S"],
-      status: "PROMISE",
+      status: "PROMISED",
     },
   ];
 
   const events = [
-    { t: "02:14", c: "VOICE", m: "Connected · 1m12s · payment promise 02:00 today", id: "DR-1041" },
-    { t: "02:11", c: "EMAIL", m: "Reply received · ‘send pay link again’", id: "DR-1042" },
+    { t: "02:14", c: "VOICE", m: "Friendly call · 1m12s · they’ll pay later today", id: "DR-1041" },
+    { t: "02:11", c: "EMAIL", m: "Reply received · ‘can you resend the link?’", id: "DR-1042" },
     { t: "02:09", c: "SMS", m: "Delivered · pay link tapped", id: "DR-1044" },
-    { t: "02:04", c: "EMAIL", m: "Sent · soft tone v3", id: "DR-1045" },
-    { t: "01:58", c: "VOICE", m: "Voicemail dropped · branded", id: "DR-1046" },
-    { t: "01:52", c: "SMS", m: "Delivered · quiet-hours respected", id: "DR-1047" },
+    { t: "02:04", c: "EMAIL", m: "Sent · friendly reminder", id: "DR-1045" },
+    { t: "01:58", c: "VOICE", m: "Voicemail left · warm tone", id: "DR-1046" },
+    { t: "01:52", c: "SMS", m: "Delivered · quiet hours respected", id: "DR-1047" },
   ];
 
   const channelStats = [
-    { name: "Email", v: "Resend", a: 64.8, b: 28.4 },
-    { name: "SMS", v: "Twilio", a: 99.1, b: 19.7 },
-    { name: "Voice", v: "Agent", a: 41.2, b: 33.6 },
+    { name: "Email", v: "Resend", start: 0, span: 70, window: "D0–D21" },
+    { name: "SMS", v: "Twilio", start: 16, span: 44, window: "D5–D18" },
+    { name: "Voice", v: "Agent", start: 40, span: 47, window: "D12–D26" },
   ];
 
   const statusColor: Record<string, string> = {
-    RECOVERED: "bg-moss text-bone border-moss",
-    "IN PURSUIT": "bg-ember/15 text-ember border-ember/40",
+    PAID: "bg-moss text-bone border-moss",
+    "FOLLOWING UP": "bg-ember/15 text-ember border-ember/40",
     DRAFTED: "bg-transparent text-bone-3 border-bone-3/40",
-    ESCALATED: "bg-ember text-ink border-ember",
-    PROMISE: "bg-bone text-ink border-bone",
+    ATTENTION: "bg-ember text-ink border-ember",
+    PROMISED: "bg-bone text-ink border-bone",
   };
 
   return (
     <section id="dashboard" className="relative border-y border-line bg-ink-1/40">
-      <div className="mx-auto max-w-[1320px] px-6 py-28 md:py-36">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div className="mx-auto max-w-[1320px] px-6 py-24 md:py-36">
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-3">
-              IV. The operator surface
+            <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
+              IV. Your ledger · Preview
             </p>
-            <h2 className="mt-4 font-display text-[clamp(2.4rem,5vw,4.2rem)] leading-[1.02] tracking-tight text-bone">
-              One ledger for every receivable.
+            <h2 className="mt-4 font-display text-[clamp(2rem,5vw,4.2rem)] leading-[1.04] tracking-tight text-bone break-words">
+              One ledger for every unpaid invoice.
             </h2>
           </div>
-          <p className="max-w-md text-bone-2">
-            Built for operators, not collectors. Every case is auditable,
-            every touch is timestamped, every dollar lands in your bank.
+          <p className="max-w-md text-bone-2 text-sm sm:text-base">
+            Built for small-business owners. Every customer is auditable,
+            every reminder is timestamped, every payment lands in your bank.
+            <span className="mt-2 block font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-bone-3">
+              Mockup · sample data ahead of alpha
+            </span>
           </p>
         </div>
 
@@ -735,10 +673,10 @@ function Dashboard() {
               <span className="h-2.5 w-2.5 rounded-full bg-bone-3/40" />
               <span className="h-2.5 w-2.5 rounded-full bg-bone-3/40" />
             </div>
-            <div className="font-mono text-[10.5px] uppercase tracking-[0.2em] text-bone-3">
-              app.dragun.io / ledger
+            <div className="font-mono text-xs uppercase tracking-[0.2em] text-bone-3">
+              app.dragun.io / ledger · preview
             </div>
-            <div className="font-mono text-[10.5px] uppercase tracking-[0.2em] text-bone-3">
+            <div className="font-mono text-xs uppercase tracking-[0.2em] text-bone-3">
               your-business
             </div>
           </div>
@@ -754,17 +692,17 @@ function Dashboard() {
                     Dragun
                   </span>
                 </div>
-                <div className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-bone-3">
+                <div className="mt-3 font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
                   Your business
                 </div>
               </div>
-              <nav className="px-2 py-3 font-mono text-[11px] uppercase tracking-[0.18em]">
+              <nav className="px-2 py-3 font-mono text-sm uppercase tracking-[0.18em]">
                 {[
                   ["Ledger", true],
-                  ["Cases", false],
+                  ["Customers", false],
                   ["Drafts", false],
                   ["Inbox", false],
-                  ["Voice log", false],
+                  ["Call log", false],
                   ["Settings", false],
                 ].map(([label, active]) => (
                   <a
@@ -782,20 +720,20 @@ function Dashboard() {
                 ))}
               </nav>
               <div className="mt-2 border-t border-line px-5 py-5">
-                <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-bone-3">
+                <div className="font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
                   Compliance
                 </div>
-                <div className="mt-3 space-y-1.5 text-[12px] text-bone-2">
+                <div className="mt-3 space-y-1.5 text-[13.5px] text-bone-2">
                   <div className="flex items-center justify-between">
-                    <span>TCPA window</span>
+                    <span>Calling hours</span>
                     <span className="text-ember">Open</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span>FDCPA mode</span>
-                    <span className="text-bone">SMB</span>
+                    <span>Tone</span>
+                    <span className="text-bone">Friendly</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span>10DLC</span>
+                    <span>SMS · 10DLC</span>
                     <span className="text-bone">OK</span>
                   </div>
                 </div>
@@ -807,10 +745,10 @@ function Dashboard() {
               {/* KPI */}
               <div className="grid grid-cols-2 lg:grid-cols-4 border-b border-line">
                 {[
-                  { k: "Active recoveries", v: "1,284", d: "+82 wk" },
-                  { k: "Recovered · 30d", v: "$4.21M", d: "+19%" },
-                  { k: "Median TTP", v: "9.4d", d: "−1.6d" },
-                  { k: "Recovery rate", v: "73.2%", d: "+4.4pp" },
+                  { k: "Open invoices", v: "—" },
+                  { k: "Paid · 30d", v: "—" },
+                  { k: "Median time-to-pay", v: "—" },
+                  { k: "Pay rate", v: "—" },
                 ].map((k, i) => (
                   <div
                     key={k.k}
@@ -818,26 +756,69 @@ function Dashboard() {
                       i < 3 ? "border-r border-line" : ""
                     }`}
                   >
-                    <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-bone-3">
+                    <div className="font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
                       {k.k}
                     </div>
-                    <div className="num mt-2 font-display text-3xl text-bone">
+                    <div className="num mt-2 font-display text-3xl text-bone-2">
                       {k.v}
                     </div>
-                    <div className="mt-1 font-mono text-[10.5px] uppercase tracking-[0.2em] text-ember">
-                      {k.d}
+                    <div className="mt-1 font-mono text-xs uppercase tracking-[0.2em] text-bone-3">
+                      Awaits first cohort
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Cases */}
-              <div className="overflow-x-auto thin-scroll">
-                <table className="w-full min-w-[760px] text-sm">
+              {/* Cases — mobile cards */}
+              <ul className="md:hidden divide-y divide-line">
+                {cases.map((r) => (
+                  <li key={r.id} className="px-5 py-4">
+                    <div className="flex items-baseline justify-between">
+                      <span className="font-mono text-xs uppercase tracking-[0.2em] text-bone-3">
+                        {r.id} · {r.sector}
+                      </span>
+                      <span
+                        className={`inline-flex border px-2 py-0.5 font-mono text-sm uppercase tracking-[0.18em] ${statusColor[r.status]}`}
+                      >
+                        {r.status}
+                      </span>
+                    </div>
+                    <div className="mt-1.5 text-bone">{r.who}</div>
+                    <div className="mt-2 flex items-center justify-between">
+                      <span className="num text-sm text-bone-2">
+                        <span className="text-bone">{r.amount}</span>
+                        <span className="text-bone-3"> · </span>
+                        {r.age}
+                      </span>
+                      <div className="flex gap-1 font-mono text-[11.5px]">
+                        {(["E", "S", "V"] as const).map((m) => {
+                          const on = r.mix.includes(m);
+                          return (
+                            <span
+                              key={m}
+                              className={`flex h-5 w-5 items-center justify-center border ${
+                                on
+                                  ? "border-bone text-bone"
+                                  : "border-bone-3/30 text-bone-3/40"
+                              }`}
+                            >
+                              {m}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Cases — tablet+ table */}
+              <div className="hidden md:block overflow-x-auto thin-scroll">
+                <table className="w-full min-w-[720px] text-sm">
                   <thead>
-                    <tr className="border-b border-line text-left font-mono text-[10px] uppercase tracking-[0.2em] text-bone-3">
-                      <th className="px-5 py-3 font-medium">Case</th>
-                      <th className="px-3 py-3 font-medium">Debtor</th>
+                    <tr className="border-b border-line text-left font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
+                      <th className="px-5 py-3 font-medium">Invoice</th>
+                      <th className="px-3 py-3 font-medium">Customer</th>
                       <th className="px-3 py-3 font-medium">Sector</th>
                       <th className="px-3 py-3 font-medium text-right">Amount</th>
                       <th className="px-3 py-3 font-medium text-right">Age</th>
@@ -848,7 +829,7 @@ function Dashboard() {
                   <tbody>
                     {cases.map((r) => (
                       <tr key={r.id} className="row border-b border-line-soft">
-                        <td className="px-5 py-3.5 font-mono text-[12px] text-bone-2">
+                        <td className="px-5 py-3.5 font-mono text-[13.5px] text-bone-2">
                           {r.id}
                         </td>
                         <td className="px-3 py-3.5 text-bone">{r.who}</td>
@@ -860,7 +841,7 @@ function Dashboard() {
                           {r.age}
                         </td>
                         <td className="px-3 py-3.5">
-                          <div className="flex gap-1 font-mono text-[10px]">
+                          <div className="flex gap-1 font-mono text-[11.5px]">
                             {(["E", "S", "V"] as const).map((m) => {
                               const on = r.mix.includes(m);
                               return (
@@ -880,7 +861,7 @@ function Dashboard() {
                         </td>
                         <td className="px-5 py-3.5">
                           <span
-                            className={`inline-flex border px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.18em] ${
+                            className={`inline-flex border px-2 py-0.5 font-mono text-[11.5px] uppercase tracking-[0.18em] ${
                               statusColor[r.status]
                             }`}
                           >
@@ -893,14 +874,14 @@ function Dashboard() {
                 </table>
               </div>
 
-              {/* Channel performance */}
+              {/* Channel composition */}
               <div className="border-t border-line p-5">
                 <div className="flex items-baseline justify-between">
-                  <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-bone-3">
-                    Channel performance · last 30d
+                  <div className="font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
+                    Channel composition · per case
                   </div>
-                  <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-bone-3">
-                    delivery / pay-rate
+                  <div className="font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
+                    window
                   </div>
                 </div>
                 <div className="mt-5 space-y-4">
@@ -913,23 +894,18 @@ function Dashboard() {
                         <div className="font-display text-lg text-bone">
                           {c.name}
                         </div>
-                        <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-bone-3">
+                        <div className="font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
                           {c.v}
                         </div>
                       </div>
                       <div className="relative h-2 bg-ink-3">
                         <div
-                          className="absolute inset-y-0 left-0 bg-bone/70"
-                          style={{ width: `${c.a}%` }}
-                        />
-                        <div
-                          className="absolute inset-y-0 left-0 bg-ember"
-                          style={{ width: `${c.b}%` }}
+                          className="absolute inset-y-0 bg-bone/40"
+                          style={{ left: `${c.start}%`, width: `${c.span}%` }}
                         />
                       </div>
-                      <div className="num text-right text-sm text-bone-2">
-                        {c.a}%{" / "}
-                        <span className="text-ember">{c.b}%</span>
+                      <div className="num text-right text-sm text-bone-3 font-mono uppercase tracking-[0.18em]">
+                        {c.window}
                       </div>
                     </div>
                   ))}
@@ -937,15 +913,15 @@ function Dashboard() {
               </div>
             </div>
 
-            {/* Live transmissions */}
+            {/* Sample transmissions */}
             <aside className="border-t border-line lg:border-t-0 lg:border-l">
               <div className="border-b border-line px-5 py-3 flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-bone-3">
-                  Live transmissions
+                <span className="font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
+                  Transmissions
                 </span>
-                <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-ember">
-                  <span className="pulse h-1.5 w-1.5 rounded-full bg-ember" />
-                  Streaming
+                <span className="flex items-center gap-2 font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
+                  <span className="h-1.5 w-1.5 rounded-full bg-bone-3/60" />
+                  Sample
                 </span>
               </div>
               <ul>
@@ -954,7 +930,7 @@ function Dashboard() {
                     key={i}
                     className="row border-b border-line-soft px-5 py-3"
                   >
-                    <div className="flex items-baseline justify-between font-mono text-[10.5px] uppercase tracking-[0.18em]">
+                    <div className="flex items-baseline justify-between font-mono text-xs uppercase tracking-[0.18em]">
                       <span className="text-bone-3">{e.t}</span>
                       <span
                         className={
@@ -968,10 +944,10 @@ function Dashboard() {
                         {e.c}
                       </span>
                     </div>
-                    <p className="mt-1 text-[13px] text-bone-2 leading-snug">
+                    <p className="mt-1 text-sm text-bone-2 leading-snug">
                       {e.m}
                     </p>
-                    <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-bone-3">
+                    <p className="mt-1 font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
                       {e.id}
                     </p>
                   </li>
@@ -993,52 +969,56 @@ function Compliance() {
   const items = [
     {
       k: "TCPA",
-      l: "Calls and texts windowed to debtor local time, opt-out aware, prior express consent surfaced per case.",
+      tag: "Built in",
+      l: "Calls and texts respect your customer's local hours. Opt-outs honored instantly. Consent records kept per invoice.",
     },
     {
-      k: "FDCPA",
-      l: "Frequency caps, identity disclosure, mini-Miranda templates by state — and an SMB-mode that stays on the right side of the line.",
+      k: "Tone & frequency",
+      tag: "Built in",
+      l: "Sensible frequency caps, clear identity in every message, and a small-business tone — designed to keep customers, not to corner them.",
     },
     {
       k: "10DLC / A2P",
+      tag: "Registered",
       l: "Sender registered for application-to-person traffic. Carrier filtering minimised through brand & campaign vetting.",
     },
     {
       k: "SOC 2",
-      l: "Type I in process. Controls aligned to AICPA TSC. Audit log on every case, retained for seven years.",
+      tag: "In progress",
+      l: "Type I in process. Controls aligned to AICPA TSC. Audit log on every invoice, retained for seven years.",
     },
   ];
   return (
     <section id="compliance" className="relative">
-      <div className="mx-auto max-w-[1320px] px-6 py-28 md:py-36">
-        <div className="grid gap-16 lg:grid-cols-12">
+      <div className="mx-auto max-w-[1320px] px-6 py-24 md:py-36">
+        <div className="grid gap-12 lg:gap-16 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-3">
-              V. Compliance, by design
+            <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
+              V. Built thoughtfully
             </p>
-            <h2 className="mt-4 font-display text-[clamp(2.2rem,4.5vw,3.6rem)] leading-[1.05] tracking-tight text-bone">
-              We pursue debts.
+            <h2 className="mt-4 font-display text-[clamp(1.85rem,4.5vw,3.6rem)] leading-[1.06] tracking-tight text-bone break-words">
+              Friendly with your customers.
               <br />
-              <em>Not problems.</em>
+              <em>Honest with the rules.</em>
             </h2>
-            <p className="mt-6 max-w-[40ch] text-bone-2">
-              Compliance is not a feature bolted on. It is the lattice every
-              campaign is built into.
+            <p className="mt-6 max-w-[40ch] text-bone-2 text-sm sm:text-base">
+              Customer respect isn&rsquo;t a feature bolted on. It&rsquo;s how
+              every reminder is written, scheduled, and sent.
             </p>
           </div>
           <div className="lg:col-span-8 lg:pl-12">
             <div className="grid gap-px border border-line bg-line md:grid-cols-2">
               {items.map((it) => (
-                <div key={it.k} className="bg-ink p-7">
-                  <div className="flex items-baseline justify-between">
-                    <span className="font-display text-3xl text-bone">
+                <div key={it.k} className="bg-ink p-6 sm:p-7">
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <span className="font-display text-2xl sm:text-3xl text-bone break-words">
                       {it.k}
                     </span>
-                    <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-ember">
-                      Active
+                    <span className="font-mono text-[11px] sm:text-[11.5px] uppercase tracking-[0.22em] text-ember">
+                      {it.tag}
                     </span>
                   </div>
-                  <p className="mt-4 text-bone-2">{it.l}</p>
+                  <p className="mt-4 text-bone-2 text-sm sm:text-base">{it.l}</p>
                 </div>
               ))}
             </div>
@@ -1056,27 +1036,26 @@ function Compliance() {
 function Distribution() {
   return (
     <section className="relative border-t border-line bg-ink-1/40">
-      <div className="mx-auto max-w-[1320px] px-6 py-28 md:py-36">
+      <div className="mx-auto max-w-[1320px] px-6 py-24 md:py-36">
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-3">
-              VI. Distribution
+            <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
+              VI. Getting started
             </p>
-            <h2 className="mt-4 font-display text-[clamp(2.4rem,5vw,4.2rem)] leading-[1.02] tracking-tight text-bone">
-              Private alpha.
+            <h2 className="mt-4 font-display text-[clamp(2rem,5vw,4.2rem)] leading-[1.04] tracking-tight text-bone break-words">
+              Public alpha.
               <br />
-              <em>Sourced from operators.</em>
+              <em>Fifty seats, open.</em>
             </h2>
-            <p className="mt-6 max-w-[44ch] text-bone-2">
-              Dragun&rsquo;s first fifty customers are being onboarded one at
-              a time, directly from tech-savvy SMB owner groups on Facebook —
-              communities where operators already trade tooling
-              recommendations and care, more than most, about cash flow.
+            <p className="mt-6 max-w-[44ch] text-bone-2 text-sm sm:text-base">
+              No invitations, no waiting list. Fifty seats, first come, first
+              served. Sign up and an in-app tutorial walks you from empty
+              ledger to your first friendly reminder — no sales calls, no
+              gatekeeping.
             </p>
-            <p className="mt-4 max-w-[44ch] text-bone-2">
-              We win them with a working product, an honest demo, and a
-              flat-fee on what we recover. No pitch deck warriors. No paid
-              acquisition. Word travels.
+            <p className="mt-4 max-w-[44ch] text-bone-2 text-sm sm:text-base">
+              Flat 5% on what gets paid. Cancel any time. Your ledger is yours.
+              We only earn when you do.
             </p>
           </div>
 
@@ -1084,21 +1063,21 @@ function Distribution() {
             <div className="border border-line">
               <div className="grid grid-cols-3 border-b border-line">
                 {[
-                  { k: "Alpha seats", v: "50", d: "By Q3 2026" },
-                  { k: "From comms", v: "12+", d: "FB owner groups" },
-                  { k: "Pricing", v: "5%", d: "Of recovered, flat" },
+                  { k: "Alpha seats", v: "50", d: "Open now" },
+                  { k: "Onboarding", v: "Self-serve", d: "In-app tutorial" },
+                  { k: "Pricing", v: "5%", d: "Of paid, flat" },
                 ].map((s, i) => (
                   <div
                     key={s.k}
-                    className={`p-6 ${i < 2 ? "border-r border-line" : ""}`}
+                    className={`p-4 sm:p-6 ${i < 2 ? "border-r border-line" : ""}`}
                   >
-                    <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-bone-3">
+                    <div className="font-mono text-[10px] sm:text-[11.5px] uppercase tracking-[0.18em] text-bone-3">
                       {s.k}
                     </div>
-                    <div className="num mt-2 font-display text-4xl text-bone">
+                    <div className="num mt-2 font-display text-2xl sm:text-4xl text-bone break-words">
                       {s.v}
                     </div>
-                    <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-ember">
+                    <div className="mt-1 font-mono text-[10px] sm:text-[11.5px] uppercase tracking-[0.18em] text-ember">
                       {s.d}
                     </div>
                   </div>
@@ -1106,19 +1085,19 @@ function Distribution() {
               </div>
               <ul className="divide-y divide-line">
                 {[
-                  ["W1", "Operator-direct intros from gym-owner & SMB FB groups"],
-                  ["W2", "Public roadmap. Weekly demo for new alpha seats"],
-                  ["W3", "First voice-agent campaigns shipped to alpha cohort"],
-                  ["W4", "Case studies → expansion through operator referrals"],
-                ].map(([k, v]) => (
+                  ["D0", "Claim a seat · sandbox provisioned automatically"],
+                  ["D0", "In-app tutorial · email, SMS, voice wired in minutes"],
+                  ["D1", "Approve your first drafts · reminders go live"],
+                  ["D7+", "Voice agent joins in as invoices age"],
+                ].map(([k, v], i) => (
                   <li
-                    key={k}
-                    className="grid grid-cols-[60px_1fr] items-baseline px-6 py-4"
+                    key={`${k}-${i}`}
+                    className="grid grid-cols-[52px_1fr] sm:grid-cols-[60px_1fr] items-baseline px-4 sm:px-6 py-4 gap-2"
                   >
-                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-bone-3">
+                    <span className="font-mono text-[10.5px] sm:text-[11.5px] uppercase tracking-[0.18em] text-bone-3">
                       {k}
                     </span>
-                    <span className="text-bone-2">{v}</span>
+                    <span className="text-bone-2 text-sm sm:text-base">{v}</span>
                   </li>
                 ))}
               </ul>
@@ -1129,34 +1108,34 @@ function Distribution() {
         {/* Alpha access form */}
         <div
           id="alpha"
-          className="mt-24 grid gap-12 border-t border-line pt-16 lg:grid-cols-12"
+          className="mt-20 sm:mt-24 grid gap-12 border-t border-line pt-12 sm:pt-16 lg:grid-cols-12"
         >
           <div className="lg:col-span-5">
-            <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-3">
-              Apply
+            <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
+              Claim a seat
             </p>
-            <h3 className="mt-3 font-display text-[clamp(2rem,3.5vw,3rem)] leading-[1.05] tracking-tight text-bone">
+            <h3 className="mt-3 font-display text-[clamp(1.75rem,3.5vw,3rem)] leading-[1.06] tracking-tight text-bone break-words">
               Run your ledger
               <br />
               <em className="text-bone-2">on Dragun.</em>
             </h3>
-            <p className="mt-5 max-w-[40ch] text-bone-2">
-              Forty-nine seats remain. We onboard one operator at a time.
-              Tell us what gets aged out in your shop and we&rsquo;ll come
-              back with a working campaign within a business day.
+            <p className="mt-5 max-w-[40ch] text-bone-2 text-sm sm:text-base">
+              Fifty seats are open. The in-app tutorial gets you from sign-up
+              to your first friendly reminder in under ten minutes — no sales
+              calls, no waiting list.
             </p>
-            <ul className="mt-8 space-y-3 font-mono text-[11px] uppercase tracking-[0.18em] text-bone-2">
+            <ul className="mt-8 space-y-3 font-mono text-[12px] sm:text-sm uppercase tracking-[0.18em] text-bone-2">
               <li className="flex gap-3">
-                <span className="text-ember">▲</span> Flat 5% on what we
-                recover. Nothing else.
+                <span className="text-ember shrink-0">▲</span> Flat 5% on what
+                gets paid. Nothing else.
               </li>
               <li className="flex gap-3">
-                <span className="text-ember">▲</span> Bilingual EN · FR from
-                day one.
+                <span className="text-ember shrink-0">▲</span> Bilingual EN · FR
+                from day one.
               </li>
               <li className="flex gap-3">
-                <span className="text-ember">▲</span> Cancel any time. Your
-                ledger is yours.
+                <span className="text-ember shrink-0">▲</span> Cancel any time.
+                Your ledger is yours.
               </li>
             </ul>
           </div>
@@ -1180,29 +1159,29 @@ function Investor() {
       className="relative overflow-hidden border-t border-line"
     >
       <div className="ember-floor" aria-hidden style={{ bottom: "-65%" }} />
-      <div className="relative mx-auto max-w-[1320px] px-6 py-28 md:py-44">
-        <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-3">
+      <div className="relative mx-auto max-w-[1320px] px-6 py-24 md:py-44">
+        <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
           VII. Now raising
         </p>
-        <h2 className="mt-4 max-w-[18ch] font-display text-[clamp(3rem,7vw,7rem)] leading-[0.96] tracking-tight text-bone">
+        <h2 className="mt-4 max-w-[18ch] font-display text-[clamp(2.25rem,7vw,7rem)] leading-[0.98] tracking-tight text-bone break-words">
           The back-office for
           <br />
-          <em className="text-bone-2">money owed.</em>
+          <em className="text-bone-2">getting paid.</em>
         </h2>
 
-        <div className="mt-14 grid gap-12 lg:grid-cols-12">
+        <div className="mt-12 sm:mt-14 grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-7">
-            <p className="text-lg text-bone-2 leading-[1.55] max-w-[58ch]">
-              We are closing a pre-seed round to extend the voice agent and
-              widen the compliance lattice. The data room — including pilot
+            <p className="text-base sm:text-lg text-bone-2 leading-[1.55] max-w-[58ch]">
+              We&rsquo;re closing a pre-seed round to extend the voice agent
+              and the compliance lattice. The data room — including unit
               economics, the alpha cohort plan, and our compliance posture
               — is available on request to qualified investors.
             </p>
 
-            <div className="mt-10 flex flex-wrap items-center gap-4">
+            <div className="mt-8 sm:mt-10 flex flex-wrap items-center gap-3 sm:gap-4">
               <a
                 href="mailto:investors@dragun.app?subject=Dragun%20%E2%80%94%20investor%20memo"
-                className="group inline-flex items-center gap-3 bg-ember px-7 py-4 font-mono text-[11px] uppercase tracking-[0.22em] text-ink transition-colors hover:bg-bone"
+                className="group inline-flex max-w-full items-center gap-3 bg-ember px-5 sm:px-7 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-ink transition-colors hover:bg-bone break-all"
               >
                 investors@dragun.app
                 <span className="transition-transform group-hover:translate-x-1">
@@ -1211,7 +1190,7 @@ function Investor() {
               </a>
               <a
                 href="mailto:founders@dragun.app?subject=Dragun%20%E2%80%94%20founders"
-                className="group inline-flex items-center gap-3 border-b border-bone/40 pb-1 font-mono text-[11px] uppercase tracking-[0.22em] text-bone-2 transition-colors hover:text-bone hover:border-bone"
+                className="group inline-flex items-center gap-3 border-b border-bone/40 pb-1 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone-2 transition-colors hover:text-bone hover:border-bone"
               >
                 Talk to a founder
               </a>
@@ -1219,30 +1198,30 @@ function Investor() {
           </div>
 
           <aside className="lg:col-span-5">
-            <div className="border border-line bg-ink-1/70 p-7">
-              <div className="flex items-center justify-between font-mono text-[10.5px] uppercase tracking-[0.2em] text-bone-3">
+            <div className="border border-line bg-ink-1/70 p-5 sm:p-7">
+              <div className="flex items-center justify-between font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-bone-3">
                 <span>Round · Pre-seed</span>
                 <span className="text-ember">Open</span>
               </div>
-              <dl className="mt-6 grid grid-cols-2 gap-6">
+              <dl className="mt-6 grid grid-cols-2 gap-5 sm:gap-6">
                 {[
                   { k: "Stage", v: "Pre-seed" },
                   { k: "Vehicle", v: "SAFE" },
                   { k: "Use", v: "Voice agent · Compliance · Alpha" },
                   { k: "Geography", v: "Québec · US first" },
                 ].map((d) => (
-                  <div key={d.k}>
-                    <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-bone-3">
+                  <div key={d.k} className="min-w-0">
+                    <dt className="font-mono text-[11px] sm:text-[11.5px] uppercase tracking-[0.18em] text-bone-3">
                       {d.k}
                     </dt>
-                    <dd className="mt-1 font-display text-xl text-bone">
+                    <dd className="mt-1 font-display text-lg sm:text-xl text-bone break-words">
                       {d.v}
                     </dd>
                   </div>
                 ))}
               </dl>
-              <p className="mt-7 border-t border-line pt-5 font-mono text-[10.5px] uppercase tracking-[0.18em] text-bone-3 leading-relaxed">
-                Memo includes pilot economics, channel-mix performance,
+              <p className="mt-7 border-t border-line pt-5 font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] text-bone-3 leading-relaxed">
+                Memo includes unit economics, channel design,
                 regulatory posture, alpha cohort plan, and team profile.
               </p>
             </div>
@@ -1260,7 +1239,7 @@ function Investor() {
 function Footer() {
   return (
     <footer className="relative border-t border-line">
-      <div className="mx-auto max-w-[1320px] px-6 pt-20 pb-10">
+      <div className="mx-auto max-w-[1320px] px-6 pt-16 sm:pt-20 pb-10">
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <a href="#" className="flex items-center gap-3 text-bone">
@@ -1269,42 +1248,42 @@ function Footer() {
                 Dragun
               </span>
             </a>
-            <p className="mt-5 max-w-[44ch] text-bone-2">
-              The relentless back-office for money owed. Email, SMS and voice
-              — one campaign, one ledger, one bank deposit.
+            <p className="mt-5 max-w-[44ch] text-bone-2 text-sm sm:text-base">
+              The friendly back-office for getting paid. Email, SMS and voice
+              — one rhythm, one ledger, one bank deposit.
             </p>
           </div>
-          <div className="lg:col-span-5 grid grid-cols-2 gap-8 font-mono text-[11px] uppercase tracking-[0.18em] text-bone-2">
+          <div className="lg:col-span-5 grid grid-cols-2 gap-6 sm:gap-8 font-mono text-[12px] sm:text-sm uppercase tracking-[0.18em] text-bone-2">
             <div>
               <div className="text-bone-3">Platform</div>
               <ul className="mt-3 space-y-2">
-                <li><a href="#mechanism" className="hover:text-bone">Mechanism</a></li>
+                <li><a href="#mechanism" className="hover:text-bone">How it works</a></li>
                 <li><a href="#dashboard" className="hover:text-bone">Ledger</a></li>
                 <li><a href="#compliance" className="hover:text-bone">Compliance</a></li>
               </ul>
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="text-bone-3">Contact</div>
-              <ul className="mt-3 space-y-2">
+              <ul className="mt-3 space-y-2 break-words">
                 <li><a href="mailto:investors@dragun.app" className="hover:text-bone">Investors</a></li>
                 <li><a href="mailto:founders@dragun.app" className="hover:text-bone">Founders</a></li>
-                <li><a href="mailto:hello@dragun.app" className="hover:text-bone">Operators</a></li>
+                <li><a href="mailto:hello@dragun.app" className="hover:text-bone">Owners</a></li>
               </ul>
             </div>
           </div>
         </div>
 
         {/* Wordmark */}
-        <div className="mt-20 select-none">
-          <div className="font-display text-[clamp(5rem,22vw,18rem)] leading-none tracking-[-0.03em] text-bone/90">
+        <div className="mt-16 sm:mt-20 select-none overflow-hidden">
+          <div className="font-display text-[clamp(3.5rem,22vw,18rem)] leading-none tracking-[-0.03em] text-bone/90 break-words">
             DRAGUN<span className="text-ember">†</span>
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-4 border-t border-line pt-6 font-mono text-[10.5px] uppercase tracking-[0.2em] text-bone-3 md:flex-row md:items-center md:justify-between">
+        <div className="mt-8 flex flex-col gap-3 border-t border-line pt-6 font-mono text-[10.5px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.2em] text-bone-3 md:flex-row md:items-center md:justify-between">
           <span>© 2026 Dragun, Inc. · All rights reserved</span>
-          <span>Built in dim rooms · For loud receivables</span>
-          <span className="flex gap-5">
+          <span>Built in Québec · For small businesses</span>
+          <span className="flex flex-wrap gap-4 sm:gap-5">
             <a href="#" className="hover:text-bone">Privacy</a>
             <a href="#" className="hover:text-bone">Terms</a>
             <a href="#" className="hover:text-bone">Disclosures</a>

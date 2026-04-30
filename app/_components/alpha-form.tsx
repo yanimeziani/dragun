@@ -9,7 +9,7 @@ const initial: LeadState = { status: "idle" };
 const inputCx =
   "w-full bg-transparent border-b border-line py-3 text-bone placeholder:text-bone-3/70 outline-none transition-colors focus:border-ember";
 const labelCx =
-  "font-mono text-[10px] uppercase tracking-[0.22em] text-bone-3";
+  "font-mono text-[11.5px] uppercase tracking-[0.22em] text-bone-3";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -17,9 +17,9 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="group inline-flex items-center gap-3 bg-ember px-7 py-4 font-mono text-[11px] uppercase tracking-[0.22em] text-ink transition-colors hover:bg-bone disabled:opacity-60"
+      className="group inline-flex items-center gap-3 bg-ember px-7 py-4 font-mono text-sm uppercase tracking-[0.22em] text-ink transition-colors hover:bg-bone disabled:opacity-60"
     >
-      {pending ? "Sending…" : "Request alpha access"}
+      {pending ? "Reserving…" : "Claim my seat"}
       <span className="transition-transform group-hover:translate-x-1">→</span>
     </button>
   );
@@ -34,15 +34,15 @@ export function AlphaForm() {
         role="status"
         className="border border-ember/40 bg-ember/5 p-7 text-bone"
       >
-        <div className="font-mono text-[10.5px] uppercase tracking-[0.22em] text-ember">
-          Received
+        <div className="font-mono text-xs uppercase tracking-[0.22em] text-ember">
+          Seat reserved
         </div>
         <p className="mt-3 font-display text-2xl leading-snug">
-          {state.name ? `Thanks, ${state.name}.` : "Thanks."} We&rsquo;ll be in
-          touch within a business day.
+          {state.name ? `Thanks, ${state.name}.` : "Thanks."} Your onboarding
+          link is on its way to your inbox.
         </p>
-        <p className="mt-2 font-mono text-[10.5px] uppercase tracking-[0.22em] text-bone-3">
-          Reply directly to that email if you need us sooner.
+        <p className="mt-2 font-mono text-xs uppercase tracking-[0.22em] text-bone-3">
+          Didn&rsquo;t arrive in five minutes? Email founders@dragun.app.
         </p>
       </div>
     );
@@ -115,14 +115,14 @@ export function AlphaForm() {
       </label>
 
       {state.status === "error" && (
-        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-ember">
+        <p className="font-mono text-sm uppercase tracking-[0.18em] text-ember">
           {state.error}
         </p>
       )}
 
       <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
         <SubmitButton />
-        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-bone-3">
+        <p className="font-mono text-[11.5px] uppercase tracking-[0.22em] text-bone-3">
           We never share your name. Reply STOP to leave any comms.
         </p>
       </div>

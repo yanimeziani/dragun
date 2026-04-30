@@ -4,7 +4,7 @@ import { Demo } from "./_demo";
 export const metadata: Metadata = {
   title: "Dragun — Live demo",
   description:
-    "Walk through a 14-day Dragun campaign across email, SMS and voice — from both the operator and the debtor's side, in real time.",
+    "Walk through a 14-day Dragun reminder rhythm across email, SMS and voice — from both the owner and the customer's side, in real time.",
 };
 
 export default function DemoPage() {
