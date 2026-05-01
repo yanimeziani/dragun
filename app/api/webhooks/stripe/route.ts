@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
   if (!secret) {
     return NextResponse.json(
       { error: "STRIPE_WEBHOOK_SECRET not set" },
-      { status: 500 },
+      { status: 503, headers: { "Retry-After": "60" } },
     );
   }
 
