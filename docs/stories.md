@@ -2,214 +2,375 @@
 
 Ordered slices the autonomous build loop walks top to bottom. Each is
 ≤2h of effective work and has a binary acceptance check. A story is
-**done** only when the acceptance check passes on the deployed Vercel
-URL, not localhost.
+**done** only when its acceptance check passes against the deployed
+Vercel URL (or, for purely-code stories, when `npm run build` is
+green and a localhost smoke confirms behavior).
 
 Mark progress in this file by changing `Status:` from `pending` to
-`in_progress` to `done`. The loop reads this file each iteration.
+`in_progress` to `done`. The loop reads this file each iteration and
+follows `docs/loop.md` for skip rules.
 
 ---
 
-## S1 — Twilio account, number, verified caller-ID
-
-**Status:** blocked-human
-**Estimate:** 1h
-**Why blocked:** Twilio account creation requires manual signup
-(payment card, ToS). Verifying Mounir's caller-ID requires him to
-read back an OTP. The autonomous loop must skip this story.
-**Human steps (do these by hand, then flip Status to `pending`):**
-- Create Twilio account, buy a Canadian SMS+Voice number.
-- Add Mounir's mobile (from contacts) as a verified caller-ID.
-- Capture `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER`
-  into `.env.development.local` and Vercel project env (Production
-  + Preview).
-
-**Steps**
-- Create Twilio account (or log in to existing).
-- Buy one Canadian phone number capable of SMS + Voice.
-- Add Mounir's mobile as a verified caller-ID.
-- Capture `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER`
-  into Vercel project env (Production + Preview).
-
-**Acceptance**
-- `curl -u $SID:$TOKEN https://api.twilio.com/2010-04-01/Accounts/$SID.json` returns 200.
-- A manual test SMS from the Twilio console lands on Mounir's phone.
-
----
-
-## S2 — Supabase Cloud project + migrations applied
-
-**Status:** blocked-human
-**Estimate:** 1h
-**Why blocked:** Supabase Cloud project creation and service-role
-key generation require manual dashboard steps. The autonomous loop
-must skip this story.
-**Human steps (do these by hand, then flip Status to `pending`):**
-- Create Supabase Cloud project `dragun-prod`.
-- Generate a service-role key.
-- Capture `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`
-  into `.env.development.local` and Vercel env.
-- `supabase link --project-ref ...` so `supabase db push` works.
-
-**Steps**
-- Create Supabase Cloud project `dragun-prod` (region: `us-east-1` or
-  `ca-central-1` if available).
-- Generate a service-role key.
-- Capture `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`
-  into Vercel env.
-- `supabase link --project-ref ...` then `supabase db push`.
-
-**Acceptance**
-- Tables `clients`, `cases`, `debtors`, `channel_events` visible in
-  Supabase Studio for the prod project.
-- `select * from public.clients;` returns 0 rows (no errors).
-
----
-
-## S3 — Schema migration
-
-**Status:** pending
-**Estimate:** 1h
-**Depends on:** S2
-
-**Steps**
-- Add `supabase/migrations/<ts>_initial.sql` containing the four
-  tables in `architecture.md` plus row-level-security enabled.
-- `supabase db reset` locally; verify schema; commit.
-- Apply to prod via `supabase db push`.
-
-**Acceptance**
-- `\d public.cases` in local psql matches the spec.
-- `supabase db diff` against prod shows no drift after push.
-
----
-
-## S4 — Resend + Twilio thin REST clients
-
-**Status:** pending
-**Estimate:** 2h
-
-**Steps**
-- `app/_lib/resend.ts` — `sendEmail({ to, from, subject, html })`
-  using `fetch('https://api.resend.com/emails')`.
-- `app/_lib/twilio.ts` — `sendSms({ to, from, body })` and
-  `placeCall({ to, from, twiml })` using basic-auth `fetch` to the
-  Twilio REST API. No SDK.
-- `app/_lib/supabase.ts` — server-side service-role client factory.
-- Server actions `_actions/send-email.ts`, `_actions/send-sms.ts`,
-  `_actions/place-call.ts` that wrap the lib calls and write a
-  `channel_events` row per attempt.
-
-**Acceptance**
-- A Node script invoking `sendSms` with the Vercel env vars delivers
-  to the verified number and inserts one `channel_events` row with
-  `status='queued'`.
-
----
-
-## S5 — Client fixture module + Venice Gym data
+## S0 — Demo fixture refactor + Venice Gym FR fixture
 
 **Status:** done
-**Estimate:** 2h
+**Estimate:** 2h (actual: ~1h)
 
-**Steps**
-- Move the existing Atlas Athletic data out of `_demo.tsx` into
-  `app/_data/clients/atlas-athletic.ts`. The component reads from a
-  shared fixture interface.
-- Add `app/_data/clients/venice-gym.ts` with: brand colors, logo
-  reference, French locale strings, a Quebec-realistic delinquent
-  member (e.g., "Jean-François Tremblay, 89,00 $ CAD, 18 jours en
-  retard"), and a 14-day campaign timeline in French.
-- Add `app/_data/clients/index.ts` mapping slug → fixture.
-
-**Acceptance**
-- `/demo?client=atlas-athletic` renders identically to today's `/demo`.
-- `/demo?client=venice-gym` renders the entire UI in French with
-  Venice Gym branding and no Atlas Athletic strings anywhere on the page.
+Done in commit `5ac193a`. `app/_data/clients/{types,atlas-athletic,
+venice-gym,index}.ts`, demo player consumes a `ClientFixture` prop,
+`/demo?client=venice-gym` renders fully French. Carry-over from the
+prior spec (was S5).
 
 ---
 
-## S6 — Live mode wiring
+## S1 — Twilio account + verified destination
+
+**Status:** blocked-human
+**Estimate:** 1h
+**Why blocked:** Twilio account creation needs payment card + ToS;
+verified caller-ID needs Mounir's OTP read-back.
+**Human steps (then flip to `pending`):**
+- Create Twilio account, buy a Canadian SMS+Voice number.
+- Add Mounir's mobile (E.164) to verified caller-IDs; run OTP today.
+- Capture creds into `.env.development.local` and Vercel env:
+  `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER`.
+
+---
+
+## S2 — Supabase Cloud project linked
+
+**Status:** blocked-human
+**Estimate:** 0.5h
+**Why blocked:** Cloud project create + service-role key generation
+are dashboard steps.
+**Human steps (then flip to `pending`):**
+- Create `dragun-prod` Supabase Cloud project.
+- Generate service-role key.
+- `supabase link --project-ref <ref>` from this repo.
+- Capture env into `.env.development.local` and Vercel:
+  `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`,
+  `SUPABASE_SERVICE_ROLE_KEY`.
+
+---
+
+## S3 — Stripe test-mode account
+
+**Status:** blocked-human
+**Estimate:** 0.5h
+**Why blocked:** Stripe account needs identity / payout setup.
+**Human steps (then flip to `pending`):**
+- Create Stripe account in test mode.
+- Generate restricted secret key + publishable key.
+- Create webhook endpoint to `https://dragun.app/api/webhooks/stripe`,
+  capture `whsec_...`.
+- Capture env: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`,
+  `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`.
+
+---
+
+## S4 — Multi-tenant schema migration
+
+**Status:** pending
+**Estimate:** 1h
+**Depends on:** S2 (for prod push); local migration write does not.
+
+**Steps**
+- Add `supabase/migrations/<ts>_orgs_cases.sql` with: `organizations`,
+  `org_members`, `cases`, `debtors`, `campaign_events`, `payments`,
+  `message_templates` per `architecture.md`. Enable RLS on each;
+  policies for org-scoped read/write via `org_members` subquery.
+- `supabase db reset` locally; verify schema; commit.
+- After S2: `supabase db push` to prod.
+
+**Acceptance**
+- Local: `select 1 from public.organizations, public.cases, public.debtors,
+  public.campaign_events, public.payments, public.message_templates;`
+  returns clean.
+- Prod (after S2): same query in Supabase Studio.
+- RLS: anonymous client can `select` zero rows from `organizations`.
+
+---
+
+## S5 — Locale system (cookie + helper + EN/FR maps)
+
+**Status:** pending
+**Estimate:** 2h
+
+**Steps**
+- `app/_lib/i18n/index.ts` — `getLocale()` reads `dragun_locale`
+  cookie, defaults to `fr`. `setLocale(l)` writes the cookie.
+  `t(key)` resolves a dotted path against the active map.
+- `app/_lib/i18n/fr.ts`, `en.ts` — flat objects for nav, landing,
+  dashboard, onboarding, pay link, legal.
+- `app/_components/locale-toggle.tsx` — `<form action={setLocale}>`
+  wrapper, FR / EN buttons.
+- Wire the toggle into `app/_components/nav.tsx` (or wherever the
+  user's auth-aware nav now lives).
+
+**Acceptance**
+- `npm run build` green.
+- Cookie set to `fr` → landing renders FR strings; toggle to `en` →
+  English; reload preserves choice.
+- No "lorem", no English-in-FR or FR-in-English mixing.
+
+---
+
+## S6 — Onboarding wizard `/welcome`
 
 **Status:** pending
 **Estimate:** 2h
 **Depends on:** S4, S5
 
 **Steps**
-- `/demo?client=<slug>&live=1&phone=<e164>` reads the phone param and
-  validates it's E.164.
-- On scrubber play, the timeline events trigger the matching server
-  actions in real time (not the scripted 16× replay — true wall-clock
-  pacing or compressed-but-real, your call).
-- Each send writes a `channel_events` row; the operator pane reads
-  those rows so the on-screen "Transmission feed" is sourced from the
-  database, not the script.
-- An emergency "stop sends" button kills the campaign mid-flight.
+- Replace the existing `/welcome` placeholder with a single-page form:
+  business name, default locale (FR / EN radio), brand color, brand
+  signature line. Server action `createOrganization()` inserts a row
+  in `organizations`, slugifies the name, inserts `org_members`
+  (user as owner), then redirects to `/app`.
+- Locale toggle visible on the page so an EN-first owner can flip
+  before submitting.
 
 **Acceptance**
-- `/demo?client=venice-gym&live=1&phone=<verified>` on the Vercel
-  prod URL delivers, in order, one email + one SMS + one outbound
-  call to that phone. All three render in the on-screen feed.
+- Fresh signup at `/auth/sign-up` lands on `/welcome`.
+- Submitting the form creates one row in each of `organizations` and
+  `org_members`, redirects to `/app`.
+- Returning to `/welcome` after onboarding redirects to `/app`.
 
 ---
 
-## S7 — Investor copy pass on `/`
+## S7 — Operator dashboard `/app`
 
 **Status:** pending
-**Estimate:** 1h
+**Estimate:** 2h
+**Depends on:** S4, S5, S6
 
 **Steps**
-- Audit `app/page.tsx` for stale "Atlas" leakage, Lorem, broken
-  internal links, missing alt text, contrast misses.
-- Tighten the headline + sub. Confirm the live counter still ticks
-  (it was deleted from `_components/` — see git status; either restore
-  or remove all references).
-- Add a "Watch the demo" CTA that deep-links to
-  `/demo?client=venice-gym` (scripted, not live).
+- `app/app/layout.tsx` — guard: redirect to `/auth/sign-in` if no
+  user, to `/welcome` if user has no `org_members` row.
+- `app/app/page.tsx` — list of cases for the active org with: status
+  pill, `display_name` of debtor, amount, days overdue, channels
+  fired, recovered total in a header KPI strip.
+- Bilingual via `t()`.
 
 **Acceptance**
-- `npm run build` passes with zero warnings.
-- Manual scroll-through on the Vercel prod URL: no broken images,
-  no console errors, no English/French mixing in the gym section.
+- Signed-in owner sees only their own org's cases (RLS confirmed by
+  trying with two different signed-in users).
+- Empty state shows a "Add your first delinquent customer" CTA →
+  `/app/cases/new`.
 
 ---
 
-## S8 — End-to-end dry run
+## S8 — Case creation form `/app/cases/new`
 
 **Status:** pending
-**Estimate:** 1h
-**Depends on:** S1..S7
+**Estimate:** 2h
+**Depends on:** S4, S5, S6, S9
 
 **Steps**
-- Run the live demo flow against a non-Mounir verified phone (one of
-  ours) on Vercel prod.
-- Walk the runbook (`runbook.md`) start to finish, time it, capture
-  any breakage in this file as a new story.
-- Record a 60-second fallback screencast of the successful run.
+- Form: debtor name, email, phone (E.164 validated), amount in
+  dollars, currency dropdown (CAD default), description, debtor
+  locale override (defaults to org locale), `ref` (auto if blank).
+- Server action `createCase()`: inserts `cases` row, generates
+  `paylink_slug`, inserts `debtors`, calls `cadence.schedule(caseId)`
+  to insert all `campaign_events` rows. Redirects to
+  `/app/cases/[id]`.
+- "Send the first email immediately" toggle on the form fires the
+  day-0 email synchronously; otherwise the cron picks it up at the
+  next tick.
 
 **Acceptance**
-- One full live run with email + SMS + call delivered, all three
-  showing in the `channel_events` table with `status='delivered'` or
-  `status='sent'`.
-- Fallback video saved to `public/demo-fallback.mp4` (gitignored if
-  large; keep a Drive/S3 link in `runbook.md`).
+- Submitting the form creates `cases` + `debtors` + 8 (or however
+  many) `campaign_events` rows with correct `scheduled_at`s.
+- Redirect to case detail shows the schedule.
 
 ---
 
-## S9 — Production deploy + smoke
+## S9 — Cadence engine + REST channel clients
+
+**Status:** pending
+**Estimate:** 3h
+**Depends on:** S1, S4
+
+**Steps**
+- `app/_lib/resend.ts` — `sendEmail({ to, from, subject, html })`
+  via REST.
+- `app/_lib/twilio.ts` — `sendSms({ to, from, body })` and
+  `placeCall({ to, from, twiml })` via basic-auth REST.
+- `app/_lib/cadence.ts` — `schedule(caseId)` inserts events,
+  `fire(eventId)` resolves template + dispatches via the right
+  channel + writes back `provider_id` / `status`, `cancel(caseId)`
+  flips remaining `scheduled` → `cancelled`.
+- `app/api/cron/cadence/route.ts` — GET handler authed via
+  Vercel cron secret, queries due `campaign_events`, fires each.
+- Register Vercel cron in `vercel.json`: every 5 min.
+
+**Acceptance**
+- A case created at T fires its day-0 email within 5 min in prod.
+- Twilio Debugger shows the SMS / call attempts with
+  matching `provider_id` in `campaign_events.provider_id`.
+- Cancelling a case stops further sends.
+
+---
+
+## S10 — Message templates EN + FR
+
+**Status:** pending
+**Estimate:** 1.5h
+**Depends on:** S4
+
+**Steps**
+- Seed `message_templates` with 8 templates × 2 locales = 16 rows:
+  `email-day-0`, `email-day-3`, `sms-day-5`, `email-day-7`,
+  `sms-day-10`, `call-day-12`, `sms-day-12`, `email-receipt`. Use
+  the existing FR copy in `app/_data/clients/venice-gym.ts` as the
+  source of truth for the FR variants; translate to EN where the
+  atlas-athletic fixture has a parallel.
+- Templates are Mustache-style: `{{org.display_name}}`,
+  `{{debtor.first_name}}`, `{{case.amount_display}}`,
+  `{{case.paylink_url}}`. `cadence.fire()` renders before send.
+
+**Acceptance**
+- `select count(*) from public.message_templates;` = 16.
+- A test render of `email-day-0` for a Venice Gym fixture matches
+  the venice-gym.ts copy exactly.
+
+---
+
+## S11 — Pay link `/p/[slug]` + Stripe Checkout
+
+**Status:** pending
+**Estimate:** 2h
+**Depends on:** S3, S4
+
+**Steps**
+- `app/p/[slug]/page.tsx` — public page, locale = debtor's. Renders
+  org logo, amount, "Pay now" CTA. Server action creates a Stripe
+  Checkout session in test mode (line items: amount, currency,
+  metadata: case_id), redirects to Stripe.
+- `app/p/[slug]/thanks/page.tsx` — post-success page in debtor locale.
+- `app/_lib/stripe.ts` — `createCheckout(case)` REST call.
+
+**Acceptance**
+- `https://dragun.app/p/<seeded-slug>` returns 200 in incognito,
+  Stripe Checkout opens in the debtor's locale, test card `4242…`
+  succeeds, lands on `/thanks`.
+
+---
+
+## S12 — Stripe webhook + payment reconciliation
+
+**Status:** pending
+**Estimate:** 1.5h
+**Depends on:** S3, S11
+
+**Steps**
+- `app/api/webhooks/stripe/route.ts` — verifies signature using
+  `STRIPE_WEBHOOK_SECRET`, handles `checkout.session.completed` and
+  `payment_intent.succeeded`. Inserts `payments` row, computes
+  `fee_cents` from `org.fee_bps`, marks `case.status='paid'`,
+  cancels remaining `campaign_events`.
+- Smoke with `stripe trigger checkout.session.completed`.
+
+**Acceptance**
+- Stripe CLI `stripe trigger payment_intent.succeeded` against the
+  prod webhook produces one new `payments` row and one updated
+  `cases` row.
+
+---
+
+## S13 — Bilingual landing `/`
+
+**Status:** pending
+**Estimate:** 1.5h
+**Depends on:** S5
+
+**Steps**
+- Audit `app/page.tsx` for stale "Atlas" leakage, lorem, broken
+  links. The user has been editing this file for auth integration —
+  do NOT touch sections currently being modified by the user;
+  coordinate via `git status` before opening.
+- Move every visible string into `i18n/{en,fr}.ts` under
+  `landing.*` keys.
+- Add the locale toggle to the nav.
+- Add a "Voir la démo" / "Watch the demo" CTA → `/demo?client=venice-gym`.
+
+**Acceptance**
+- `dragun.app` (prod) renders the same content in EN and FR with the
+  toggle.
+- No English strings on the FR side, no French on the EN.
+- `npm run build` zero warnings.
+
+---
+
+## S14 — Legal pages bilingual
 
 **Status:** pending
 **Estimate:** 1h
-**Depends on:** S8
+**Depends on:** S5
 
 **Steps**
-- Verify Vercel prod env vars match the architecture-doc table.
-- Promote latest `main` to production.
-- DNS: confirm `dragun.app` resolves and SSL is green.
-- Smoke: hit `/`, `/demo`, `/demo?client=venice-gym`, the lead form.
+- `/legal/privacy` and `/legal/terms` — short, MVP-grade copy in EN
+  and FR. Bill 96 friendly: FR is the canonical version, EN is
+  translation.
+- Footer link from every public page.
 
 **Acceptance**
-- All four URLs return 200 with no console errors in a fresh
-  incognito window.
-- Lighthouse: Performance ≥ 85, Accessibility ≥ 95.
-- The day-of runbook checklist (`runbook.md`) passes top to bottom.
+- Both pages render in both locales, match the active locale toggle.
+
+---
+
+## S15 — End-to-end dry run on prod
+
+**Status:** pending
+**Estimate:** 1h
+**Depends on:** S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12
+
+**Steps**
+- Sign up a fresh test account at `dragun.app/auth/sign-up`.
+- Onboard a fake "Test Gym" org, FR locale.
+- Create a case for a non-Mounir verified phone (one of ours).
+- Watch email + SMS + call land in real time on the verified phone.
+- Open the pay link, complete with Stripe test card.
+- Confirm `cases.status='paid'`, `payments` row, future events
+  cancelled.
+- Walk the runbook (`runbook.md`) start to finish.
+
+**Acceptance**
+- One full live signup → case → recovery cycle on prod, end to end,
+  in under 10 minutes of wall clock.
+- 60-second fallback screencast saved (`public/demo-fallback.mp4`
+  or Drive link in `runbook.md`).
+
+---
+
+## S16 — Production deploy + DNS + smoke
+
+**Status:** pending
+**Estimate:** 1h
+**Depends on:** S15
+
+**Steps**
+- Vercel: confirm prod env vars match `architecture.md`'s table.
+- Promote latest `main`. Confirm cron is registered.
+- DNS: `dragun.app` resolves, SSL green, redirects sane.
+- Smoke: `/`, `/auth/sign-up`, `/welcome`, `/app`, `/p/<seeded>`,
+  `/demo?client=venice-gym`, `/legal/privacy`. All 200, no console
+  errors in incognito.
+
+**Acceptance**
+- Lighthouse on `/`: Performance ≥ 85, Accessibility ≥ 95.
+- The runbook checklist in `runbook.md` passes top to bottom.
+
+---
+
+## Backlog (post-launch, not in scope for 2026-05-01)
+
+- Stripe Connect Express for direct SMB payouts.
+- Twilio 10DLC carrier registration for unrestricted Canadian SMS.
+- ElevenLabs / ConversationRelay for natural-voice calls.
+- Multi-user organizations + role-based permissions.
+- Org-level analytics (recovery rate, time-to-pay distribution).
+- Custom cadence editor; right now the cadence is hard-coded.
+- Webhook outbound (let SMBs forward events to Zapier / Make).
+- iOS / Android native push for SMB owners.

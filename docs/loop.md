@@ -5,15 +5,25 @@ walks `stories.md` top to bottom, completes one story per iteration,
 commits, and exits when (a) all stories are `done`, or (b) it hits
 something only a human can resolve.
 
+**Authorized run window:** ~3 hours of wall-clock work toward the
+2026-05-01 15:30 production launch. Story list per the post-spec
+rewrite is S0..S16 in `stories.md`; ~12 stories in scope for the
+loop (S0 done, S1–S3 blocked-human, the rest workable in dependency
+order).
+
 ## Pre-flight before launching the loop
 
 1. Mounir's number (in your contacts) added to Twilio verified
    caller-IDs and OTP completed. The loop cannot do this for you.
 2. Twilio + Supabase Cloud accounts exist and credentials are in
    `.env.development.local` *and* in Vercel project env vars.
-3. `git status` is clean (loop will commit per story; you don't want
-   it sweeping up unrelated work-in-progress).
+3. `git status` is clean *for files the loop will touch*. The user
+   may have parallel WIP on `app/page.tsx` (auth integration) — the
+   loop must `git status` before touching that file and skip / wait
+   if the user has uncommitted edits there.
 4. `npm run build` currently passes on `main`.
+5. Stripe test-mode keys exist in env (S3) — without them, S11+S12
+   are blocked.
 
 If any of those are red, fix them by hand first. The loop is for
 the mechanical slices, not the human-input ones.
@@ -60,8 +70,14 @@ Hard rules:
 - Never edit a story's Acceptance section. If acceptance is wrong,
   stop and ask. The acceptance criteria are the contract.
 - Skipping `blocked-human` stories is allowed and expected. Skipping
-  past a `pending` story to grab one further down is NOT allowed —
-  fix or finish the pending one first.
+  past a `pending` story to grab one further down is NOT allowed
+  unless the pending story's `Depends on:` lists a story that is
+  itself `blocked-human` or `pending` — in that case, also skip.
+- Before opening a file the user might be editing in parallel
+  (notably `app/page.tsx`), run `git status` and inspect for
+  uncommitted modifications. If the file is dirty with the user's
+  WIP, leave a note in the iteration report and pick a different
+  story instead of merge-conflicting with them.
 - Never disable hooks, never --no-verify, never --force push.
 - Commits go to `main` directly (solo founder, pre-launch). One commit
   per story plus one for the `in_progress` flip.
