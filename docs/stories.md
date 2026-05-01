@@ -71,9 +71,13 @@ are dashboard steps.
 
 ## S4 — Multi-tenant schema migration
 
-**Status:** pending
+**Status:** in_progress
 **Estimate:** 1h
 **Depends on:** S2 (for prod push); local migration write does not.
+**Note:** Migration file authored; local `supabase db reset`
+verification deferred (Docker not running in build env). Prod push
+happens automatically when S2 unblocks. Will flip to `done` after
+either local stack is up or prod push lands.
 
 **Steps**
 - Add `supabase/migrations/<ts>_orgs_cases.sql` with: `organizations`,
