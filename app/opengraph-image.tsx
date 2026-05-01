@@ -116,7 +116,7 @@ export default async function OpenGraphImage() {
                 background: "#e36a2c",
               }}
             />
-            Private alpha — Live
+            Live · Free to start
           </div>
         </div>
       </div>

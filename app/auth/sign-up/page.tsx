@@ -3,12 +3,12 @@ import { AuthForm } from "@/app/_components/auth-form";
 import { AuthShell } from "../_shell";
 
 export const metadata: Metadata = {
-  title: "Claim a seat · Dragun",
+  title: "Create account · Dragun",
 };
 
 export default function SignUpPage() {
   return (
-    <AuthShell title="Claim a seat." subtitle="Public alpha · 50 seats">
+    <AuthShell title="Create your account." subtitle="Free to start · 5 % on recovered">
       <AuthForm mode="sign-up" />
     </AuthShell>
   );

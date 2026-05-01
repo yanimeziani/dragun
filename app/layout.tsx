@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Dragun — Friendly invoice follow-up.",
     description:
-      "Get paid on time without the awkward conversation. Friendly reminders across email, SMS and voice. Public alpha now open.",
+      "Get paid on time without the awkward conversation. Friendly reminders across email, SMS and voice. Free to start, 5 % only on what we recover.",
     type: "website",
     siteName: "Dragun",
   },

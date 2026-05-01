@@ -11,7 +11,6 @@ export const fr: Strings = {
     signUp: "Créer un compte",
     signOut: "Déconnexion",
     dashboard: "Tableau de bord",
-    demo: "Démo",
     pricing: "Tarifs",
     home: "Accueil",
   },
@@ -31,7 +30,6 @@ export const fr: Strings = {
     heroHeadline: "Encaissez ce qui vous est dû, sans appels gênants.",
     heroSub: "Dragun récupère les cotisations et factures impayées par courriel, texto et appel — dans la voix de votre marque, dans la langue de votre client. Vous payez seulement quand on récupère.",
     heroPrimary: "Démarrer gratuitement",
-    heroSecondary: "Voir la démo",
   },
   onboarding: {
     title: "Bienvenue chez Dragun",

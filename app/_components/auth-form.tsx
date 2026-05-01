@@ -36,7 +36,7 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
   const [state, dispatch] = useActionState(action, initial);
   const altHref = mode === "sign-up" ? "/auth/sign-in" : "/auth/sign-up";
   const altLabel =
-    mode === "sign-up" ? "Already a member? Sign in" : "Need a seat? Sign up";
+    mode === "sign-up" ? "Already have an account? Sign in" : "New here? Create an account";
 
   return (
     <div className="space-y-6">
@@ -96,7 +96,7 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
         )}
 
         <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
-          <Submit label={mode === "sign-up" ? "Create my seat" : "Sign in"} />
+          <Submit label={mode === "sign-up" ? "Create my account" : "Sign in"} />
           <Link
             href={altHref}
             className="font-mono text-[11px] sm:text-[11.5px] uppercase tracking-[0.2em] text-bone-3 hover:text-bone"

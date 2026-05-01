@@ -11,7 +11,6 @@ export type Strings = {
     signUp: string;
     signOut: string;
     dashboard: string;
-    demo: string;
     pricing: string;
     home: string;
   };
@@ -31,7 +30,6 @@ export type Strings = {
     heroHeadline: string;
     heroSub: string;
     heroPrimary: string;
-    heroSecondary: string;
   };
   onboarding: {
     title: string;
