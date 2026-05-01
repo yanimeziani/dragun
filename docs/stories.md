@@ -309,7 +309,7 @@ either local stack is up or prod push lands.
 
 ## S14 — Legal pages bilingual
 
-**Status:** pending
+**Status:** in_progress
 **Estimate:** 1h
 **Depends on:** S5
 
