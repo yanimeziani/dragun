@@ -156,8 +156,14 @@ export default async function DashboardPage() {
               </span>
             )}
           </Link>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <LocaleToggle />
+            <Link
+              href="/app/cases/import"
+              className="hidden sm:inline-flex items-center gap-2 border border-line px-3 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-bone-2 hover:border-bone hover:text-bone transition-colors"
+            >
+              {locale === "fr" ? "Importer" : "Import"}
+            </Link>
             <Link
               href="/app/cases/new"
               className="hidden sm:inline-flex items-center gap-2 border border-bone/70 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-bone hover:border-ember hover:text-ember transition-colors"
