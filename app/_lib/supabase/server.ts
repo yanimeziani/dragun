@@ -3,9 +3,12 @@ import { createServerClient } from "@supabase/ssr";
 
 export async function createClient() {
   const cookieStore = await cookies();
+  // `.invalid` is RFC 2606-reserved — DNS fails fast so missing-env pages render as anonymous instead of crashing.
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://missing-env.invalid";
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || "missing-env";
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    url,
+    key,
     {
       cookies: {
         getAll() {
