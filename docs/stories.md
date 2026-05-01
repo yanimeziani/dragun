@@ -263,9 +263,11 @@ verification block).
 
 ## S11 — Pay link `/p/[slug]` + Stripe Checkout
 
-**Status:** pending
+**Status:** in_progress
 **Estimate:** 2h
 **Depends on:** S3, S4
+**Note:** Public page + thanks page + Stripe REST createCheckout
+authored. Runtime needs Stripe creds (S3) and the schema (S4).
 
 **Steps**
 - `app/p/[slug]/page.tsx` — public page, locale = debtor's. Renders
@@ -284,9 +286,12 @@ verification block).
 
 ## S12 — Stripe webhook + payment reconciliation
 
-**Status:** pending
+**Status:** in_progress
 **Estimate:** 1.5h
 **Depends on:** S3, S11
+**Note:** Webhook handler with HMAC signature verification authored
+(no Stripe SDK — node:crypto). Inserts payments, cancels remaining
+events, marks case paid. Runtime needs Stripe creds.
 
 **Steps**
 - `app/api/webhooks/stripe/route.ts` — verifies signature using
