@@ -150,9 +150,12 @@ on prod.
 
 ## S7 — Operator dashboard `/app`
 
-**Status:** pending
+**Status:** in_progress
 **Estimate:** 2h
 **Depends on:** S4, S5, S6
+**Note:** Layout guard + case list shell authored. Runtime depends
+on the S4 schema being applied (no Docker locally; S2 still
+blocked-human). Flips to `done` after first prod round-trip.
 
 **Steps**
 - `app/app/layout.tsx` — guard: redirect to `/auth/sign-in` if no
