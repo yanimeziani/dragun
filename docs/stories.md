@@ -285,8 +285,13 @@ either local stack is up or prod push lands.
 
 ## S13 — Bilingual landing `/`
 
-**Status:** pending
+**Status:** in_progress
 **Estimate:** 1.5h
+**Progress note:** the landing is 1428 lines under heavy active editing
+by the user. Surgical additive contributions land first (locale toggle
+in nav, /legal links in footer, /demo?client=venice-gym CTA target).
+Full string lift into `landing.*` keys is deferred to a later
+iteration when the file is stable.
 **Depends on:** S5
 
 **Steps**

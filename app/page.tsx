@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { GoogleButton } from "./_components/google-button";
+import { LocaleToggle } from "./_components/locale-toggle";
 import { createClient } from "./_lib/supabase/server";
 import { signOut } from "./_actions/auth";
 
@@ -123,6 +124,7 @@ function Nav({ user }: { user: { name: string | null; email: string | null } | n
         </a>
         {user ? (
           <div className="hidden md:flex items-center gap-3">
+            <LocaleToggle />
             <Link
               href="/welcome"
               className="font-mono text-[11px] lg:text-xs uppercase tracking-[0.2em] text-bone-2 hover:text-bone whitespace-nowrap"
@@ -140,6 +142,7 @@ function Nav({ user }: { user: { name: string | null; email: string | null } | n
           </div>
         ) : (
           <div className="hidden md:flex items-center gap-3">
+            <LocaleToggle />
             <Link
               href="/auth/sign-in"
               className="font-mono text-[11px] lg:text-xs uppercase tracking-[0.2em] text-bone-3 hover:text-bone whitespace-nowrap"
@@ -212,7 +215,7 @@ function Hero({ authed }: { authed: boolean }) {
               style={{ animationDelay: "0.28s" }}
             >
               <a
-                href="/demo"
+                href="/demo?client=venice-gym"
                 className="group inline-flex items-center gap-3 bg-ember px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-ink transition-colors hover:bg-bone"
               >
                 See it in action
@@ -1417,9 +1420,8 @@ function Footer() {
           <span>© 2026 Dragun, Inc. · All rights reserved</span>
           <span>Built in Québec · For small businesses</span>
           <span className="flex flex-wrap gap-4 sm:gap-5">
-            <a href="#" className="hover:text-bone">Privacy</a>
-            <a href="#" className="hover:text-bone">Terms</a>
-            <a href="#" className="hover:text-bone">Disclosures</a>
+            <Link href="/legal/privacy" className="hover:text-bone">Privacy</Link>
+            <Link href="/legal/terms" className="hover:text-bone">Terms</Link>
           </span>
         </div>
       </div>
