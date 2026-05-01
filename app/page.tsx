@@ -78,9 +78,9 @@ function TopBar() {
         <div className="flex items-center gap-x-6 gap-y-1">
           <span className="hidden sm:flex items-center gap-2">
             <span className="pulse h-1.5 w-1.5 rounded-full bg-ember" />
-            <span className="text-bone-2">Public alpha · 50 seats</span>
+            <span className="text-bone-2">Free to start · 5% on recovered</span>
           </span>
-          <span>v.0.4 · Pre-seed</span>
+          <span>Built in Québec</span>
         </div>
       </div>
     </div>
@@ -264,7 +264,7 @@ function Hero({ authed }: { authed: boolean }) {
                   <em className="text-bone-2">Three channels.</em>
                 </div>
                 <p className="mt-3 font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] text-bone-3">
-                  Public alpha · 50 seats open
+                  Free to start · 5% only on recovered
                 </p>
               </div>
               <div className="grid grid-cols-3 border-t border-line">

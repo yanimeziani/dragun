@@ -76,26 +76,6 @@ export function OnboardingForm({
         </div>
       </fieldset>
 
-      <label className="block">
-        <span className={labelCx}>{s.brandColor}</span>
-        <input
-          name="brandColor"
-          type="text"
-          placeholder="#E36A2C"
-          className={inputCx}
-        />
-      </label>
-
-      <label className="block">
-        <span className={labelCx}>{s.signature}</span>
-        <input
-          name="signature"
-          type="text"
-          placeholder={s.signaturePlaceholder}
-          className={inputCx}
-        />
-      </label>
-
       {state.status === "error" && (
         <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.18em] text-ember">
           {state.error}

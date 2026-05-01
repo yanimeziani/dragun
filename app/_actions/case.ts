@@ -133,5 +133,75 @@ export async function createCaseAction(
   }
 
   revalidatePath("/app");
-  redirect("/app");
+  redirect(`/app/cases/${caseRow.id}`);
+}
+
+export async function cancelCaseAction(formData: FormData): Promise<void> {
+  const caseId = String(formData.get("caseId") ?? "");
+  if (!caseId) return;
+
+  const supabase = await createClient();
+  const { data: caseRow } = await supabase
+    .from("cases")
+    .select("id")
+    .eq("id", caseId)
+    .maybeSingle();
+  if (!caseRow) return;
+
+  const service = createServiceClient();
+  await service
+    .from("campaign_events")
+    .update({ status: "cancelled" })
+    .eq("case_id", caseId)
+    .eq("status", "scheduled");
+  await service
+    .from("cases")
+    .update({ status: "closed", closed_at: new Date().toISOString() })
+    .eq("id", caseId);
+
+  revalidatePath(`/app/cases/${caseId}`);
+  revalidatePath("/app");
+}
+
+export async function markPaidAction(formData: FormData): Promise<void> {
+  const caseId = String(formData.get("caseId") ?? "");
+  if (!caseId) return;
+
+  const supabase = await createClient();
+  const { data: caseRow } = await supabase
+    .from("cases")
+    .select("id, amount_cents, currency, org_id, organizations(fee_bps)")
+    .eq("id", caseId)
+    .maybeSingle();
+  if (!caseRow) return;
+
+  type OrgFee = { fee_bps: number };
+  const orgRaw = caseRow.organizations as OrgFee | OrgFee[] | null | undefined;
+  const feeBps =
+    (Array.isArray(orgRaw) ? orgRaw[0]?.fee_bps : orgRaw?.fee_bps) ?? 500;
+  const feeCents = Math.round((caseRow.amount_cents * feeBps) / 10000);
+  const netCents = caseRow.amount_cents - feeCents;
+
+  const service = createServiceClient();
+  await service.from("payments").insert({
+    case_id: caseId,
+    amount_cents: caseRow.amount_cents,
+    currency: caseRow.currency,
+    fee_cents: feeCents,
+    net_to_org_cents: netCents,
+    status: "succeeded",
+    paid_at: new Date().toISOString(),
+  });
+  await service
+    .from("campaign_events")
+    .update({ status: "cancelled" })
+    .eq("case_id", caseId)
+    .eq("status", "scheduled");
+  await service
+    .from("cases")
+    .update({ status: "paid", closed_at: new Date().toISOString() })
+    .eq("id", caseId);
+
+  revalidatePath(`/app/cases/${caseId}`);
+  revalidatePath("/app");
 }
