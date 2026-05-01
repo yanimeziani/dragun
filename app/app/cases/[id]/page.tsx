@@ -29,6 +29,7 @@ type Debtor = {
   email: string | null;
   phone_e164: string | null;
   locale: Locale | null;
+  unsubscribed_at: string | null;
 };
 
 type Event = {
@@ -142,7 +143,7 @@ export default async function CaseDetailPage({
 
   const { data: debtorRows } = await supabase
     .from("debtors")
-    .select("full_name, email, phone_e164, locale")
+    .select("full_name, email, phone_e164, locale, unsubscribed_at")
     .eq("case_id", c.id)
     .limit(1);
   const debtor = (debtorRows?.[0] as Debtor | undefined) ?? null;
@@ -203,6 +204,14 @@ export default async function CaseDetailPage({
                 {debtor?.email && debtor?.phone_e164 ? " · " : ""}
                 {debtor?.phone_e164 ?? ""}
               </div>
+              {debtor?.unsubscribed_at && (
+                <div className="mt-3 inline-flex items-center gap-2 border border-ember/40 bg-ember/5 px-2.5 py-1 font-mono text-[10.5px] uppercase tracking-[0.2em] text-ember">
+                  <span>●</span>
+                  {locale === "fr"
+                    ? `Désabonné · ${fmtDateTime(debtor.unsubscribed_at, locale)}`
+                    : `Unsubscribed · ${fmtDateTime(debtor.unsubscribed_at, locale)}`}
+                </div>
+              )}
             </div>
             <span
               className={`inline-flex border px-2.5 py-1 font-mono text-[10.5px] uppercase tracking-[0.2em] ${statusPillCx(c.status)}`}

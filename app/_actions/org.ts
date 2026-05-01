@@ -53,6 +53,20 @@ export async function createOrganizationAction(
     return { status: "error", error: "Not authenticated." };
   }
 
+  // Idempotency: if the user already has an org, don't create a duplicate.
+  // Just send them to the dashboard. Prevents orphan orgs from earlier
+  // failed-redirect attempts (the original RLS recursion bug).
+  const { data: existing } = await supabase
+    .from("org_members")
+    .select("org_id")
+    .eq("user_id", user.id)
+    .limit(1)
+    .maybeSingle();
+  if (existing) {
+    revalidatePath("/", "layout");
+    redirect("/app");
+  }
+
   const baseSlug = slugify(businessName) || "org";
   const slug = `${baseSlug}-${randomSuffix()}`;
 
