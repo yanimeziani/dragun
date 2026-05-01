@@ -3,6 +3,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/app/_lib/supabase/server";
 import { signOut } from "@/app/_actions/auth";
+import { getLocale, getStrings } from "@/app/_lib/i18n";
+import { LocaleToggle } from "@/app/_components/locale-toggle";
+import { OnboardingForm } from "@/app/_components/onboarding-form";
 
 export const metadata: Metadata = {
   title: "Welcome · Dragun",
@@ -34,16 +37,18 @@ export default async function WelcomePage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/auth/sign-in");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name, email")
-    .eq("id", user.id)
+  // If the user already belongs to an organization, skip onboarding.
+  const { data: existing } = await supabase
+    .from("org_members")
+    .select("org_id")
+    .eq("user_id", user.id)
+    .limit(1)
     .maybeSingle();
+  if (existing) redirect("/app");
 
-  const name =
-    profile?.full_name ||
-    (user.user_metadata?.full_name as string | undefined) ||
-    (user.email ? user.email.split("@")[0] : "there");
+  const locale = await getLocale();
+  const strings = await getStrings();
+  const s = strings.onboarding;
 
   return (
     <main className="min-h-screen overflow-x-hidden">
@@ -55,53 +60,37 @@ export default async function WelcomePage() {
               Dragun
             </span>
           </Link>
-          <form action={signOut}>
-            <button
-              type="submit"
-              className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-bone-3 hover:text-bone"
-            >
-              Sign out
-            </button>
-          </form>
+          <div className="flex items-center gap-4">
+            <LocaleToggle />
+            <form action={signOut}>
+              <button
+                type="submit"
+                className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-bone-3 hover:text-bone"
+              >
+                {strings.nav.signOut}
+              </button>
+            </form>
+          </div>
         </div>
       </header>
 
-      <section className="mx-auto max-w-[820px] px-4 sm:px-6 py-16 sm:py-28">
+      <section className="mx-auto max-w-[680px] px-4 sm:px-6 py-12 sm:py-20">
         <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-ember">
-          Seat reserved
+          {strings.dashboard.title}
         </p>
-        <h1 className="mt-4 font-display text-[clamp(2rem,6vw,4.4rem)] leading-[1.02] tracking-tight text-bone break-words">
-          Welcome, {name}.
+        <h1 className="mt-4 font-display text-[clamp(2rem,6vw,3.6rem)] leading-[1.04] tracking-tight text-bone break-words">
+          {s.title}
         </h1>
-        <p className="mt-6 max-w-[52ch] text-bone-2 text-base sm:text-lg leading-[1.55]">
-          Your Dragun seat is ready. The in-app tutorial is being built — for
-          now, take a tour of the live demo to see how reminders unfold across
-          email, SMS, and voice.
+        <p className="mt-5 max-w-[52ch] text-bone-2 text-base sm:text-lg leading-[1.55]">
+          {s.subtitle}
         </p>
 
-        <div className="mt-10 flex flex-wrap items-center gap-3 sm:gap-4">
-          <Link
-            href="/demo"
-            className="group inline-flex items-center gap-3 bg-ember px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-ink transition-colors hover:bg-bone"
-          >
-            See the live demo
-            <span className="transition-transform group-hover:translate-x-1">
-              →
-            </span>
-          </Link>
-          <Link
-            href="/"
-            className="group inline-flex items-center gap-3 border border-bone/50 px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone hover:border-ember hover:text-ember transition-colors"
-          >
-            Back to the site
-            <span className="transition-transform group-hover:translate-x-1">
-              →
-            </span>
-          </Link>
+        <div className="mt-12">
+          <OnboardingForm strings={strings} defaultLocale={locale} />
         </div>
 
         <p className="mt-12 font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-bone-3">
-          Signed in as {user.email}
+          {user.email}
         </p>
       </section>
     </main>

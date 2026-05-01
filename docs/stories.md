@@ -122,9 +122,14 @@ either local stack is up or prod push lands.
 
 ## S6 — Onboarding wizard `/welcome`
 
-**Status:** pending
+**Status:** in_progress
 **Estimate:** 2h
 **Depends on:** S4, S5
+**Note:** UI + server action authored against the `create_organization`
+SQL function from S4. Runtime depends on the migration being applied
+to a database (local stack needs Docker; prod needs S2). Will flip
+to `done` after first end-to-end signup → /welcome → /app round-trip
+on prod.
 
 **Steps**
 - Replace the existing `/welcome` placeholder with a single-page form:
