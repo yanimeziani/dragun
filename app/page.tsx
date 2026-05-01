@@ -3,6 +3,494 @@ import { GoogleButton } from "./_components/google-button";
 import { LocaleToggle } from "./_components/locale-toggle";
 import { createClient } from "./_lib/supabase/server";
 import { signOut } from "./_actions/auth";
+import { getLocale } from "./_lib/i18n";
+
+/* ────────────────────────────────────────────────────────── */
+/*  Bilingual landing copy                                    */
+/* ────────────────────────────────────────────────────────── */
+
+const COPY = {
+  fr: {
+    topBar: {
+      online: "En ligne · 30·04·2026",
+      forSmb: "Pour les PME",
+      hours: "Heures de rappel · 08 h–20 h 59 (heure locale)",
+      pricing: "Gratuit · 5 % sur le récupéré",
+      builtIn: "Conçu au Québec",
+    },
+    nav: {
+      tagline: "™ · Encaisser",
+      howItWorks: "Comment ça marche",
+      compliance: "Conformité",
+      pricing: "Tarifs",
+      investors: "Investisseurs",
+      howShort: "Comment",
+      complianceShort: "Conformité",
+      startShort: "Commencer",
+      startFree: "Commencer gratuitement",
+      signIn: "Connexion",
+      dashboard: "Tableau de bord",
+      signOut: "Déconnexion",
+    },
+    hero: {
+      tagline: "Relance amicale pour les PME · Fondé en 2026",
+      titleLine1: "Encaissez à temps.",
+      titleLine2: "Restez en bons termes.",
+      body: "Dragun est le bureau qui relance vos factures impayées — par courriel, texto et un agent vocal amical — pour que vous gardiez le client et soyez payé. Vous tenez la boutique. Nous gérons le moment gênant.",
+      ctaPrimary: "Commencer gratuitement",
+      ctaSecondaryAuthed: "Ouvrir le tableau de bord",
+      ctaSecondaryUnauth: "Commencer gratuitement",
+      asideLabel: "Dragun · Coup d'œil",
+      asideLive: "En ligne",
+      asideHead1: "Une boîte.",
+      asideHead2: "Trois canaux.",
+      asideSubline: "Gratuit · 5 % uniquement sur le récupéré",
+      asideKChannels: "Canaux",
+      asideKCampaign: "Campagne",
+      asideKPricing: "Tarif",
+      asideArc: "Arc des canaux",
+      asideEmail: "Courriel",
+      asideSms: "Texto",
+      asideVoice: "Voix",
+      asideBuiltOn: "Conçu avec · Resend · Twilio · Agent vocal Dragun",
+    },
+    problem: {
+      label: "I. La math du paiement",
+      introA: "La facture n'est pas le problème.",
+      introB: "C'est la relance.",
+      headlinePrefix: "des factures de PME",
+      headlineMid: "dépassent trente jours. Au quatre-vingt-dixième jour, seulement",
+      headlineSuffix: "sur le dollar reviennent.",
+      bigStat: "42 %",
+      bigStat2: "12 ¢",
+      stat1Big: "825 G$",
+      stat1Label: "Factures impayées détenues par les PME nord-américaines",
+      stat2Big: "31 h / mois",
+      stat2Label: "Temps consacré aux relances par un propriétaire moyen",
+      stat3Big: "1 sur 6",
+      stat3Label: "Factures radiées avant la troisième année",
+    },
+    channels: {
+      label: "II. Trois canaux amicaux",
+      title: "Trois canaux, un rythme, une boîte.",
+      sub: "Chaque client vous entend de la même façon — gentiment. La cadence est automatique, sensible aux heures, ajustée à votre secteur.",
+      windowLabel: "Fenêtre",
+      cards: [
+        {
+          roman: "Ⅰ.",
+          name: "Courriel",
+          vendor: "Resend",
+          window: "Jour 0 → 7",
+          cadence: "3 rappels",
+          voice: "Chaleureux, transactionnel, dans la voix de votre marque.",
+          detail: [
+            "Alignement DKIM, SPF et DMARC",
+            "Réponses regroupées vers votre équipe",
+            "Sujets variables et chauffe-expéditeur",
+          ],
+        },
+        {
+          roman: "Ⅱ.",
+          name: "Texto",
+          vendor: "Twilio",
+          window: "Jour 5 → 14",
+          cadence: "2 relances",
+          voice: "Court, doux, signé de votre marque. Lien de paiement en un clic.",
+          detail: [
+            "10DLC enregistré, A2P pré-validé",
+            "Heures calmes selon le fuseau du client",
+            "STOP / AIDE entrants gérés",
+          ],
+        },
+        {
+          roman: "Ⅲ.",
+          name: "Voix",
+          vendor: "Agent Dragun",
+          window: "Jour 10 →",
+          cadence: "Jusqu'à 3 appels",
+          voice: "Un agent amical. Écoute, aide, laisse une trace claire.",
+          detail: [
+            "Enregistrement et transcriptions en direct",
+            "Appels uniquement durant les heures ouvrables locales",
+            "Transfert à un humain au bon moment",
+          ],
+        },
+      ],
+    },
+    mechanism: {
+      label: "III. Le rythme de trente jours",
+      title: "Un rythme. Début amical, rappels doux, fin polie.",
+      body: "Les rappels se déroulent automatiquement entre courriel, texto et voix. Vous voyez chaque action dans un seul registre ; vos clients entendent une seule voix, cohérente et amicale.",
+      laneLabel: "Voie",
+      laneEmail: "Courriel",
+      laneSms: "Texto",
+      laneVoice: "Voix",
+      vendorEmail: "Resend",
+      vendorSms: "Twilio",
+      vendorVoice: "Agent",
+      outcomeLabel: "Résultat",
+      outcomePayLink: "Lien de paiement · J0",
+      outcomeRhythm: "Rythme · 30 j",
+      outcomeHandoff: "Transfert si > J27",
+    },
+    compliance: {
+      label: "V. Conçu avec soin",
+      titleLine1: "Amical avec vos clients.",
+      titleLine2: "Honnête avec les règles.",
+      body: "Le respect du client n'est pas une option ajoutée. C'est la façon dont chaque rappel est rédigé, planifié et envoyé.",
+      items: [
+        {
+          k: "TCPA / LCAP",
+          tag: "Intégré",
+          l: "Appels et textos respectent les heures locales du client. Désinscriptions traitées immédiatement. Trace de consentement par facture.",
+        },
+        {
+          k: "Ton et fréquence",
+          tag: "Intégré",
+          l: "Plafonds raisonnables, identité claire dans chaque message, ton de petite entreprise — pour garder vos clients, pas les acculer.",
+        },
+        {
+          k: "10DLC / A2P",
+          tag: "Enregistré",
+          l: "Expéditeur enregistré pour le trafic application-vers-personne. Filtrage des opérateurs minimisé par la validation marque et campagne.",
+        },
+        {
+          k: "SOC 2",
+          tag: "En cours",
+          l: "Type I en préparation. Contrôles alignés AICPA TSC. Journal d'audit par facture, conservé sept ans.",
+        },
+      ],
+    },
+    distribution: {
+      label: "IV. Pour commencer",
+      titleLine1: "Gratuit pour démarrer.",
+      titleLine2: "Vous payez seulement ce qu'on récupère.",
+      body1:
+        "Inscrivez-vous sur dragun.app, nommez votre entreprise, collez votre liste de clients en retard, et une cadence de 14 jours démarre dans la voix de votre marque. Aucun appel commercial, aucun gardien, aucun frais mensuel.",
+      body2:
+        "Forfait fixe de 5 % sur ce qui est encaissé. Annulez à tout moment. Votre registre vous appartient, toujours. On gagne uniquement quand vous gagnez.",
+      stats: [
+        { k: "Onboarding", v: "Autonome", d: "5 minutes" },
+        { k: "Langues", v: "FR · EN", d: "Dès le départ" },
+        { k: "Tarif", v: "5 %", d: "Du payé, fixe" },
+      ],
+      timeline: [
+        ["J0", "Inscrivez-vous · configurez votre entreprise en 5 min"],
+        ["J0", "Ajoutez un client ou téléversez votre liste CSV"],
+        ["J0", "Le premier courriel amical part le jour même"],
+        ["J7+", "L'agent vocal entre en jeu à mesure que la facture vieillit"],
+      ],
+      formLabel: "Commencer",
+      formTitleA: "Lancez votre registre",
+      formTitleB: "sur Dragun.",
+      formBody:
+        "Aucun appel commercial. Aucune liste d'attente. Connectez-vous et l'assistant d'onboarding vous mène d'un compte vide à votre premier rappel en moins de dix minutes.",
+      bullets: [
+        "5 % fixe sur le payé. Rien d'autre.",
+        "Bilingue FR · EN dès le départ.",
+        "Annulez quand vous voulez. Le registre vous appartient.",
+      ],
+    },
+    auth: {
+      authedLabel: "Connecté",
+      authedTitle: (name: string | null) =>
+        name ? `Bon retour, ${name}.` : "Bon retour.",
+      authedSub:
+        "Votre tableau de bord est prêt. Ajoutez un client une fois, ou téléversez votre liste de clients en retard en CSV.",
+      ctaDashboard: "Ouvrir le tableau de bord",
+      ctaImport: "Importer des clients",
+      unauthLabel: "Une étape. Pas de long formulaire.",
+      unauthTitle: "Commencez en deux clics.",
+      unauthSub:
+        "Continuez avec Google, ou avec courriel et mot de passe. Votre tableau de bord est prêt dès la connexion.",
+      googleCta: "Continuer avec Google",
+      emailCta: "Utiliser le courriel",
+      already: "Déjà membre ?",
+      alreadyLink: "Connexion →",
+    },
+    investor: {
+      label: "VII. Levée en cours",
+      titleLine1: "Le bureau qui",
+      titleLine2: "vous fait payer.",
+      body:
+        "Nous bouclons une ronde pré-amorçage pour étendre l'agent vocal et le maillage de conformité. La data room — économies unitaires, plan de mise en marché, posture de conformité — est disponible sur demande aux investisseurs qualifiés.",
+      investorEmail: "investors@dragun.app",
+      foundersLink: "Parler à un fondateur",
+      cardLabel: "Ronde · Pré-amorçage",
+      cardOpen: "Ouverte",
+      kStage: "Stade",
+      vStage: "Pré-amorçage",
+      kVehicle: "Instrument",
+      vVehicle: "SAFE",
+      kUse: "Usage",
+      vUse: "Agent vocal · Conformité · Croissance",
+      kGeo: "Géographie",
+      vGeo: "Québec · États-Unis d'abord",
+      footnote:
+        "Le mémo couvre les économies unitaires, la conception des canaux, la posture réglementaire, le plan de mise en marché et l'équipe.",
+    },
+    footer: {
+      blurb:
+        "Le bureau amical pour vous faire payer. Courriel, texto et voix — un rythme, un registre, un dépôt bancaire.",
+      platform: "Plateforme",
+      contact: "Contact",
+      howItWorks: "Comment ça marche",
+      compliance: "Conformité",
+      pricing: "Tarifs",
+      investors: "Investisseurs",
+      founders: "Fondateurs",
+      owners: "Propriétaires",
+      copyright: "© 2026 Dragun, Inc. · Tous droits réservés",
+      tagline: "Conçu au Québec · Pour les PME",
+      privacy: "Confidentialité",
+      terms: "Conditions",
+      disclosures: "Divulgations",
+    },
+  },
+  en: {
+    topBar: {
+      online: "Online · 04·30·2026",
+      forSmb: "For small businesses",
+      hours: "Reminder hours · 08:00–20:59 local",
+      pricing: "Free to start · 5% on recovered",
+      builtIn: "Built in Québec",
+    },
+    nav: {
+      tagline: "™ · Get paid",
+      howItWorks: "How it works",
+      compliance: "Compliance",
+      pricing: "Pricing",
+      investors: "Investors",
+      howShort: "How",
+      complianceShort: "Compliance",
+      startShort: "Start",
+      startFree: "Start free",
+      signIn: "Sign in",
+      dashboard: "Dashboard",
+      signOut: "Sign out",
+    },
+    hero: {
+      tagline: "Friendly invoice follow-up for small businesses · Est. 2026",
+      titleLine1: "Get paid on time.",
+      titleLine2: "Stay friends.",
+      body: "Dragun is the back-office that follows up on your unpaid invoices — across email, SMS and a friendly voice agent — so you keep the customer and still get paid. You run the shop. We handle the awkward part.",
+      ctaPrimary: "Start free",
+      ctaSecondaryAuthed: "Open dashboard",
+      ctaSecondaryUnauth: "Start free",
+      asideLabel: "Dragun · At a glance",
+      asideLive: "Live",
+      asideHead1: "One inbox.",
+      asideHead2: "Three channels.",
+      asideSubline: "Free to start · 5% only on recovered",
+      asideKChannels: "Channels",
+      asideKCampaign: "Campaign",
+      asideKPricing: "Pricing",
+      asideArc: "Channel arc",
+      asideEmail: "Email",
+      asideSms: "SMS",
+      asideVoice: "Voice",
+      asideBuiltOn: "Built on · Resend · Twilio · Dragun voice agent",
+    },
+    problem: {
+      label: "I. The math of getting paid",
+      introA: "The invoice isn't the problem.",
+      introB: "The follow-up is.",
+      headlinePrefix: "of small-business invoices",
+      headlineMid: "go past thirty days. By day ninety, only",
+      headlineSuffix: "on the dollar comes back.",
+      bigStat: "42%",
+      bigStat2: "12¢",
+      stat1Big: "$825B",
+      stat1Label: "Outstanding invoices held by US small businesses",
+      stat2Big: "31 hrs / mo",
+      stat2Label: "A typical owner spends sending reminders",
+      stat3Big: "1 in 6",
+      stat3Label: "Invoices written off by year three",
+    },
+    channels: {
+      label: "II. Three friendly channels",
+      title: "Three channels, one rhythm, one inbox.",
+      sub: "Every customer hears from you the same way — kindly. The cadence is automatic, hours-aware, and tuned to your industry.",
+      windowLabel: "Window",
+      cards: [
+        {
+          roman: "Ⅰ.",
+          name: "Email",
+          vendor: "Resend",
+          window: "Day 0 → 7",
+          cadence: "3 reminders",
+          voice: "Warm, transactional, written in your brand voice.",
+          detail: [
+            "DKIM, SPF & DMARC alignment",
+            "Threaded replies routed to your team",
+            "Variable subject + sender warm-up",
+          ],
+        },
+        {
+          roman: "Ⅱ.",
+          name: "SMS",
+          vendor: "Twilio",
+          window: "Day 5 → 14",
+          cadence: "2 nudges",
+          voice: "Short, kind, branded. Pay link in one tap.",
+          detail: [
+            "10DLC registered, A2P 10DLC pre-cleared",
+            "Quiet hours by your customer's timezone",
+            "Inbound STOP / HELP handled",
+          ],
+        },
+        {
+          roman: "Ⅲ.",
+          name: "Voice",
+          vendor: "Dragun agent",
+          window: "Day 10 →",
+          cadence: "Up to 3 calls",
+          voice: "A friendly agent. Listens, helps, leaves a clear record.",
+          detail: [
+            "Real-time call recording & transcripts",
+            "Calls only during local business hours",
+            "Hands off to a human at the right cue",
+          ],
+        },
+      ],
+    },
+    mechanism: {
+      label: "III. The thirty-day rhythm",
+      title: "One rhythm. Friendly start, gentle reminders, polite finish.",
+      body: "Reminders unfold automatically across email, SMS and voice. You see every touch in a single ledger; your customers hear one consistent, friendly tone.",
+      laneLabel: "Lane",
+      laneEmail: "Email",
+      laneSms: "SMS",
+      laneVoice: "Voice",
+      vendorEmail: "Resend",
+      vendorSms: "Twilio",
+      vendorVoice: "Agent",
+      outcomeLabel: "Outcome",
+      outcomePayLink: "Pay link · Day 0",
+      outcomeRhythm: "Rhythm · 30d",
+      outcomeHandoff: "Hand-off if > D27",
+    },
+    compliance: {
+      label: "V. Built thoughtfully",
+      titleLine1: "Friendly with your customers.",
+      titleLine2: "Honest with the rules.",
+      body: "Customer respect isn't a feature bolted on. It's how every reminder is written, scheduled, and sent.",
+      items: [
+        {
+          k: "TCPA / CASL",
+          tag: "Built in",
+          l: "Calls and texts respect your customer's local hours. Opt-outs honored instantly. Consent records kept per invoice.",
+        },
+        {
+          k: "Tone & frequency",
+          tag: "Built in",
+          l: "Sensible frequency caps, clear identity in every message, and a small-business tone — designed to keep customers, not to corner them.",
+        },
+        {
+          k: "10DLC / A2P",
+          tag: "Registered",
+          l: "Sender registered for application-to-person traffic. Carrier filtering minimised through brand & campaign vetting.",
+        },
+        {
+          k: "SOC 2",
+          tag: "In progress",
+          l: "Type I in process. Controls aligned to AICPA TSC. Audit log on every invoice, retained for seven years.",
+        },
+      ],
+    },
+    distribution: {
+      label: "IV. Getting started",
+      titleLine1: "Free to start.",
+      titleLine2: "Pay only on what we recover.",
+      body1:
+        "Sign up at dragun.app, name your business, paste in your delinquent list, and a 14-day cadence kicks off in your brand voice. No sales calls, no gatekeeping, no monthly fee.",
+      body2:
+        "Flat 5 % on what gets paid. Cancel any time. Your ledger is yours, always. We only earn when you do.",
+      stats: [
+        { k: "Onboarding", v: "Self-serve", d: "5 minutes" },
+        { k: "Languages", v: "FR · EN", d: "From day one" },
+        { k: "Pricing", v: "5%", d: "Of paid, flat" },
+      ],
+      timeline: [
+        ["D0", "Sign up · onboard your business in 5 minutes"],
+        ["D0", "Add a customer or upload your list as CSV"],
+        ["D0", "First friendly email goes out the same day"],
+        ["D7+", "Voice agent joins in as invoices age"],
+      ],
+      formLabel: "Start free",
+      formTitleA: "Run your ledger",
+      formTitleB: "on Dragun.",
+      formBody:
+        "No sales calls. No waiting list. Sign in and the onboarding wizard gets you from a fresh account to your first reminder in under ten minutes.",
+      bullets: [
+        "Flat 5% on what gets paid. Nothing else.",
+        "Bilingual EN · FR from day one.",
+        "Cancel any time. Your ledger is yours.",
+      ],
+    },
+    auth: {
+      authedLabel: "Signed in",
+      authedTitle: (name: string | null) =>
+        name ? `Welcome back, ${name}.` : "Welcome back.",
+      authedSub:
+        "Your dashboard is ready. Add a customer one at a time, or upload your delinquent list as a CSV.",
+      ctaDashboard: "Open dashboard",
+      ctaImport: "Import customers",
+      unauthLabel: "One step. No long form.",
+      unauthTitle: "Get started in two clicks.",
+      unauthSub:
+        "Continue with Google, or use email and password. Your dashboard is ready the moment you sign in.",
+      googleCta: "Continue with Google",
+      emailCta: "Use email instead",
+      already: "Already a member?",
+      alreadyLink: "Sign in →",
+    },
+    investor: {
+      label: "VII. Now raising",
+      titleLine1: "The back-office for",
+      titleLine2: "getting paid.",
+      body:
+        "We're closing a pre-seed round to extend the voice agent and the compliance lattice. The data room — including unit economics, the go-to-market plan, and our compliance posture — is available on request to qualified investors.",
+      investorEmail: "investors@dragun.app",
+      foundersLink: "Talk to a founder",
+      cardLabel: "Round · Pre-seed",
+      cardOpen: "Open",
+      kStage: "Stage",
+      vStage: "Pre-seed",
+      kVehicle: "Vehicle",
+      vVehicle: "SAFE",
+      kUse: "Use",
+      vUse: "Voice agent · Compliance · Growth",
+      kGeo: "Geography",
+      vGeo: "Québec · US first",
+      footnote:
+        "Memo includes unit economics, channel design, regulatory posture, go-to-market plan, and team profile.",
+    },
+    footer: {
+      blurb:
+        "The friendly back-office for getting paid. Email, SMS and voice — one rhythm, one ledger, one bank deposit.",
+      platform: "Platform",
+      contact: "Contact",
+      howItWorks: "How it works",
+      compliance: "Compliance",
+      pricing: "Pricing",
+      investors: "Investors",
+      founders: "Founders",
+      owners: "Owners",
+      copyright: "© 2026 Dragun, Inc. · All rights reserved",
+      tagline: "Built in Québec · For small businesses",
+      privacy: "Privacy",
+      terms: "Terms",
+      disclosures: "Disclosures",
+    },
+  },
+};
+
+type Copy = (typeof COPY)["fr"];
+
+/* ────────────────────────────────────────────────────────── */
+/*  Page                                                      */
+/* ────────────────────────────────────────────────────────── */
 
 export default async function Home() {
   const supabase = await createClient();
@@ -22,18 +510,21 @@ export default async function Home() {
       (user.email ? user.email.split("@")[0] : null);
   }
 
+  const locale = await getLocale();
+  const c = COPY[locale];
+
   return (
     <main className="relative overflow-x-hidden">
-      <TopBar />
-      <Nav user={user ? { name: displayName, email: user.email ?? null } : null} />
-      <Hero authed={Boolean(user)} />
-      <Problem />
-      <Channels />
-      <Mechanism />
-      <Compliance />
-      <Distribution authed={Boolean(user)} displayName={displayName} />
-      <Investor />
-      <Footer />
+      <TopBar c={c} />
+      <Nav c={c} user={user ? { name: displayName, email: user.email ?? null } : null} />
+      <Hero c={c} authed={Boolean(user)} />
+      <Problem c={c} />
+      <Channels c={c} />
+      <Mechanism c={c} />
+      <Compliance c={c} />
+      <Distribution c={c} authed={Boolean(user)} displayName={displayName} />
+      <Investor c={c} />
+      <Footer c={c} />
     </main>
   );
 }
@@ -65,21 +556,21 @@ function Mark({ className = "h-5 w-5" }: { className?: string }) {
 /*  Top status bar                                            */
 /* ────────────────────────────────────────────────────────── */
 
-function TopBar() {
+function TopBar({ c }: { c: Copy }) {
   return (
     <div className="border-b border-line bg-ink-1/60 backdrop-blur-sm">
       <div className="mx-auto flex max-w-[1320px] flex-wrap items-center justify-between gap-x-6 gap-y-1 px-6 py-2 font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] text-bone-3">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
-          <span>Online · 04·30·2026</span>
-          <span className="hidden md:inline">For small businesses</span>
-          <span className="hidden lg:inline">Reminder hours · 08:00–20:59 local</span>
+          <span>{c.topBar.online}</span>
+          <span className="hidden md:inline">{c.topBar.forSmb}</span>
+          <span className="hidden lg:inline">{c.topBar.hours}</span>
         </div>
         <div className="flex items-center gap-x-6 gap-y-1">
           <span className="hidden sm:flex items-center gap-2">
             <span className="pulse h-1.5 w-1.5 rounded-full bg-ember" />
-            <span className="text-bone-2">Free to start · 5% on recovered</span>
+            <span className="text-bone-2">{c.topBar.pricing}</span>
           </span>
-          <span>Built in Québec</span>
+          <span>{c.topBar.builtIn}</span>
         </div>
       </div>
     </div>
@@ -90,7 +581,13 @@ function TopBar() {
 /*  Nav                                                       */
 /* ────────────────────────────────────────────────────────── */
 
-function Nav({ user }: { user: { name: string | null; email: string | null } | null }) {
+function Nav({
+  c,
+  user,
+}: {
+  c: Copy;
+  user: { name: string | null; email: string | null } | null;
+}) {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-ink/80 backdrop-blur">
       <nav className="mx-auto flex max-w-[1320px] items-center justify-between gap-4 px-4 sm:px-6 py-4">
@@ -98,25 +595,25 @@ function Nav({ user }: { user: { name: string | null; email: string | null } | n
           <Mark className="h-5 w-5 shrink-0" />
           <span className="font-display text-lg sm:text-xl tracking-tight">Dragun</span>
           <span className="hidden xl:inline font-mono text-[11.5px] uppercase tracking-[0.22em] text-bone-3">
-            ™ · Get paid
+            {c.nav.tagline}
           </span>
         </a>
         <ul className="hidden lg:flex items-center gap-5 xl:gap-8 font-mono text-[12px] xl:text-sm uppercase tracking-[0.18em] text-bone-2">
-          <li><a href="#mechanism" className="hover:text-bone">How it works</a></li>
-          <li><a href="#compliance" className="hover:text-bone">Compliance</a></li>
-          <li><a href="#start" className="hover:text-bone">Pricing</a></li>
-          <li><a href="#investor" className="hover:text-bone">Investors</a></li>
+          <li><a href="#mechanism" className="hover:text-bone">{c.nav.howItWorks}</a></li>
+          <li><a href="#compliance" className="hover:text-bone">{c.nav.compliance}</a></li>
+          <li><a href="#start" className="hover:text-bone">{c.nav.pricing}</a></li>
+          <li><a href="#investor" className="hover:text-bone">{c.nav.investors}</a></li>
         </ul>
         <ul className="hidden md:flex lg:hidden items-center gap-5 font-mono text-[12px] uppercase tracking-[0.18em] text-bone-2">
-          <li><a href="#mechanism" className="hover:text-bone">How</a></li>
-          <li><a href="#compliance" className="hover:text-bone">Compliance</a></li>
-          <li><a href="#start" className="hover:text-bone">Start</a></li>
+          <li><a href="#mechanism" className="hover:text-bone">{c.nav.howShort}</a></li>
+          <li><a href="#compliance" className="hover:text-bone">{c.nav.complianceShort}</a></li>
+          <li><a href="#start" className="hover:text-bone">{c.nav.startShort}</a></li>
         </ul>
         <Link
           href="/auth/sign-up"
           className="group inline-flex md:hidden items-center gap-2 border border-ember px-3 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-ember"
         >
-          Start free
+          {c.nav.startFree}
           <span className="transition-transform group-hover:translate-x-0.5">→</span>
         </Link>
         {user ? (
@@ -126,14 +623,14 @@ function Nav({ user }: { user: { name: string | null; email: string | null } | n
               href="/app"
               className="font-mono text-[11px] lg:text-xs uppercase tracking-[0.2em] text-bone-2 hover:text-bone whitespace-nowrap"
             >
-              {user.name ?? "Dashboard"}
+              {user.name ?? c.nav.dashboard}
             </Link>
             <form action={signOut}>
               <button
                 type="submit"
                 className="font-mono text-[11px] lg:text-xs uppercase tracking-[0.2em] text-bone-3 hover:text-bone whitespace-nowrap"
               >
-                Sign out
+                {c.nav.signOut}
               </button>
             </form>
           </div>
@@ -144,13 +641,13 @@ function Nav({ user }: { user: { name: string | null; email: string | null } | n
               href="/auth/sign-in"
               className="font-mono text-[11px] lg:text-xs uppercase tracking-[0.2em] text-bone-3 hover:text-bone whitespace-nowrap"
             >
-              Sign in
+              {c.nav.signIn}
             </Link>
             <Link
               href="/auth/sign-up"
               className="group inline-flex items-center gap-2 border border-bone/70 px-3 lg:px-4 py-2 font-mono text-[11px] lg:text-xs uppercase tracking-[0.2em] text-bone hover:border-ember hover:text-ember transition-colors whitespace-nowrap"
             >
-              Start free
+              {c.nav.startFree}
               <span className="transition-transform group-hover:translate-x-0.5">→</span>
             </Link>
           </div>
@@ -164,7 +661,7 @@ function Nav({ user }: { user: { name: string | null; email: string | null } | n
 /*  Hero                                                      */
 /* ────────────────────────────────────────────────────────── */
 
-function Hero({ authed }: { authed: boolean }) {
+function Hero({ c, authed }: { c: Copy; authed: boolean }) {
   return (
     <section className="relative overflow-hidden">
       <div className="ember-floor" aria-hidden />
@@ -186,25 +683,21 @@ function Hero({ authed }: { authed: boolean }) {
         <div className="grid gap-16 lg:grid-cols-12">
           <div className="lg:col-span-8">
             <p className="rise font-mono text-xs sm:text-sm uppercase tracking-[0.28em] sm:tracking-[0.32em] text-bone-3">
-              <span className="text-ember">●</span>&nbsp;&nbsp;Friendly invoice
-              follow-up for small businesses · Est. 2026
+              <span className="text-ember">●</span>&nbsp;&nbsp;{c.hero.tagline}
             </p>
             <h1
               className="rise font-display mt-8 text-[clamp(2.6rem,9vw,9.5rem)] leading-[0.92] tracking-[-0.02em] text-bone break-words"
               style={{ animationDelay: "0.08s" }}
             >
-              Get paid on time.
+              {c.hero.titleLine1}
               <br />
-              <em className="italic text-bone-2">Stay friends.</em>
+              <em className="italic text-bone-2">{c.hero.titleLine2}</em>
             </h1>
             <p
               className="rise mt-10 max-w-[44ch] text-base sm:text-lg leading-[1.55] text-bone-2 md:text-xl"
               style={{ animationDelay: "0.18s" }}
             >
-              Dragun is the back-office that follows up on your unpaid
-              invoices — across email, SMS and a friendly voice agent — so
-              you keep the customer and still get paid. You run the shop.
-              We handle the awkward part.
+              {c.hero.body}
             </p>
 
             <div
@@ -215,19 +708,15 @@ function Hero({ authed }: { authed: boolean }) {
                 href="/auth/sign-up"
                 className="group inline-flex items-center gap-3 bg-ember px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-ink transition-colors hover:bg-bone"
               >
-                Start free
-                <span className="transition-transform group-hover:translate-x-1">
-                  →
-                </span>
+                {c.hero.ctaPrimary}
+                <span className="transition-transform group-hover:translate-x-1">→</span>
               </Link>
               <a
                 href={authed ? "/app" : "/auth/sign-up"}
                 className="group inline-flex items-center gap-3 border border-bone/50 px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone hover:border-ember hover:text-ember transition-colors"
               >
-                {authed ? "Open dashboard" : "Start free"}
-                <span className="transition-transform group-hover:translate-x-1">
-                  →
-                </span>
+                {authed ? c.hero.ctaSecondaryAuthed : c.hero.ctaSecondaryUnauth}
+                <span className="transition-transform group-hover:translate-x-1">→</span>
               </a>
             </div>
           </div>
@@ -239,27 +728,27 @@ function Hero({ authed }: { authed: boolean }) {
           >
             <div className="border border-line bg-ink-1/70 backdrop-blur-sm">
               <div className="flex items-center justify-between border-b border-line px-5 py-3 font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] text-bone-3">
-                <span>Dragun · At a glance</span>
+                <span>{c.hero.asideLabel}</span>
                 <span className="flex items-center gap-2 text-ember">
                   <span className="pulse h-1.5 w-1.5 rounded-full bg-ember" />
-                  Live
+                  {c.hero.asideLive}
                 </span>
               </div>
               <div className="px-5 py-7">
                 <div className="font-display text-[clamp(2rem,5vw,3.6rem)] leading-[0.96] tracking-tight text-bone break-words">
-                  One inbox.
+                  {c.hero.asideHead1}
                   <br />
-                  <em className="text-bone-2">Three channels.</em>
+                  <em className="text-bone-2">{c.hero.asideHead2}</em>
                 </div>
                 <p className="mt-3 font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] text-bone-3">
-                  Free to start · 5% only on recovered
+                  {c.hero.asideSubline}
                 </p>
               </div>
               <div className="grid grid-cols-3 border-t border-line">
                 {[
-                  { k: "Channels", v: "3" },
-                  { k: "Campaign", v: "30d" },
-                  { k: "Pricing", v: "5%" },
+                  { k: c.hero.asideKChannels, v: "3" },
+                  { k: c.hero.asideKCampaign, v: "30d" },
+                  { k: c.hero.asideKPricing, v: "5%" },
                 ].map((s) => (
                   <div
                     key={s.k}
@@ -274,26 +763,23 @@ function Hero({ authed }: { authed: boolean }) {
               </div>
               <div className="border-t border-line px-5 py-4">
                 <div className="font-mono text-xs uppercase tracking-[0.18em] text-bone-3">
-                  Channel arc
+                  {c.hero.asideArc}
                 </div>
                 <div className="mt-3 flex h-1.5 w-full overflow-hidden rounded-[1px] bg-ink-3">
                   <span className="h-full bg-bone" style={{ width: "33.33%" }} />
-                  <span
-                    className="h-full bg-ember"
-                    style={{ width: "33.33%" }}
-                  />
+                  <span className="h-full bg-ember" style={{ width: "33.33%" }} />
                   <span className="h-full bg-moss" style={{ width: "33.34%" }} />
                 </div>
                 <div className="mt-2 flex justify-between font-mono text-[11.5px] uppercase tracking-[0.18em] text-bone-3">
-                  <span>Email</span>
-                  <span>SMS</span>
-                  <span>Voice</span>
+                  <span>{c.hero.asideEmail}</span>
+                  <span>{c.hero.asideSms}</span>
+                  <span>{c.hero.asideVoice}</span>
                 </div>
               </div>
             </div>
 
             <p className="mt-4 font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-bone-3">
-              Built on · Resend · Twilio · Dragun voice agent
+              {c.hero.asideBuiltOn}
             </p>
           </aside>
         </div>
@@ -306,41 +792,32 @@ function Hero({ authed }: { authed: boolean }) {
 /*  Problem                                                   */
 /* ────────────────────────────────────────────────────────── */
 
-function Problem() {
+function Problem({ c }: { c: Copy }) {
   return (
     <section className="relative">
       <div className="mx-auto max-w-[1320px] px-6 py-24 md:py-44">
         <div className="grid gap-12 lg:gap-16 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
-              I. The math of getting paid
+              {c.problem.label}
             </p>
             <p className="mt-6 font-display text-2xl sm:text-3xl leading-tight text-bone-2">
-              The invoice isn&rsquo;t the problem.
+              {c.problem.introA}
               <br />
-              <em>The follow-up is.</em>
+              <em>{c.problem.introB}</em>
             </p>
           </div>
           <div className="lg:col-span-8 lg:pl-12">
             <p className="font-display text-[clamp(2rem,5vw,4.4rem)] leading-[1.08] tracking-tight text-bone break-words">
-              <span className="text-ember">42%</span> of small-business invoices
-              go past thirty days. By day ninety, only{" "}
-              <span className="text-ember">12¢</span> on the dollar comes back.
+              <span className="text-ember">{c.problem.bigStat}</span> {c.problem.headlinePrefix}{" "}
+              {c.problem.headlineMid}{" "}
+              <span className="text-ember">{c.problem.bigStat2}</span> {c.problem.headlineSuffix}
             </p>
             <div className="mt-10 sm:mt-12 grid gap-8 border-t border-line pt-8 sm:grid-cols-2 md:grid-cols-3">
               {[
-                {
-                  k: "$825B",
-                  l: "Outstanding invoices held by US small businesses",
-                },
-                {
-                  k: "31 hrs / mo",
-                  l: "A typical owner spends sending reminders",
-                },
-                {
-                  k: "1 in 6",
-                  l: "Invoices written off by year three",
-                },
+                { k: c.problem.stat1Big, l: c.problem.stat1Label },
+                { k: c.problem.stat2Big, l: c.problem.stat2Label },
+                { k: c.problem.stat3Big, l: c.problem.stat3Label },
               ].map((d) => (
                 <div key={d.k}>
                   <div className="num font-display text-3xl sm:text-4xl text-bone break-words">
@@ -363,48 +840,7 @@ function Problem() {
 /*  Channels — Resend, Twilio, Voice                          */
 /* ────────────────────────────────────────────────────────── */
 
-function Channels() {
-  const channels = [
-    {
-      roman: "Ⅰ.",
-      name: "Email",
-      vendor: "Resend",
-      window: "Day 0 → 7",
-      cadence: "3 reminders",
-      voice: "Warm, transactional, written in your brand voice.",
-      detail: [
-        "DKIM, SPF & DMARC alignment",
-        "Threaded replies routed to your team",
-        "Variable subject + sender warm-up",
-      ],
-    },
-    {
-      roman: "Ⅱ.",
-      name: "SMS",
-      vendor: "Twilio",
-      window: "Day 5 → 14",
-      cadence: "2 nudges",
-      voice: "Short, kind, branded. Pay link in one tap.",
-      detail: [
-        "10DLC registered, A2P 10DLC pre-cleared",
-        "Quiet hours by your customer's timezone",
-        "Inbound STOP / HELP handled",
-      ],
-    },
-    {
-      roman: "Ⅲ.",
-      name: "Voice",
-      vendor: "Dragun agent",
-      window: "Day 10 →",
-      cadence: "Up to 3 calls",
-      voice: "A friendly agent. Listens, helps, leaves a clear record.",
-      detail: [
-        "Real-time call recording & transcripts",
-        "Calls only during local business hours",
-        "Hands off to a human at the right cue",
-      ],
-    },
-  ];
+function Channels({ c }: { c: Copy }) {
   return (
     <section
       id="channels"
@@ -414,35 +850,32 @@ function Channels() {
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
-              II. Three friendly channels
+              {c.channels.label}
             </p>
             <h2 className="mt-4 font-display text-[clamp(2rem,5vw,4.2rem)] leading-[1.04] tracking-tight text-bone break-words">
-              Three channels, one rhythm, one inbox.
+              {c.channels.title}
             </h2>
           </div>
-          <p className="max-w-md font-sans text-bone-2">
-            Every customer hears from you the same way — kindly. The cadence
-            is automatic, hours-aware, and tuned to your industry.
-          </p>
+          <p className="max-w-md font-sans text-bone-2">{c.channels.sub}</p>
         </div>
 
         <div className="mt-12 sm:mt-16 grid gap-px bg-line border border-line md:grid-cols-3">
-          {channels.map((c) => (
+          {c.channels.cards.map((card) => (
             <article
-              key={c.name}
+              key={card.name}
               className="group relative bg-ink p-6 sm:p-8 transition-colors hover:bg-ink-1"
             >
               <div className="flex items-baseline justify-between font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-bone-3">
-                <span>{c.roman} {c.name}</span>
-                <span>{c.vendor}</span>
+                <span>{card.roman} {card.name}</span>
+                <span>{card.vendor}</span>
               </div>
               <h3 className="mt-5 sm:mt-6 font-display text-4xl sm:text-5xl tracking-tight text-bone">
-                {c.name}
+                {card.name}
               </h3>
-              <p className="mt-4 max-w-[34ch] text-bone-2 text-sm sm:text-base">{c.voice}</p>
+              <p className="mt-4 max-w-[34ch] text-bone-2 text-sm sm:text-base">{card.voice}</p>
 
               <ul className="mt-7 sm:mt-8 space-y-2 border-t border-line pt-5 text-sm text-bone-2">
-                {c.detail.map((d) => (
+                {card.detail.map((d) => (
                   <li key={d} className="flex gap-3">
                     <span className="mt-2 h-px w-3 shrink-0 bg-bone-3" />
                     <span>{d}</span>
@@ -451,8 +884,8 @@ function Channels() {
               </ul>
 
               <div className="mt-8 sm:mt-10 flex flex-wrap items-end justify-between gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-bone-3">
-                <span>Window {c.window}</span>
-                <span>{c.cadence}</span>
+                <span>{c.channels.windowLabel} {card.window}</span>
+                <span>{card.cadence}</span>
               </div>
             </article>
           ))}
@@ -466,24 +899,24 @@ function Channels() {
 /*  Mechanism — 30 day campaign timeline                      */
 /* ────────────────────────────────────────────────────────── */
 
-function Mechanism() {
+function Mechanism({ c }: { c: Copy }) {
   const days = 30;
   const lanes = [
     {
-      name: "Email",
-      vendor: "Resend",
+      name: c.mechanism.laneEmail,
+      vendor: c.mechanism.vendorEmail,
       color: "var(--color-bone)",
       hits: [0, 3, 7, 14, 21],
     },
     {
-      name: "SMS",
-      vendor: "Twilio",
+      name: c.mechanism.laneSms,
+      vendor: c.mechanism.vendorSms,
       color: "var(--color-ember)",
       hits: [5, 10, 18],
     },
     {
-      name: "Voice",
-      vendor: "Agent",
+      name: c.mechanism.laneVoice,
+      vendor: c.mechanism.vendorVoice,
       color: "var(--color-moss)",
       hits: [12, 19, 26],
     },
@@ -493,22 +926,18 @@ function Mechanism() {
     <section id="mechanism" className="relative">
       <div className="mx-auto max-w-[1320px] px-6 py-24 md:py-36">
         <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
-          III. The thirty-day rhythm
+          {c.mechanism.label}
         </p>
         <h2 className="mt-4 max-w-[24ch] font-display text-[clamp(2rem,5vw,4.2rem)] leading-[1.04] tracking-tight text-bone break-words">
-          One rhythm. Friendly start, gentle reminders, polite finish.
+          {c.mechanism.title}
         </h2>
-        <p className="mt-6 max-w-[60ch] text-bone-2 text-sm sm:text-base">
-          Reminders unfold automatically across email, SMS and voice. You see
-          every touch in a single ledger; your customers hear one consistent,
-          friendly tone.
-        </p>
+        <p className="mt-6 max-w-[60ch] text-bone-2 text-sm sm:text-base">{c.mechanism.body}</p>
 
         <div className="mt-12 sm:mt-16 border border-line bg-ink-1/40 overflow-hidden">
           {/* Day axis */}
           <div className="grid grid-cols-[88px_1fr] sm:grid-cols-[120px_1fr] border-b border-line">
             <div className="px-3 sm:px-4 py-3 font-mono text-[10.5px] sm:text-[11.5px] uppercase tracking-[0.18em] text-bone-3">
-              Lane
+              {c.mechanism.laneLabel}
             </div>
             <div className="relative h-9">
               <div className="absolute inset-0 flex">
@@ -543,9 +972,7 @@ function Mechanism() {
                 </span>
               </div>
               <div className="relative h-20">
-                {/* lane rail */}
                 <div className="absolute left-0 right-0 top-1/2 h-px -translate-y-1/2 bg-line" />
-                {/* hit markers */}
                 {lane.hits.map((d, i) => {
                   const pct = (d / days) * 100;
                   return (
@@ -561,9 +988,7 @@ function Mechanism() {
                           boxShadow: `0 0 0 4px ${lane.color}22`,
                         }}
                       />
-                      <div
-                        className="hidden md:block absolute left-1/2 mt-3 -translate-x-1/2 whitespace-nowrap font-mono text-[11.5px] uppercase tracking-[0.18em] text-bone-3"
-                      >
+                      <div className="hidden md:block absolute left-1/2 mt-3 -translate-x-1/2 whitespace-nowrap font-mono text-[11.5px] uppercase tracking-[0.18em] text-bone-3">
                         D{d} · #{i + 1}
                       </div>
                     </div>
@@ -576,13 +1001,13 @@ function Mechanism() {
           {/* Outcome bar */}
           <div className="grid grid-cols-[88px_1fr] sm:grid-cols-[120px_1fr] border-t border-line bg-ink">
             <div className="border-r border-line px-3 sm:px-4 py-3 sm:py-4 font-mono text-[10px] sm:text-[11.5px] uppercase tracking-[0.18em] text-bone-3">
-              Outcome
+              {c.mechanism.outcomeLabel}
             </div>
             <div className="relative px-3 sm:px-4 py-3 sm:py-4">
               <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 font-mono text-[10.5px] sm:text-xs uppercase tracking-[0.18em] text-bone-2">
-                <span>Pay link · Day 0</span>
-                <span>Rhythm · 30d</span>
-                <span>Hand-off if &gt; D27</span>
+                <span>{c.mechanism.outcomePayLink}</span>
+                <span>{c.mechanism.outcomeRhythm}</span>
+                <span>{c.mechanism.outcomeHandoff}</span>
               </div>
             </div>
           </div>
@@ -592,55 +1017,31 @@ function Mechanism() {
   );
 }
 
-
 /* ────────────────────────────────────────────────────────── */
 /*  Compliance                                                */
 /* ────────────────────────────────────────────────────────── */
 
-function Compliance() {
-  const items = [
-    {
-      k: "TCPA",
-      tag: "Built in",
-      l: "Calls and texts respect your customer's local hours. Opt-outs honored instantly. Consent records kept per invoice.",
-    },
-    {
-      k: "Tone & frequency",
-      tag: "Built in",
-      l: "Sensible frequency caps, clear identity in every message, and a small-business tone — designed to keep customers, not to corner them.",
-    },
-    {
-      k: "10DLC / A2P",
-      tag: "Registered",
-      l: "Sender registered for application-to-person traffic. Carrier filtering minimised through brand & campaign vetting.",
-    },
-    {
-      k: "SOC 2",
-      tag: "In progress",
-      l: "Type I in process. Controls aligned to AICPA TSC. Audit log on every invoice, retained for seven years.",
-    },
-  ];
+function Compliance({ c }: { c: Copy }) {
   return (
     <section id="compliance" className="relative">
       <div className="mx-auto max-w-[1320px] px-6 py-24 md:py-36">
         <div className="grid gap-12 lg:gap-16 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
-              V. Built thoughtfully
+              {c.compliance.label}
             </p>
             <h2 className="mt-4 font-display text-[clamp(1.85rem,4.5vw,3.6rem)] leading-[1.06] tracking-tight text-bone break-words">
-              Friendly with your customers.
+              {c.compliance.titleLine1}
               <br />
-              <em>Honest with the rules.</em>
+              <em>{c.compliance.titleLine2}</em>
             </h2>
             <p className="mt-6 max-w-[40ch] text-bone-2 text-sm sm:text-base">
-              Customer respect isn&rsquo;t a feature bolted on. It&rsquo;s how
-              every reminder is written, scheduled, and sent.
+              {c.compliance.body}
             </p>
           </div>
           <div className="lg:col-span-8 lg:pl-12">
             <div className="grid gap-px border border-line bg-line md:grid-cols-2">
-              {items.map((it) => (
+              {c.compliance.items.map((it) => (
                 <div key={it.k} className="bg-ink p-6 sm:p-7">
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
                     <span className="font-display text-2xl sm:text-3xl text-bone break-words">
@@ -666,9 +1067,11 @@ function Compliance() {
 /* ────────────────────────────────────────────────────────── */
 
 function Distribution({
+  c,
   authed,
   displayName,
 }: {
+  c: Copy;
   authed: boolean;
   displayName: string | null;
 }) {
@@ -678,32 +1081,25 @@ function Distribution({
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
-              IV. Getting started
+              {c.distribution.label}
             </p>
             <h2 className="mt-4 font-display text-[clamp(2rem,5vw,4.2rem)] leading-[1.04] tracking-tight text-bone break-words">
-              Free to start.
+              {c.distribution.titleLine1}
               <br />
-              <em>Pay only on what we recover.</em>
+              <em>{c.distribution.titleLine2}</em>
             </h2>
             <p className="mt-6 max-w-[44ch] text-bone-2 text-sm sm:text-base">
-              Sign up at dragun.app, name your business, paste in your
-              delinquent list, and a 14-day cadence kicks off in your brand
-              voice. No sales calls, no gatekeeping, no monthly fee.
+              {c.distribution.body1}
             </p>
             <p className="mt-4 max-w-[44ch] text-bone-2 text-sm sm:text-base">
-              Flat 5 % on what gets paid. Cancel any time. Your ledger is
-              yours, always. We only earn when you do.
+              {c.distribution.body2}
             </p>
           </div>
 
           <div className="lg:col-span-7 lg:pl-10">
             <div className="border border-line">
               <div className="grid grid-cols-3 border-b border-line">
-                {[
-                  { k: "Onboarding", v: "Self-serve", d: "5 minutes" },
-                  { k: "Languages", v: "FR · EN", d: "From day one" },
-                  { k: "Pricing", v: "5%", d: "Of paid, flat" },
-                ].map((s, i) => (
+                {c.distribution.stats.map((s, i) => (
                   <div
                     key={s.k}
                     className={`p-4 sm:p-6 ${i < 2 ? "border-r border-line" : ""}`}
@@ -721,12 +1117,7 @@ function Distribution({
                 ))}
               </div>
               <ul className="divide-y divide-line">
-                {[
-                  ["D0", "Sign up · onboard your business in 5 minutes"],
-                  ["D0", "Add a customer or upload your list as CSV"],
-                  ["D0", "First friendly email goes out the same day"],
-                  ["D7+", "Voice agent joins in as invoices age"],
-                ].map(([k, v], i) => (
+                {c.distribution.timeline.map(([k, v], i) => (
                   <li
                     key={`${k}-${i}`}
                     className="grid grid-cols-[52px_1fr] sm:grid-cols-[60px_1fr] items-baseline px-4 sm:px-6 py-4 gap-2"
@@ -749,35 +1140,26 @@ function Distribution({
         >
           <div className="lg:col-span-5">
             <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
-              Start free
+              {c.distribution.formLabel}
             </p>
             <h3 className="mt-3 font-display text-[clamp(1.75rem,3.5vw,3rem)] leading-[1.06] tracking-tight text-bone break-words">
-              Run your ledger
+              {c.distribution.formTitleA}
               <br />
-              <em className="text-bone-2">on Dragun.</em>
+              <em className="text-bone-2">{c.distribution.formTitleB}</em>
             </h3>
             <p className="mt-5 max-w-[40ch] text-bone-2 text-sm sm:text-base">
-              No sales calls. No waiting list. Sign in and the onboarding
-              wizard gets you from a fresh account to your first reminder
-              in under ten minutes.
+              {c.distribution.formBody}
             </p>
             <ul className="mt-8 space-y-3 font-mono text-[12px] sm:text-sm uppercase tracking-[0.18em] text-bone-2">
-              <li className="flex gap-3">
-                <span className="text-ember shrink-0">▲</span> Flat 5% on what
-                gets paid. Nothing else.
-              </li>
-              <li className="flex gap-3">
-                <span className="text-ember shrink-0">▲</span> Bilingual EN · FR
-                from day one.
-              </li>
-              <li className="flex gap-3">
-                <span className="text-ember shrink-0">▲</span> Cancel any time.
-                Your ledger is yours.
-              </li>
+              {c.distribution.bullets.map((b) => (
+                <li key={b} className="flex gap-3">
+                  <span className="text-ember shrink-0">▲</span> {b}
+                </li>
+              ))}
             </ul>
           </div>
           <div className="lg:col-span-7">
-            <AuthCta authed={authed} displayName={displayName} />
+            <AuthCta c={c} authed={authed} displayName={displayName} />
           </div>
         </div>
       </div>
@@ -786,9 +1168,11 @@ function Distribution({
 }
 
 function AuthCta({
+  c,
   authed,
   displayName,
 }: {
+  c: Copy;
   authed: boolean;
   displayName: string | null;
 }) {
@@ -796,29 +1180,27 @@ function AuthCta({
     return (
       <div className="border border-ember/40 bg-ember/5 p-6 sm:p-8 text-bone">
         <div className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.22em] text-ember">
-          Signed in
+          {c.auth.authedLabel}
         </div>
         <p className="mt-3 font-display text-xl sm:text-2xl leading-snug break-words">
-          {displayName ? `Welcome back, ${displayName}.` : "Welcome back."} Your
-          dashboard is ready.
+          {c.auth.authedTitle(displayName)}
         </p>
         <p className="mt-2 max-w-[44ch] text-bone-2 text-sm sm:text-base">
-          Head to your dashboard to add a customer one at a time, or upload
-          your delinquent list as a CSV.
+          {c.auth.authedSub}
         </p>
         <div className="mt-6 flex flex-wrap items-center gap-3">
           <Link
             href="/app"
             className="group inline-flex items-center gap-3 bg-ember px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-ink transition-colors hover:bg-bone"
           >
-            Open dashboard
+            {c.auth.ctaDashboard}
             <span className="transition-transform group-hover:translate-x-1">→</span>
           </Link>
           <Link
             href="/app/cases/import"
             className="group inline-flex items-center gap-3 border border-bone/50 px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone hover:border-ember hover:text-ember transition-colors"
           >
-            Import customers
+            {c.auth.ctaImport}
             <span className="transition-transform group-hover:translate-x-1">→</span>
           </Link>
         </div>
@@ -829,31 +1211,30 @@ function AuthCta({
   return (
     <div className="border border-line bg-ink-1/40 p-6 sm:p-8">
       <div className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.22em] text-bone-3">
-        One step. No long form.
+        {c.auth.unauthLabel}
       </div>
       <p className="mt-3 font-display text-xl sm:text-2xl leading-snug text-bone break-words">
-        Get started in two clicks.
+        {c.auth.unauthTitle}
       </p>
       <p className="mt-3 max-w-[44ch] text-bone-2 text-sm sm:text-base">
-        Continue with Google, or use email and password. Your dashboard is
-        ready the moment you sign in.
+        {c.auth.unauthSub}
       </p>
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-        <GoogleButton variant="primary">Continue with Google</GoogleButton>
+        <GoogleButton variant="primary">{c.auth.googleCta}</GoogleButton>
         <Link
           href="/auth/sign-up"
           className="group inline-flex items-center justify-center gap-3 border border-bone/40 px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone hover:border-ember hover:text-ember transition-colors"
         >
-          Use email instead
+          {c.auth.emailCta}
           <span className="transition-transform group-hover:translate-x-1">→</span>
         </Link>
       </div>
 
       <p className="mt-6 font-mono text-[11px] sm:text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
-        Already a member?{" "}
+        {c.auth.already}{" "}
         <Link href="/auth/sign-in" className="text-bone hover:text-ember">
-          Sign in →
+          {c.auth.alreadyLink}
         </Link>
       </p>
     </div>
@@ -864,7 +1245,7 @@ function AuthCta({
 /*  Investor                                                  */
 /* ────────────────────────────────────────────────────────── */
 
-function Investor() {
+function Investor({ c }: { c: Copy }) {
   return (
     <section
       id="investor"
@@ -873,21 +1254,18 @@ function Investor() {
       <div className="ember-floor" aria-hidden style={{ bottom: "-65%" }} />
       <div className="relative mx-auto max-w-[1320px] px-6 py-24 md:py-44">
         <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
-          VII. Now raising
+          {c.investor.label}
         </p>
         <h2 className="mt-4 max-w-[18ch] font-display text-[clamp(2.25rem,7vw,7rem)] leading-[0.98] tracking-tight text-bone break-words">
-          The back-office for
+          {c.investor.titleLine1}
           <br />
-          <em className="text-bone-2">getting paid.</em>
+          <em className="text-bone-2">{c.investor.titleLine2}</em>
         </h2>
 
         <div className="mt-12 sm:mt-14 grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <p className="text-base sm:text-lg text-bone-2 leading-[1.55] max-w-[58ch]">
-              We&rsquo;re closing a pre-seed round to extend the voice agent
-              and the compliance lattice. The data room — including unit
-              economics, the go-to-market plan, and our compliance posture
-              — is available on request to qualified investors.
+              {c.investor.body}
             </p>
 
             <div className="mt-8 sm:mt-10 flex flex-wrap items-center gap-3 sm:gap-4">
@@ -895,16 +1273,14 @@ function Investor() {
                 href="mailto:investors@dragun.app?subject=Dragun%20%E2%80%94%20investor%20memo"
                 className="group inline-flex max-w-full items-center gap-3 bg-ember px-5 sm:px-7 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-ink transition-colors hover:bg-bone break-all"
               >
-                investors@dragun.app
-                <span className="transition-transform group-hover:translate-x-1">
-                  →
-                </span>
+                {c.investor.investorEmail}
+                <span className="transition-transform group-hover:translate-x-1">→</span>
               </a>
               <a
                 href="mailto:founders@dragun.app?subject=Dragun%20%E2%80%94%20founders"
                 className="group inline-flex items-center gap-3 border-b border-bone/40 pb-1 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone-2 transition-colors hover:text-bone hover:border-bone"
               >
-                Talk to a founder
+                {c.investor.foundersLink}
               </a>
             </div>
           </div>
@@ -912,15 +1288,15 @@ function Investor() {
           <aside className="lg:col-span-5">
             <div className="border border-line bg-ink-1/70 p-5 sm:p-7">
               <div className="flex items-center justify-between font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-bone-3">
-                <span>Round · Pre-seed</span>
-                <span className="text-ember">Open</span>
+                <span>{c.investor.cardLabel}</span>
+                <span className="text-ember">{c.investor.cardOpen}</span>
               </div>
               <dl className="mt-6 grid grid-cols-2 gap-5 sm:gap-6">
                 {[
-                  { k: "Stage", v: "Pre-seed" },
-                  { k: "Vehicle", v: "SAFE" },
-                  { k: "Use", v: "Voice agent · Compliance · Growth" },
-                  { k: "Geography", v: "Québec · US first" },
+                  { k: c.investor.kStage, v: c.investor.vStage },
+                  { k: c.investor.kVehicle, v: c.investor.vVehicle },
+                  { k: c.investor.kUse, v: c.investor.vUse },
+                  { k: c.investor.kGeo, v: c.investor.vGeo },
                 ].map((d) => (
                   <div key={d.k} className="min-w-0">
                     <dt className="font-mono text-[11px] sm:text-[11.5px] uppercase tracking-[0.18em] text-bone-3">
@@ -933,8 +1309,7 @@ function Investor() {
                 ))}
               </dl>
               <p className="mt-7 border-t border-line pt-5 font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] text-bone-3 leading-relaxed">
-                Memo includes unit economics, channel design,
-                regulatory posture, go-to-market plan, and team profile.
+                {c.investor.footnote}
               </p>
             </div>
           </aside>
@@ -948,7 +1323,7 @@ function Investor() {
 /*  Footer                                                    */
 /* ────────────────────────────────────────────────────────── */
 
-function Footer() {
+function Footer({ c }: { c: Copy }) {
   return (
     <footer className="relative border-t border-line">
       <div className="mx-auto max-w-[1320px] px-6 pt-16 sm:pt-20 pb-10">
@@ -956,30 +1331,27 @@ function Footer() {
           <div className="lg:col-span-7">
             <a href="#" className="flex items-center gap-3 text-bone">
               <Mark className="h-6 w-6" />
-              <span className="font-display text-2xl tracking-tight">
-                Dragun
-              </span>
+              <span className="font-display text-2xl tracking-tight">Dragun</span>
             </a>
             <p className="mt-5 max-w-[44ch] text-bone-2 text-sm sm:text-base">
-              The friendly back-office for getting paid. Email, SMS and voice
-              — one rhythm, one ledger, one bank deposit.
+              {c.footer.blurb}
             </p>
           </div>
           <div className="lg:col-span-5 grid grid-cols-2 gap-6 sm:gap-8 font-mono text-[12px] sm:text-sm uppercase tracking-[0.18em] text-bone-2">
             <div>
-              <div className="text-bone-3">Platform</div>
+              <div className="text-bone-3">{c.footer.platform}</div>
               <ul className="mt-3 space-y-2">
-                <li><a href="#mechanism" className="hover:text-bone">How it works</a></li>
-                <li><a href="#compliance" className="hover:text-bone">Compliance</a></li>
-                <li><a href="#start" className="hover:text-bone">Pricing</a></li>
+                <li><a href="#mechanism" className="hover:text-bone">{c.footer.howItWorks}</a></li>
+                <li><a href="#compliance" className="hover:text-bone">{c.footer.compliance}</a></li>
+                <li><a href="#start" className="hover:text-bone">{c.footer.pricing}</a></li>
               </ul>
             </div>
             <div className="min-w-0">
-              <div className="text-bone-3">Contact</div>
+              <div className="text-bone-3">{c.footer.contact}</div>
               <ul className="mt-3 space-y-2 break-words">
-                <li><a href="mailto:investors@dragun.app" className="hover:text-bone">Investors</a></li>
-                <li><a href="mailto:founders@dragun.app" className="hover:text-bone">Founders</a></li>
-                <li><a href="mailto:hello@dragun.app" className="hover:text-bone">Owners</a></li>
+                <li><a href="mailto:investors@dragun.app" className="hover:text-bone">{c.footer.investors}</a></li>
+                <li><a href="mailto:founders@dragun.app" className="hover:text-bone">{c.footer.founders}</a></li>
+                <li><a href="mailto:hello@dragun.app" className="hover:text-bone">{c.footer.owners}</a></li>
               </ul>
             </div>
           </div>
@@ -993,12 +1365,12 @@ function Footer() {
         </div>
 
         <div className="mt-8 flex flex-col gap-3 border-t border-line pt-6 font-mono text-[10.5px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.2em] text-bone-3 md:flex-row md:items-center md:justify-between">
-          <span>© 2026 Dragun, Inc. · All rights reserved</span>
-          <span>Built in Québec · For small businesses</span>
+          <span>{c.footer.copyright}</span>
+          <span>{c.footer.tagline}</span>
           <span className="flex flex-wrap gap-4 sm:gap-5">
-            <Link href="/legal/privacy" className="hover:text-bone">Privacy</Link>
-            <Link href="/legal/terms" className="hover:text-bone">Terms</Link>
-            <Link href="/legal/disclosures" className="hover:text-bone">Disclosures</Link>
+            <Link href="/legal/privacy" className="hover:text-bone">{c.footer.privacy}</Link>
+            <Link href="/legal/terms" className="hover:text-bone">{c.footer.terms}</Link>
+            <Link href="/legal/disclosures" className="hover:text-bone">{c.footer.disclosures}</Link>
           </span>
         </div>
       </div>
