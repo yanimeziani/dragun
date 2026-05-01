@@ -30,7 +30,6 @@ export default async function Home() {
       <Problem />
       <Channels />
       <Mechanism />
-      <Dashboard />
       <Compliance />
       <Distribution authed={Boolean(user)} displayName={displayName} />
       <Investor />
@@ -105,15 +104,14 @@ function Nav({ user }: { user: { name: string | null; email: string | null } | n
         <ul className="hidden lg:flex items-center gap-5 xl:gap-8 font-mono text-[12px] xl:text-sm uppercase tracking-[0.18em] text-bone-2">
           <li><a href="/demo" className="text-ember hover:text-bone">Live demo</a></li>
           <li><a href="#mechanism" className="hover:text-bone">How it works</a></li>
-          <li><a href="#dashboard" className="hover:text-bone">Ledger</a></li>
           <li><a href="#compliance" className="hover:text-bone">Compliance</a></li>
-          <li><a href="#alpha" className="hover:text-bone">Alpha</a></li>
+          <li><a href="#start" className="hover:text-bone">Pricing</a></li>
           <li><a href="#investor" className="hover:text-bone">Investors</a></li>
         </ul>
         <ul className="hidden md:flex lg:hidden items-center gap-5 font-mono text-[12px] uppercase tracking-[0.18em] text-bone-2">
           <li><a href="/demo" className="text-ember hover:text-bone">Live demo</a></li>
-          <li><a href="#dashboard" className="hover:text-bone">Ledger</a></li>
-          <li><a href="#alpha" className="hover:text-bone">Alpha</a></li>
+          <li><a href="#mechanism" className="hover:text-bone">How</a></li>
+          <li><a href="#start" className="hover:text-bone">Start</a></li>
         </ul>
         <a
           href="/demo"
@@ -126,10 +124,10 @@ function Nav({ user }: { user: { name: string | null; email: string | null } | n
           <div className="hidden md:flex items-center gap-3">
             <LocaleToggle />
             <Link
-              href="/welcome"
+              href="/app"
               className="font-mono text-[11px] lg:text-xs uppercase tracking-[0.2em] text-bone-2 hover:text-bone whitespace-nowrap"
             >
-              {user.name ?? "Your seat"}
+              {user.name ?? "Dashboard"}
             </Link>
             <form action={signOut}>
               <button
@@ -153,7 +151,7 @@ function Nav({ user }: { user: { name: string | null; email: string | null } | n
               href="/auth/sign-up"
               className="group inline-flex items-center gap-2 border border-bone/70 px-3 lg:px-4 py-2 font-mono text-[11px] lg:text-xs uppercase tracking-[0.2em] text-bone hover:border-ember hover:text-ember transition-colors whitespace-nowrap"
             >
-              Claim a seat
+              Start free
               <span className="transition-transform group-hover:translate-x-0.5">→</span>
             </Link>
           </div>
@@ -224,37 +222,28 @@ function Hero({ authed }: { authed: boolean }) {
                 </span>
               </a>
               <a
-                href={authed ? "/welcome" : "#alpha"}
+                href={authed ? "/app" : "/auth/sign-up"}
                 className="group inline-flex items-center gap-3 border border-bone/50 px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone hover:border-ember hover:text-ember transition-colors"
               >
-                {authed ? "Your seat" : "Claim a seat"}
+                {authed ? "Open dashboard" : "Start free"}
                 <span className="transition-transform group-hover:translate-x-1">
                   →
-                </span>
-              </a>
-              <a
-                href="#dashboard"
-                className="group inline-flex items-center gap-3 border-b border-bone/40 pb-1 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone-2 transition-colors hover:text-bone hover:border-bone"
-              >
-                Tour the ledger
-                <span className="transition-transform group-hover:translate-y-0.5">
-                  ↓
                 </span>
               </a>
             </div>
           </div>
 
-          {/* Ledger preview card */}
+          {/* At-a-glance card */}
           <aside
             className="rise lg:col-span-4 lg:mt-2 self-start"
             style={{ animationDelay: "0.42s" }}
           >
             <div className="border border-line bg-ink-1/70 backdrop-blur-sm">
               <div className="flex items-center justify-between border-b border-line px-5 py-3 font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] text-bone-3">
-                <span>Your ledger · Preview</span>
-                <span className="flex items-center gap-2 text-bone-3">
-                  <span className="h-1.5 w-1.5 rounded-full bg-bone-3/60" />
-                  Mockup
+                <span>Dragun · At a glance</span>
+                <span className="flex items-center gap-2 text-ember">
+                  <span className="pulse h-1.5 w-1.5 rounded-full bg-ember" />
+                  Live
                 </span>
               </div>
               <div className="px-5 py-7">
@@ -604,417 +593,6 @@ function Mechanism() {
   );
 }
 
-/* ────────────────────────────────────────────────────────── */
-/*  Dashboard preview                                         */
-/* ────────────────────────────────────────────────────────── */
-
-function Dashboard() {
-  const cases = [
-    {
-      id: "DR-1041",
-      who: "Northridge Plumbing & Heat",
-      sector: "Trades",
-      amount: "$4,128.00",
-      age: "27d",
-      mix: ["E", "S", "V"],
-      status: "PAID",
-    },
-    {
-      id: "DR-1042",
-      who: "Halstead Auto Body",
-      sector: "Auto",
-      amount: "$1,290.00",
-      age: "14d",
-      mix: ["E", "S"],
-      status: "FOLLOWING UP",
-    },
-    {
-      id: "DR-1043",
-      who: "Oakwell Café Group",
-      sector: "Hospitality",
-      amount: "$782.50",
-      age: "9d",
-      mix: ["E"],
-      status: "DRAFTED",
-    },
-    {
-      id: "DR-1044",
-      who: "Maritime Supply Co.",
-      sector: "Wholesale",
-      amount: "$9,402.00",
-      age: "41d",
-      mix: ["E", "S", "V"],
-      status: "ATTENTION",
-    },
-    {
-      id: "DR-1045",
-      who: "Waves & Wicks LLC",
-      sector: "Retail",
-      amount: "$355.00",
-      age: "4d",
-      mix: ["E"],
-      status: "DRAFTED",
-    },
-    {
-      id: "DR-1046",
-      who: "Bering Strait Logistics",
-      sector: "Logistics",
-      amount: "$11,008.20",
-      age: "19d",
-      mix: ["E", "S", "V"],
-      status: "FOLLOWING UP",
-    },
-    {
-      id: "DR-1047",
-      who: "Foothill Dental Partners",
-      sector: "Health",
-      amount: "$2,140.75",
-      age: "31d",
-      mix: ["E", "S"],
-      status: "PROMISED",
-    },
-  ];
-
-  const events = [
-    { t: "02:14", c: "VOICE", m: "Friendly call · 1m12s · they’ll pay later today", id: "DR-1041" },
-    { t: "02:11", c: "EMAIL", m: "Reply received · ‘can you resend the link?’", id: "DR-1042" },
-    { t: "02:09", c: "SMS", m: "Delivered · pay link tapped", id: "DR-1044" },
-    { t: "02:04", c: "EMAIL", m: "Sent · friendly reminder", id: "DR-1045" },
-    { t: "01:58", c: "VOICE", m: "Voicemail left · warm tone", id: "DR-1046" },
-    { t: "01:52", c: "SMS", m: "Delivered · quiet hours respected", id: "DR-1047" },
-  ];
-
-  const channelStats = [
-    { name: "Email", v: "Resend", start: 0, span: 70, window: "D0–D21" },
-    { name: "SMS", v: "Twilio", start: 16, span: 44, window: "D5–D18" },
-    { name: "Voice", v: "Agent", start: 40, span: 47, window: "D12–D26" },
-  ];
-
-  const statusColor: Record<string, string> = {
-    PAID: "bg-moss text-bone border-moss",
-    "FOLLOWING UP": "bg-ember/15 text-ember border-ember/40",
-    DRAFTED: "bg-transparent text-bone-3 border-bone-3/40",
-    ATTENTION: "bg-ember text-ink border-ember",
-    PROMISED: "bg-bone text-ink border-bone",
-  };
-
-  return (
-    <section id="dashboard" className="relative border-y border-line bg-ink-1/40">
-      <div className="mx-auto max-w-[1320px] px-6 py-24 md:py-36">
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
-              IV. Your ledger · Preview
-            </p>
-            <h2 className="mt-4 font-display text-[clamp(2rem,5vw,4.2rem)] leading-[1.04] tracking-tight text-bone break-words">
-              One ledger for every unpaid invoice.
-            </h2>
-          </div>
-          <p className="max-w-md text-bone-2 text-sm sm:text-base">
-            Built for small-business owners. Every customer is auditable,
-            every reminder is timestamped, every payment lands in your bank.
-            <span className="mt-2 block font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-bone-3">
-              Mockup · sample data ahead of alpha
-            </span>
-          </p>
-        </div>
-
-        {/* App chrome */}
-        <div className="mt-14 overflow-hidden border border-line bg-ink shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8)]">
-          {/* window bar */}
-          <div className="flex items-center justify-between border-b border-line bg-ink-2 px-4 py-2.5">
-            <div className="flex items-center gap-2">
-              <span className="h-2.5 w-2.5 rounded-full bg-ember/80" />
-              <span className="h-2.5 w-2.5 rounded-full bg-bone-3/40" />
-              <span className="h-2.5 w-2.5 rounded-full bg-bone-3/40" />
-            </div>
-            <div className="font-mono text-xs uppercase tracking-[0.2em] text-bone-3">
-              app.dragun.io / ledger · preview
-            </div>
-            <div className="font-mono text-xs uppercase tracking-[0.2em] text-bone-3">
-              your-business
-            </div>
-          </div>
-
-          {/* Body */}
-          <div className="grid grid-cols-1 lg:grid-cols-[180px_1fr_320px]">
-            {/* Sidebar */}
-            <aside className="border-b border-line lg:border-b-0 lg:border-r">
-              <div className="px-5 py-5 border-b border-line">
-                <div className="flex items-center gap-2 text-bone">
-                  <Mark className="h-4 w-4" />
-                  <span className="font-display text-base tracking-tight">
-                    Dragun
-                  </span>
-                </div>
-                <div className="mt-3 font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
-                  Your business
-                </div>
-              </div>
-              <nav className="px-2 py-3 font-mono text-sm uppercase tracking-[0.18em]">
-                {[
-                  ["Ledger", true],
-                  ["Customers", false],
-                  ["Drafts", false],
-                  ["Inbox", false],
-                  ["Call log", false],
-                  ["Settings", false],
-                ].map(([label, active]) => (
-                  <a
-                    key={String(label)}
-                    href="#"
-                    className={`flex items-center justify-between rounded-[1px] px-3 py-2 ${
-                      active
-                        ? "bg-bone/5 text-bone"
-                        : "text-bone-3 hover:text-bone"
-                    }`}
-                  >
-                    <span>{label}</span>
-                    {active && <span className="text-ember">●</span>}
-                  </a>
-                ))}
-              </nav>
-              <div className="mt-2 border-t border-line px-5 py-5">
-                <div className="font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
-                  Compliance
-                </div>
-                <div className="mt-3 space-y-1.5 text-[13.5px] text-bone-2">
-                  <div className="flex items-center justify-between">
-                    <span>Calling hours</span>
-                    <span className="text-ember">Open</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Tone</span>
-                    <span className="text-bone">Friendly</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>SMS · 10DLC</span>
-                    <span className="text-bone">OK</span>
-                  </div>
-                </div>
-              </div>
-            </aside>
-
-            {/* Main */}
-            <div className="min-w-0">
-              {/* KPI */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 border-b border-line">
-                {[
-                  { k: "Open invoices", v: "—" },
-                  { k: "Paid · 30d", v: "—" },
-                  { k: "Median time-to-pay", v: "—" },
-                  { k: "Pay rate", v: "—" },
-                ].map((k, i) => (
-                  <div
-                    key={k.k}
-                    className={`px-5 py-5 ${
-                      i < 3 ? "border-r border-line" : ""
-                    }`}
-                  >
-                    <div className="font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
-                      {k.k}
-                    </div>
-                    <div className="num mt-2 font-display text-3xl text-bone-2">
-                      {k.v}
-                    </div>
-                    <div className="mt-1 font-mono text-xs uppercase tracking-[0.2em] text-bone-3">
-                      Awaits first cohort
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Cases — mobile cards */}
-              <ul className="md:hidden divide-y divide-line">
-                {cases.map((r) => (
-                  <li key={r.id} className="px-5 py-4">
-                    <div className="flex items-baseline justify-between">
-                      <span className="font-mono text-xs uppercase tracking-[0.2em] text-bone-3">
-                        {r.id} · {r.sector}
-                      </span>
-                      <span
-                        className={`inline-flex border px-2 py-0.5 font-mono text-sm uppercase tracking-[0.18em] ${statusColor[r.status]}`}
-                      >
-                        {r.status}
-                      </span>
-                    </div>
-                    <div className="mt-1.5 text-bone">{r.who}</div>
-                    <div className="mt-2 flex items-center justify-between">
-                      <span className="num text-sm text-bone-2">
-                        <span className="text-bone">{r.amount}</span>
-                        <span className="text-bone-3"> · </span>
-                        {r.age}
-                      </span>
-                      <div className="flex gap-1 font-mono text-[11.5px]">
-                        {(["E", "S", "V"] as const).map((m) => {
-                          const on = r.mix.includes(m);
-                          return (
-                            <span
-                              key={m}
-                              className={`flex h-5 w-5 items-center justify-center border ${
-                                on
-                                  ? "border-bone text-bone"
-                                  : "border-bone-3/30 text-bone-3/40"
-                              }`}
-                            >
-                              {m}
-                            </span>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-
-              {/* Cases — tablet+ table */}
-              <div className="hidden md:block overflow-x-auto thin-scroll">
-                <table className="w-full min-w-[720px] text-sm">
-                  <thead>
-                    <tr className="border-b border-line text-left font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
-                      <th className="px-5 py-3 font-medium">Invoice</th>
-                      <th className="px-3 py-3 font-medium">Customer</th>
-                      <th className="px-3 py-3 font-medium">Sector</th>
-                      <th className="px-3 py-3 font-medium text-right">Amount</th>
-                      <th className="px-3 py-3 font-medium text-right">Age</th>
-                      <th className="px-3 py-3 font-medium">Channels</th>
-                      <th className="px-5 py-3 font-medium">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {cases.map((r) => (
-                      <tr key={r.id} className="row border-b border-line-soft">
-                        <td className="px-5 py-3.5 font-mono text-[13.5px] text-bone-2">
-                          {r.id}
-                        </td>
-                        <td className="px-3 py-3.5 text-bone">{r.who}</td>
-                        <td className="px-3 py-3.5 text-bone-3">{r.sector}</td>
-                        <td className="num px-3 py-3.5 text-right text-bone">
-                          {r.amount}
-                        </td>
-                        <td className="num px-3 py-3.5 text-right text-bone-2">
-                          {r.age}
-                        </td>
-                        <td className="px-3 py-3.5">
-                          <div className="flex gap-1 font-mono text-[11.5px]">
-                            {(["E", "S", "V"] as const).map((m) => {
-                              const on = r.mix.includes(m);
-                              return (
-                                <span
-                                  key={m}
-                                  className={`flex h-5 w-5 items-center justify-center border ${
-                                    on
-                                      ? "border-bone text-bone"
-                                      : "border-bone-3/30 text-bone-3/40"
-                                  }`}
-                                >
-                                  {m}
-                                </span>
-                              );
-                            })}
-                          </div>
-                        </td>
-                        <td className="px-5 py-3.5">
-                          <span
-                            className={`inline-flex border px-2 py-0.5 font-mono text-[11.5px] uppercase tracking-[0.18em] ${
-                              statusColor[r.status]
-                            }`}
-                          >
-                            {r.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Channel composition */}
-              <div className="border-t border-line p-5">
-                <div className="flex items-baseline justify-between">
-                  <div className="font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
-                    Channel composition · per case
-                  </div>
-                  <div className="font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
-                    window
-                  </div>
-                </div>
-                <div className="mt-5 space-y-4">
-                  {channelStats.map((c) => (
-                    <div
-                      key={c.name}
-                      className="grid grid-cols-[80px_1fr_80px] items-center gap-4"
-                    >
-                      <div>
-                        <div className="font-display text-lg text-bone">
-                          {c.name}
-                        </div>
-                        <div className="font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
-                          {c.v}
-                        </div>
-                      </div>
-                      <div className="relative h-2 bg-ink-3">
-                        <div
-                          className="absolute inset-y-0 bg-bone/40"
-                          style={{ left: `${c.start}%`, width: `${c.span}%` }}
-                        />
-                      </div>
-                      <div className="num text-right text-sm text-bone-3 font-mono uppercase tracking-[0.18em]">
-                        {c.window}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Sample transmissions */}
-            <aside className="border-t border-line lg:border-t-0 lg:border-l">
-              <div className="border-b border-line px-5 py-3 flex items-center justify-between">
-                <span className="font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
-                  Transmissions
-                </span>
-                <span className="flex items-center gap-2 font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
-                  <span className="h-1.5 w-1.5 rounded-full bg-bone-3/60" />
-                  Sample
-                </span>
-              </div>
-              <ul>
-                {events.map((e, i) => (
-                  <li
-                    key={i}
-                    className="row border-b border-line-soft px-5 py-3"
-                  >
-                    <div className="flex items-baseline justify-between font-mono text-xs uppercase tracking-[0.18em]">
-                      <span className="text-bone-3">{e.t}</span>
-                      <span
-                        className={
-                          e.c === "EMAIL"
-                            ? "text-bone"
-                            : e.c === "SMS"
-                              ? "text-bone-2"
-                              : "text-ember"
-                        }
-                      >
-                        {e.c}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-sm text-bone-2 leading-snug">
-                      {e.m}
-                    </p>
-                    <p className="mt-1 font-mono text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
-                      {e.id}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </aside>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 /* ────────────────────────────────────────────────────────── */
 /*  Compliance                                                */
@@ -1085,7 +663,7 @@ function Compliance() {
 }
 
 /* ────────────────────────────────────────────────────────── */
-/*  Distribution — private alpha via FB owner groups          */
+/*  Distribution — getting started                            */
 /* ────────────────────────────────────────────────────────── */
 
 function Distribution({
@@ -1101,22 +679,21 @@ function Distribution({
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
-              VI. Getting started
+              IV. Getting started
             </p>
             <h2 className="mt-4 font-display text-[clamp(2rem,5vw,4.2rem)] leading-[1.04] tracking-tight text-bone break-words">
-              Public alpha.
+              Free to start.
               <br />
-              <em>Fifty seats, open.</em>
+              <em>Pay only on what we recover.</em>
             </h2>
             <p className="mt-6 max-w-[44ch] text-bone-2 text-sm sm:text-base">
-              No invitations, no waiting list. Fifty seats, first come, first
-              served. Sign up and an in-app tutorial walks you from empty
-              ledger to your first friendly reminder — no sales calls, no
-              gatekeeping.
+              Sign up at dragun.app, name your business, paste in your
+              delinquent list, and a 14-day cadence kicks off in your brand
+              voice. No sales calls, no gatekeeping, no monthly fee.
             </p>
             <p className="mt-4 max-w-[44ch] text-bone-2 text-sm sm:text-base">
-              Flat 5% on what gets paid. Cancel any time. Your ledger is yours.
-              We only earn when you do.
+              Flat 5 % on what gets paid. Cancel any time. Your ledger is
+              yours, always. We only earn when you do.
             </p>
           </div>
 
@@ -1124,8 +701,8 @@ function Distribution({
             <div className="border border-line">
               <div className="grid grid-cols-3 border-b border-line">
                 {[
-                  { k: "Alpha seats", v: "50", d: "Open now" },
-                  { k: "Onboarding", v: "Self-serve", d: "In-app tutorial" },
+                  { k: "Onboarding", v: "Self-serve", d: "5 minutes" },
+                  { k: "Languages", v: "FR · EN", d: "From day one" },
                   { k: "Pricing", v: "5%", d: "Of paid, flat" },
                 ].map((s, i) => (
                   <div
@@ -1146,9 +723,9 @@ function Distribution({
               </div>
               <ul className="divide-y divide-line">
                 {[
-                  ["D0", "Claim a seat · sandbox provisioned automatically"],
-                  ["D0", "In-app tutorial · email, SMS, voice wired in minutes"],
-                  ["D1", "Approve your first drafts · reminders go live"],
+                  ["D0", "Sign up · onboard your business in 5 minutes"],
+                  ["D0", "Add a customer or upload your list as CSV"],
+                  ["D0", "First friendly email goes out the same day"],
                   ["D7+", "Voice agent joins in as invoices age"],
                 ].map(([k, v], i) => (
                   <li
@@ -1166,14 +743,14 @@ function Distribution({
           </div>
         </div>
 
-        {/* Alpha access form */}
+        {/* Sign-up form */}
         <div
-          id="alpha"
+          id="start"
           className="mt-20 sm:mt-24 grid gap-12 border-t border-line pt-12 sm:pt-16 lg:grid-cols-12"
         >
           <div className="lg:col-span-5">
             <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
-              Claim a seat
+              Start free
             </p>
             <h3 className="mt-3 font-display text-[clamp(1.75rem,3.5vw,3rem)] leading-[1.06] tracking-tight text-bone break-words">
               Run your ledger
@@ -1181,9 +758,9 @@ function Distribution({
               <em className="text-bone-2">on Dragun.</em>
             </h3>
             <p className="mt-5 max-w-[40ch] text-bone-2 text-sm sm:text-base">
-              Fifty seats are open. The in-app tutorial gets you from sign-up
-              to your first friendly reminder in under ten minutes — no sales
-              calls, no waiting list.
+              No sales calls. No waiting list. Sign in and the onboarding
+              wizard gets you from a fresh account to your first reminder
+              in under ten minutes.
             </p>
             <ul className="mt-8 space-y-3 font-mono text-[12px] sm:text-sm uppercase tracking-[0.18em] text-bone-2">
               <li className="flex gap-3">
@@ -1220,22 +797,22 @@ function AuthCta({
     return (
       <div className="border border-ember/40 bg-ember/5 p-6 sm:p-8 text-bone">
         <div className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.22em] text-ember">
-          Seat reserved
+          Signed in
         </div>
         <p className="mt-3 font-display text-xl sm:text-2xl leading-snug break-words">
-          {displayName ? `You're in, ${displayName}.` : "You're in."} Your
-          ledger is ready.
+          {displayName ? `Welcome back, ${displayName}.` : "Welcome back."} Your
+          dashboard is ready.
         </p>
         <p className="mt-2 max-w-[44ch] text-bone-2 text-sm sm:text-base">
-          Head to your seat to start the in-app tutorial, or take a tour of the
-          live demo first.
+          Head to your dashboard to add a customer or import your list, or
+          walk through the live demo first.
         </p>
         <div className="mt-6 flex flex-wrap items-center gap-3">
           <Link
-            href="/welcome"
+            href="/app"
             className="group inline-flex items-center gap-3 bg-ember px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-ink transition-colors hover:bg-bone"
           >
-            Open your seat
+            Open dashboard
             <span className="transition-transform group-hover:translate-x-1">→</span>
           </Link>
           <Link
@@ -1256,11 +833,11 @@ function AuthCta({
         One step. No long form.
       </div>
       <p className="mt-3 font-display text-xl sm:text-2xl leading-snug text-bone break-words">
-        Sign in to claim your seat.
+        Get started in two clicks.
       </p>
       <p className="mt-3 max-w-[44ch] text-bone-2 text-sm sm:text-base">
-        Continue with Google, or use email and password. Your sandbox is
-        provisioned the moment you sign in.
+        Continue with Google, or use email and password. Your dashboard is
+        ready the moment you sign in.
       </p>
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
@@ -1310,7 +887,7 @@ function Investor() {
             <p className="text-base sm:text-lg text-bone-2 leading-[1.55] max-w-[58ch]">
               We&rsquo;re closing a pre-seed round to extend the voice agent
               and the compliance lattice. The data room — including unit
-              economics, the alpha cohort plan, and our compliance posture
+              economics, the go-to-market plan, and our compliance posture
               — is available on request to qualified investors.
             </p>
 
@@ -1343,7 +920,7 @@ function Investor() {
                 {[
                   { k: "Stage", v: "Pre-seed" },
                   { k: "Vehicle", v: "SAFE" },
-                  { k: "Use", v: "Voice agent · Compliance · Alpha" },
+                  { k: "Use", v: "Voice agent · Compliance · Growth" },
                   { k: "Geography", v: "Québec · US first" },
                 ].map((d) => (
                   <div key={d.k} className="min-w-0">
@@ -1358,7 +935,7 @@ function Investor() {
               </dl>
               <p className="mt-7 border-t border-line pt-5 font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] text-bone-3 leading-relaxed">
                 Memo includes unit economics, channel design,
-                regulatory posture, alpha cohort plan, and team profile.
+                regulatory posture, go-to-market plan, and team profile.
               </p>
             </div>
           </aside>
@@ -1394,8 +971,8 @@ function Footer() {
               <div className="text-bone-3">Platform</div>
               <ul className="mt-3 space-y-2">
                 <li><a href="#mechanism" className="hover:text-bone">How it works</a></li>
-                <li><a href="#dashboard" className="hover:text-bone">Ledger</a></li>
                 <li><a href="#compliance" className="hover:text-bone">Compliance</a></li>
+                <li><a href="#start" className="hover:text-bone">Pricing</a></li>
               </ul>
             </div>
             <div className="min-w-0">
