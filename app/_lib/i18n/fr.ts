@@ -83,8 +83,10 @@ export const fr: Strings = {
   legal: {
     privacy: "Confidentialité",
     terms: "Conditions",
+    disclosures: "Divulgations",
     privacyTitle: "Politique de confidentialité",
     termsTitle: "Conditions d'utilisation",
+    disclosuresTitle: "Divulgations",
   },
   errors: {
     invalidEmail: "Adresse courriel invalide.",

@@ -15,7 +15,6 @@
 | `/app/settings`                | Org settings — brand, locale, signature, billing email                | org  | Server |
 | `/p/[slug]`                    | Debtor-facing pay page (Stripe Checkout)                              | none | Server |
 | `/p/[slug]/thanks`             | Post-payment confirmation in debtor locale                            | none | Static |
-| `/demo?client=<slug>`          | Public scripted demo (sales surface)                                  | none | Static |
 | `/legal/privacy`               | Bilingual privacy policy                                              | none | Static |
 | `/legal/terms`                 | Bilingual terms of service                                            | none | Static |
 | `/api/cron/cadence`            | Vercel cron — advances open campaigns                                 | cron | Edge   |
@@ -180,12 +179,6 @@ const label = await t('nav.signIn');  // server: reads cookie
 For client components, the resolved string map is passed via React
 context from a server component wrapper.
 
-The `/demo` scripted player uses its own per-fixture string map
-(`app/_data/clients/<slug>.ts`) — that surface is intentionally
-locale-baked-into-the-fixture, not driven by the cookie, so a
-prospect can preview a fully French operator UI without changing
-their own browser locale.
-
 Debtor-facing channel content (email/SMS/voice scripts) is driven by
 `debtors.locale` (override) or `organizations.locale` (default).
 
@@ -210,8 +203,7 @@ app/
 │  ├─ locale-toggle.tsx       FR / EN switch
 │  ├─ nav.tsx                 top nav, locale-aware
 │  └─ case-card.tsx           dashboard list item
-├─ _data/
-│  └─ clients/                (done) /demo fixtures
+│  (no _data/ — the scripted /demo route was removed in favor of
 ├─ _lib/
 │  ├─ supabase/
 │  │  ├─ client.ts            (done) browser client
@@ -274,11 +266,11 @@ docs/
 - **No SDK churn.** Resend, Twilio, Stripe all called via REST `fetch`
   — except Stripe webhook signature verification, which uses the
   official Stripe SDK because hand-rolling HMAC is not worth the risk.
-- **No mock channels in production code paths.** The `/demo` scripted
-  player is the only "fake" surface; everything inside `/app` and
-  `/api/*` either sends or errors.
-- **Fixture-driven branding for `/demo` only.** Real organizations
-  brand via `organizations.brand` jsonb, not by adding files.
+- **No mock channels.** Everything inside `/app` and `/api/*` either
+  sends real channel traffic or errors. There is no "fake send" code
+  path that could mask a misconfig.
+- **Branding via `organizations.brand` jsonb.** Logos, colors, and
+  signature live in the database per-org; no per-client code drops.
 - **All secrets are env vars.** No keys in code, no keys in committed
   `.env.*` files.
 - **RLS on every public table.** No public reads of org-scoped data.

@@ -83,8 +83,10 @@ export type Strings = {
   legal: {
     privacy: string;
     terms: string;
+    disclosures: string;
     privacyTitle: string;
     termsTitle: string;
+    disclosuresTitle: string;
   };
   errors: {
     invalidEmail: string;

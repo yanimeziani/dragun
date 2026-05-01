@@ -56,8 +56,9 @@ setup supports this if you arrange it:
       sign up a throwaway account, create an org, create a case,
       see email + SMS + call land within 5 min, complete a Stripe
       test payment. Delete the test data after.
-- [ ] Smoke the scripted demo: `dragun.app/demo?client=venice-gym`
-      end to end. No Atlas leakage, no English in FR mode.
+- [ ] Sign up a throwaway account, walk the full onboarding +
+      single-case-create + CSV-import flow against your own verified
+      phone. Record what you see. The product itself is the demo.
 - [ ] Open `runbook.md` and `stories.md` on a second monitor. Have
       the fallback screencast (`public/demo-fallback.mp4` or Drive
       link below) one click away.
@@ -139,5 +140,6 @@ setup supports this if you arrange it:
       while he's still holding the phone you just demoed on.
 - [ ] Open new stories in `stories.md` for any breakage observed
       during the demo. Do not close out tasks for things you faked.
-- [ ] Within 24h: email each new prospect a personal `/demo?client=
-      <their-gym-slug>` URL. Pre-build the fixture overnight.
+- [ ] Within 24h: email each new prospect their direct sign-up URL
+      (`dragun.app/auth/sign-up`). They onboard their own business in
+      5 minutes; the live product is the only demo we offer now.

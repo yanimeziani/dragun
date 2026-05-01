@@ -83,8 +83,10 @@ export const en: Strings = {
   legal: {
     privacy: "Privacy",
     terms: "Terms",
+    disclosures: "Disclosures",
     privacyTitle: "Privacy policy",
     termsTitle: "Terms of service",
+    disclosuresTitle: "Disclosures",
   },
   errors: {
     invalidEmail: "Invalid email address.",

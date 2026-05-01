@@ -84,6 +84,9 @@ export function LegalShell({
           <Link href="/legal/terms" className="hover:text-bone">
             {strings.legal.terms}
           </Link>
+          <Link href="/legal/disclosures" className="hover:text-bone">
+            {strings.legal.disclosures}
+          </Link>
           <Link href="/" className="ml-auto hover:text-bone">
             ← {strings.nav.home}
           </Link>

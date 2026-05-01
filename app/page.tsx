@@ -102,24 +102,23 @@ function Nav({ user }: { user: { name: string | null; email: string | null } | n
           </span>
         </a>
         <ul className="hidden lg:flex items-center gap-5 xl:gap-8 font-mono text-[12px] xl:text-sm uppercase tracking-[0.18em] text-bone-2">
-          <li><a href="/demo" className="text-ember hover:text-bone">Live demo</a></li>
           <li><a href="#mechanism" className="hover:text-bone">How it works</a></li>
           <li><a href="#compliance" className="hover:text-bone">Compliance</a></li>
           <li><a href="#start" className="hover:text-bone">Pricing</a></li>
           <li><a href="#investor" className="hover:text-bone">Investors</a></li>
         </ul>
         <ul className="hidden md:flex lg:hidden items-center gap-5 font-mono text-[12px] uppercase tracking-[0.18em] text-bone-2">
-          <li><a href="/demo" className="text-ember hover:text-bone">Live demo</a></li>
           <li><a href="#mechanism" className="hover:text-bone">How</a></li>
+          <li><a href="#compliance" className="hover:text-bone">Compliance</a></li>
           <li><a href="#start" className="hover:text-bone">Start</a></li>
         </ul>
-        <a
-          href="/demo"
+        <Link
+          href="/auth/sign-up"
           className="group inline-flex md:hidden items-center gap-2 border border-ember px-3 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-ember"
         >
-          Live demo
+          Start free
           <span className="transition-transform group-hover:translate-x-0.5">→</span>
-        </a>
+        </Link>
         {user ? (
           <div className="hidden md:flex items-center gap-3">
             <LocaleToggle />
@@ -212,15 +211,15 @@ function Hero({ authed }: { authed: boolean }) {
               className="rise mt-10 sm:mt-12 flex flex-wrap items-center gap-3 sm:gap-4"
               style={{ animationDelay: "0.28s" }}
             >
-              <a
-                href="/demo?client=venice-gym"
+              <Link
+                href="/auth/sign-up"
                 className="group inline-flex items-center gap-3 bg-ember px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-ink transition-colors hover:bg-bone"
               >
-                See it in action
+                Start free
                 <span className="transition-transform group-hover:translate-x-1">
                   →
                 </span>
-              </a>
+              </Link>
               <a
                 href={authed ? "/app" : "/auth/sign-up"}
                 className="group inline-flex items-center gap-3 border border-bone/50 px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone hover:border-ember hover:text-ember transition-colors"
@@ -804,8 +803,8 @@ function AuthCta({
           dashboard is ready.
         </p>
         <p className="mt-2 max-w-[44ch] text-bone-2 text-sm sm:text-base">
-          Head to your dashboard to add a customer or import your list, or
-          walk through the live demo first.
+          Head to your dashboard to add a customer one at a time, or upload
+          your delinquent list as a CSV.
         </p>
         <div className="mt-6 flex flex-wrap items-center gap-3">
           <Link
@@ -816,10 +815,10 @@ function AuthCta({
             <span className="transition-transform group-hover:translate-x-1">→</span>
           </Link>
           <Link
-            href="/demo"
+            href="/app/cases/import"
             className="group inline-flex items-center gap-3 border border-bone/50 px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone hover:border-ember hover:text-ember transition-colors"
           >
-            Live demo
+            Import customers
             <span className="transition-transform group-hover:translate-x-1">→</span>
           </Link>
         </div>
@@ -999,6 +998,7 @@ function Footer() {
           <span className="flex flex-wrap gap-4 sm:gap-5">
             <Link href="/legal/privacy" className="hover:text-bone">Privacy</Link>
             <Link href="/legal/terms" className="hover:text-bone">Terms</Link>
+            <Link href="/legal/disclosures" className="hover:text-bone">Disclosures</Link>
           </span>
         </div>
       </div>

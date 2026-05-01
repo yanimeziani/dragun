@@ -65,9 +65,10 @@ This is what `dragun.app` actually does on launch day:
 - **Bilingual surfaces.** Landing, dashboard, communications, pay
   link, legal — everything has EN and FR strings, with a cookie-based
   locale toggle that defaults to FR for Quebec IPs.
-- **Public scripted demo.** `/demo?client=<slug>` stays as a sales
-  tool — anyone can scrub through a 14-day reminder rhythm in either
-  locale without signing up. It's how prospects decide to sign up.
+- **No scripted "demo" route.** The product itself is the demo:
+  prospects sign up at `/auth/sign-up`, complete onboarding, import
+  a CSV (or add a single test customer), and watch a real campaign
+  fire. The previous scrub-through scripted player has been removed.
 
 ## Out of scope for 2026-05-01
 
@@ -122,7 +123,5 @@ By 2026-05-01 14:30 (T-1h before Mounir):
 3. `https://dragun.app/p/<slug>` returns a Stripe Checkout in the
    debtor's locale. Successful test charge with a Stripe test card.
 4. Locale toggle works on every public surface and on `/app`.
-5. `https://dragun.app/demo?client=venice-gym` (scripted) renders
-   FR end-to-end with no English leakage.
-6. A 60-second fallback screencast of the full live signup-to-recovery
-   flow is recorded.
+5. A 60-second fallback screencast of the full live signup-to-recovery
+   flow is recorded for if the room WiFi is hostile.

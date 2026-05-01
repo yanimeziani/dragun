@@ -9,45 +9,69 @@ export const metadata: Metadata = {
   title: "Dragun · Import",
 };
 
-const SAMPLE_CSV = `name,email,phone,amount,currency,description,locale
+const SAMPLE_CSV = `Name,Email,Phone,Amount,Currency,Description,Locale
 Jean-François Tremblay,jf@example.com,+14185551234,89.00,CAD,Cotisation avril,fr
-Alex Carter,alex@example.com,+14165550100,89.00,USD,March membership,en
-Sophie Lévesque,sophie@example.com,+14185551235,120.00,CAD,Forfait trimestriel,fr
+Alex Carter,alex@example.com,(416) 555-0100,89.00,USD,March membership,en
+Sophie Lévesque,sophie@example.com,418-555-1235,"120,00",CAD,Forfait trimestriel,fr
+Michel Lavoie,,4185559876,$45.50,,Drop-in fee,fr
+"O'Brien, Patrick",patrick@obrien.ca,+14385559090,210.00,CAD,"April + May (combined)",en
 `;
 
 const COPY = {
   fr: {
-    title: "Importer vos cas en lot",
+    title: "Importer vos clients en lot",
     subtitle:
-      "Téléversez un fichier CSV avec votre liste de membres en retard. Une campagne de 14 jours démarre automatiquement pour chaque ligne valide.",
-    columns: "Colonnes",
-    columnsList:
-      "name (requis), email, phone (E.164), amount (requis, > 0), currency (CAD par défaut), description, locale (fr / en)",
+      "Téléversez un CSV de votre liste de clients en retard. Aperçu d’abord, importation ensuite. Une campagne de 14 jours démarre automatiquement pour chaque ligne valide.",
+    columnsTitle: "Colonnes acceptées",
+    columnsBlurb:
+      "Requis : nom et montant. Optionnel : courriel, téléphone, devise, description, langue. L’en-tête peut utiliser plusieurs alias (Customer, Debtor, Full Name, Téléphone, Mobile, Solde, Montant, Devise, Locale, Langue…).",
+    samplesTitle: "Conversion automatique",
+    samplesBlurb:
+      "Les numéros nord-américains sans préfixe (10 chiffres ou 1+10) sont normalisés en E.164. Les montants acceptent « 89.00 », « 89,00 », « 89,00 $ », « $89.00 ». Symboles de devise et espaces ignorés.",
     sampleLabel: "Télécharger un exemple CSV",
     fileLabel: "Fichier CSV",
-    submitLabel: "Importer",
+    previewLabel: "Aperçu",
+    importLabel: "Importer",
     noFileError: "Choisissez un fichier CSV.",
-    doneCreatedLabel: "Cas créés",
-    doneFailedLabel: "Lignes ignorées",
-    errorListLabel: "Lignes ignorées et raisons",
+    totalLabel: "Total",
+    validLabel: "Valides",
+    invalidLabel: "Rejetées",
     rowLabel: "Ligne",
+    doneCreatedLabel: "Cas créés",
+    doneFailedLabel: "Lignes rejetées",
+    errorListLabel: "Lignes rejetées et raisons",
+    validHeading: "Aperçu des lignes valides",
+    invalidHeading: "Lignes rejetées",
+    reuploadHint:
+      "Aucune insertion. Pour importer vraiment, cliquez « Importer » ci-dessus avec le même fichier.",
     backLabel: "← Tableau de bord",
   },
   en: {
-    title: "Import cases in bulk",
+    title: "Import customers in bulk",
     subtitle:
-      "Upload a CSV with your delinquent customers. A 14-day campaign starts automatically for every valid row.",
-    columns: "Columns",
-    columnsList:
-      "name (required), email, phone (E.164), amount (required, > 0), currency (defaults to CAD), description, locale (fr / en)",
+      "Upload a CSV of your delinquent customers. Preview first, import second. A 14-day campaign starts automatically for every valid row.",
+    columnsTitle: "Accepted columns",
+    columnsBlurb:
+      "Required: name and amount. Optional: email, phone, currency, description, locale. The header can use any of the common aliases (Customer, Debtor, Full Name, Phone, Mobile, Balance, Total, Currency, Locale, Language…).",
+    samplesTitle: "Automatic conversion",
+    samplesBlurb:
+      "North-American phone numbers without a prefix (10-digit or 1+10) are normalized to E.164. Amounts accept “89.00”, “89,00”, “89,00 $”, “$89.00”. Currency symbols and spaces are stripped.",
     sampleLabel: "Download sample CSV",
     fileLabel: "CSV file",
-    submitLabel: "Import",
+    previewLabel: "Preview",
+    importLabel: "Import",
     noFileError: "Choose a CSV file.",
-    doneCreatedLabel: "Cases created",
-    doneFailedLabel: "Rows skipped",
-    errorListLabel: "Skipped rows and reasons",
+    totalLabel: "Total",
+    validLabel: "Valid",
+    invalidLabel: "Rejected",
     rowLabel: "Row",
+    doneCreatedLabel: "Cases created",
+    doneFailedLabel: "Rows rejected",
+    errorListLabel: "Rejected rows and reasons",
+    validHeading: "Valid rows preview",
+    invalidHeading: "Rejected rows",
+    reuploadHint:
+      "No rows inserted. To actually import, click “Import” above with the same file.",
     backLabel: "← Dashboard",
   },
 } as const;
@@ -107,7 +131,7 @@ export default async function ImportCasesPage() {
         </div>
       </header>
 
-      <section className="mx-auto max-w-[760px] px-4 sm:px-6 py-12 sm:py-16">
+      <section className="mx-auto max-w-[860px] px-4 sm:px-6 py-12 sm:py-16">
         <h1 className="font-display text-[clamp(2rem,5vw,3.4rem)] leading-[1.04] tracking-tight text-bone">
           {c.title}
         </h1>
@@ -115,32 +139,37 @@ export default async function ImportCasesPage() {
           {c.subtitle}
         </p>
 
-        <div className="mt-8 border border-line bg-ink-1/30 p-5 sm:p-6">
-          <div className="font-mono text-[10.5px] uppercase tracking-[0.2em] text-bone-3">
-            {c.columns}
+        <div className="mt-8 grid gap-px bg-line border border-line md:grid-cols-2">
+          <div className="bg-ink p-5 sm:p-6">
+            <div className="font-mono text-[10.5px] uppercase tracking-[0.2em] text-bone-3">
+              {c.columnsTitle}
+            </div>
+            <p className="mt-3 text-sm text-bone-2 leading-relaxed">
+              {c.columnsBlurb}
+            </p>
           </div>
-          <p className="mt-2 text-sm text-bone-2 leading-relaxed">
-            {c.columnsList}
-          </p>
+          <div className="bg-ink p-5 sm:p-6">
+            <div className="font-mono text-[10.5px] uppercase tracking-[0.2em] text-bone-3">
+              {c.samplesTitle}
+            </div>
+            <p className="mt-3 text-sm text-bone-2 leading-relaxed">
+              {c.samplesBlurb}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-6">
           <a
             href={sampleHref}
             download="dragun-sample.csv"
-            className="mt-4 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-ember hover:text-bone border-b border-ember hover:border-bone pb-px"
+            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-ember hover:text-bone border-b border-ember hover:border-bone pb-px"
           >
             {c.sampleLabel} ↓
           </a>
         </div>
 
         <div className="mt-12">
-          <ImportForm
-            submitLabel={c.submitLabel}
-            fileLabel={c.fileLabel}
-            noFileError={c.noFileError}
-            doneCreatedLabel={c.doneCreatedLabel}
-            doneFailedLabel={c.doneFailedLabel}
-            errorListLabel={c.errorListLabel}
-            rowLabel={c.rowLabel}
-          />
+          <ImportForm copy={c} />
         </div>
       </section>
     </main>
