@@ -231,9 +231,12 @@ a real send.
 
 ## S10 — Message templates EN + FR
 
-**Status:** pending
+**Status:** in_progress
 **Estimate:** 1.5h
 **Depends on:** S4
+**Note:** Migration with 14 template rows (7 templates × 2 locales)
+authored. Runtime depends on the schema being applied (S4
+verification block).
 
 **Steps**
 - Seed `message_templates` with 8 templates × 2 locales = 16 rows:
