@@ -63,7 +63,13 @@ grant execute on function public.unsubscribe_debtor(uuid) to anon, authenticated
  * Update get_paylink_case to also expose debtor_id and the
  * unsubscribed_at flag (callers may want to render a different
  * pay page for opted-out debtors).
+ *
+ * Return signature changes (added debtor_id + debtor_unsubscribed),
+ * so we must DROP before CREATE — Postgres rejects CREATE OR REPLACE
+ * when the OUT columns differ from the existing function.
  * ────────────────────────────────────────────────────────── */
+
+drop function if exists public.get_paylink_case(text);
 
 create or replace function public.get_paylink_case(p_slug text)
 returns table (

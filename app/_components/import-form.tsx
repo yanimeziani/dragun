@@ -56,7 +56,7 @@ export function ImportForm({ copy }: { copy: Copy }) {
 
   return (
     <div className="space-y-8">
-      <form action={dispatch} encType="multipart/form-data" className="space-y-6">
+      <form action={dispatch} className="space-y-6">
         <label className="block">
           <span className="font-mono text-[11.5px] uppercase tracking-[0.22em] text-bone-3">
             {copy.fileLabel}
