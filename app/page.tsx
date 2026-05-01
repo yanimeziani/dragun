@@ -1,17 +1,37 @@
-import { AlphaForm } from "./_components/alpha-form";
+import Link from "next/link";
+import { GoogleButton } from "./_components/google-button";
+import { createClient } from "./_lib/supabase/server";
+import { signOut } from "./_actions/auth";
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  let displayName: string | null = null;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", user.id)
+      .maybeSingle();
+    displayName =
+      profile?.full_name ||
+      (user.user_metadata?.full_name as string | undefined) ||
+      (user.email ? user.email.split("@")[0] : null);
+  }
+
   return (
-    <main className="relative">
+    <main className="relative overflow-x-hidden">
       <TopBar />
-      <Nav />
-      <Hero />
+      <Nav user={user ? { name: displayName, email: user.email ?? null } : null} />
+      <Hero authed={Boolean(user)} />
       <Problem />
       <Channels />
       <Mechanism />
       <Dashboard />
       <Compliance />
-      <Distribution />
+      <Distribution authed={Boolean(user)} displayName={displayName} />
       <Investor />
       <Footer />
     </main>
@@ -70,18 +90,18 @@ function TopBar() {
 /*  Nav                                                       */
 /* ────────────────────────────────────────────────────────── */
 
-function Nav() {
+function Nav({ user }: { user: { name: string | null; email: string | null } | null }) {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-ink/80 backdrop-blur">
-      <nav className="mx-auto flex max-w-[1320px] items-center justify-between px-6 py-4">
-        <a href="#" className="flex items-center gap-3 text-bone">
-          <Mark className="h-5 w-5" />
-          <span className="font-display text-xl tracking-tight">Dragun</span>
-          <span className="hidden lg:inline font-mono text-[11.5px] uppercase tracking-[0.22em] text-bone-3">
+      <nav className="mx-auto flex max-w-[1320px] items-center justify-between gap-4 px-4 sm:px-6 py-4">
+        <a href="#" className="flex items-center gap-2 sm:gap-3 text-bone min-w-0">
+          <Mark className="h-5 w-5 shrink-0" />
+          <span className="font-display text-lg sm:text-xl tracking-tight">Dragun</span>
+          <span className="hidden xl:inline font-mono text-[11.5px] uppercase tracking-[0.22em] text-bone-3">
             ™ · Get paid
           </span>
         </a>
-        <ul className="hidden md:flex items-center gap-5 lg:gap-8 font-mono text-[12px] lg:text-sm uppercase tracking-[0.18em] text-bone-2">
+        <ul className="hidden lg:flex items-center gap-5 xl:gap-8 font-mono text-[12px] xl:text-sm uppercase tracking-[0.18em] text-bone-2">
           <li><a href="/demo" className="text-ember hover:text-bone">Live demo</a></li>
           <li><a href="#mechanism" className="hover:text-bone">How it works</a></li>
           <li><a href="#dashboard" className="hover:text-bone">Ledger</a></li>
@@ -89,20 +109,52 @@ function Nav() {
           <li><a href="#alpha" className="hover:text-bone">Alpha</a></li>
           <li><a href="#investor" className="hover:text-bone">Investors</a></li>
         </ul>
+        <ul className="hidden md:flex lg:hidden items-center gap-5 font-mono text-[12px] uppercase tracking-[0.18em] text-bone-2">
+          <li><a href="/demo" className="text-ember hover:text-bone">Live demo</a></li>
+          <li><a href="#dashboard" className="hover:text-bone">Ledger</a></li>
+          <li><a href="#alpha" className="hover:text-bone">Alpha</a></li>
+        </ul>
         <a
           href="/demo"
-          className="group inline-flex md:hidden items-center gap-2 border border-ember px-3 py-2 font-mono text-xs uppercase tracking-[0.2em] text-ember"
+          className="group inline-flex md:hidden items-center gap-2 border border-ember px-3 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-ember"
         >
           Live demo
           <span className="transition-transform group-hover:translate-x-0.5">→</span>
         </a>
-        <a
-          href="#investor"
-          className="group hidden md:inline-flex items-center gap-2 border border-bone/70 px-4 py-2 font-mono text-xs uppercase tracking-[0.2em] text-bone hover:border-ember hover:text-ember transition-colors"
-        >
-          Request memo
-          <span className="transition-transform group-hover:translate-x-0.5">→</span>
-        </a>
+        {user ? (
+          <div className="hidden md:flex items-center gap-3">
+            <Link
+              href="/welcome"
+              className="font-mono text-[11px] lg:text-xs uppercase tracking-[0.2em] text-bone-2 hover:text-bone whitespace-nowrap"
+            >
+              {user.name ?? "Your seat"}
+            </Link>
+            <form action={signOut}>
+              <button
+                type="submit"
+                className="font-mono text-[11px] lg:text-xs uppercase tracking-[0.2em] text-bone-3 hover:text-bone whitespace-nowrap"
+              >
+                Sign out
+              </button>
+            </form>
+          </div>
+        ) : (
+          <div className="hidden md:flex items-center gap-3">
+            <Link
+              href="/auth/sign-in"
+              className="font-mono text-[11px] lg:text-xs uppercase tracking-[0.2em] text-bone-3 hover:text-bone whitespace-nowrap"
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/auth/sign-up"
+              className="group inline-flex items-center gap-2 border border-bone/70 px-3 lg:px-4 py-2 font-mono text-[11px] lg:text-xs uppercase tracking-[0.2em] text-bone hover:border-ember hover:text-ember transition-colors whitespace-nowrap"
+            >
+              Claim a seat
+              <span className="transition-transform group-hover:translate-x-0.5">→</span>
+            </Link>
+          </div>
+        )}
       </nav>
     </header>
   );
@@ -112,7 +164,7 @@ function Nav() {
 /*  Hero                                                      */
 /* ────────────────────────────────────────────────────────── */
 
-function Hero() {
+function Hero({ authed }: { authed: boolean }) {
   return (
     <section className="relative overflow-hidden">
       <div className="ember-floor" aria-hidden />
@@ -169,10 +221,10 @@ function Hero() {
                 </span>
               </a>
               <a
-                href="#alpha"
+                href={authed ? "/welcome" : "#alpha"}
                 className="group inline-flex items-center gap-3 border border-bone/50 px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone hover:border-ember hover:text-ember transition-colors"
               >
-                Claim a seat
+                {authed ? "Your seat" : "Claim a seat"}
                 <span className="transition-transform group-hover:translate-x-1">
                   →
                 </span>
@@ -1033,7 +1085,13 @@ function Compliance() {
 /*  Distribution — private alpha via FB owner groups          */
 /* ────────────────────────────────────────────────────────── */
 
-function Distribution() {
+function Distribution({
+  authed,
+  displayName,
+}: {
+  authed: boolean;
+  displayName: string | null;
+}) {
   return (
     <section className="relative border-t border-line bg-ink-1/40">
       <div className="mx-auto max-w-[1320px] px-6 py-24 md:py-36">
@@ -1140,11 +1198,86 @@ function Distribution() {
             </ul>
           </div>
           <div className="lg:col-span-7">
-            <AlphaForm />
+            <AuthCta authed={authed} displayName={displayName} />
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function AuthCta({
+  authed,
+  displayName,
+}: {
+  authed: boolean;
+  displayName: string | null;
+}) {
+  if (authed) {
+    return (
+      <div className="border border-ember/40 bg-ember/5 p-6 sm:p-8 text-bone">
+        <div className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.22em] text-ember">
+          Seat reserved
+        </div>
+        <p className="mt-3 font-display text-xl sm:text-2xl leading-snug break-words">
+          {displayName ? `You're in, ${displayName}.` : "You're in."} Your
+          ledger is ready.
+        </p>
+        <p className="mt-2 max-w-[44ch] text-bone-2 text-sm sm:text-base">
+          Head to your seat to start the in-app tutorial, or take a tour of the
+          live demo first.
+        </p>
+        <div className="mt-6 flex flex-wrap items-center gap-3">
+          <Link
+            href="/welcome"
+            className="group inline-flex items-center gap-3 bg-ember px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-ink transition-colors hover:bg-bone"
+          >
+            Open your seat
+            <span className="transition-transform group-hover:translate-x-1">→</span>
+          </Link>
+          <Link
+            href="/demo"
+            className="group inline-flex items-center gap-3 border border-bone/50 px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone hover:border-ember hover:text-ember transition-colors"
+          >
+            Live demo
+            <span className="transition-transform group-hover:translate-x-1">→</span>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="border border-line bg-ink-1/40 p-6 sm:p-8">
+      <div className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.22em] text-bone-3">
+        One step. No long form.
+      </div>
+      <p className="mt-3 font-display text-xl sm:text-2xl leading-snug text-bone break-words">
+        Sign in to claim your seat.
+      </p>
+      <p className="mt-3 max-w-[44ch] text-bone-2 text-sm sm:text-base">
+        Continue with Google, or use email and password. Your sandbox is
+        provisioned the moment you sign in.
+      </p>
+
+      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+        <GoogleButton variant="primary">Continue with Google</GoogleButton>
+        <Link
+          href="/auth/sign-up"
+          className="group inline-flex items-center justify-center gap-3 border border-bone/40 px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone hover:border-ember hover:text-ember transition-colors"
+        >
+          Use email instead
+          <span className="transition-transform group-hover:translate-x-1">→</span>
+        </Link>
+      </div>
+
+      <p className="mt-6 font-mono text-[11px] sm:text-[11.5px] uppercase tracking-[0.2em] text-bone-3">
+        Already a member?{" "}
+        <Link href="/auth/sign-in" className="text-bone hover:text-ember">
+          Sign in →
+        </Link>
+      </p>
+    </div>
   );
 }
 
