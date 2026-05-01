@@ -232,20 +232,55 @@ export default async function DashboardPage() {
 
         {/* Case list */}
         {caseRows.length === 0 ? (
-          <div className="mt-12 border border-line bg-ink-1/20 px-6 py-16 text-center">
+          <div className="mt-12 border border-line bg-ink-1/20 px-6 sm:px-10 py-12 sm:py-16">
             <p className="font-display text-2xl sm:text-3xl text-bone">
               {s.emptyTitle}
             </p>
-            <p className="mt-3 max-w-[40ch] mx-auto text-bone-2">
+            <p className="mt-3 max-w-[52ch] text-bone-2 leading-[1.55]">
               {s.emptySubtitle}
             </p>
-            <Link
-              href="/app/cases/new"
-              className="mt-8 inline-flex items-center gap-3 bg-ember px-5 py-3.5 font-mono text-xs uppercase tracking-[0.22em] text-ink hover:bg-bone transition-colors"
-            >
-              {s.addCase}
-              <span>→</span>
-            </Link>
+            <ol className="mt-8 space-y-3 max-w-[60ch] font-mono text-[11.5px] uppercase tracking-[0.18em] text-bone-2 list-none">
+              <li className="flex gap-4">
+                <span className="text-ember shrink-0">01</span>
+                <span>
+                  {locale === "fr"
+                    ? "Ajoutez un membre, ou téléversez votre liste en CSV."
+                    : "Add a customer, or upload your list as a CSV."}
+                </span>
+              </li>
+              <li className="flex gap-4">
+                <span className="text-ember shrink-0">02</span>
+                <span>
+                  {locale === "fr"
+                    ? "Dragun envoie courriels, textos et un appel sur 14 jours, dans votre voix."
+                    : "Dragun sends emails, SMS and a voice call across 14 days, in your voice."}
+                </span>
+              </li>
+              <li className="flex gap-4">
+                <span className="text-ember shrink-0">03</span>
+                <span>
+                  {locale === "fr"
+                    ? "Le débiteur tape sur le lien et paie. Vous recevez 95 % automatiquement."
+                    : "Your customer taps the link and pays. You keep 95 % automatically."}
+                </span>
+              </li>
+            </ol>
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Link
+                href="/app/cases/new"
+                className="inline-flex items-center gap-3 bg-ember px-5 py-3.5 font-mono text-xs uppercase tracking-[0.22em] text-ink hover:bg-bone transition-colors"
+              >
+                {s.addCase}
+                <span>→</span>
+              </Link>
+              <Link
+                href="/app/cases/import"
+                className="inline-flex items-center gap-3 border border-line px-5 py-3.5 font-mono text-xs uppercase tracking-[0.22em] text-bone-2 hover:border-bone hover:text-bone transition-colors"
+              >
+                {locale === "fr" ? "Importer un CSV" : "Import a CSV"}
+                <span>→</span>
+              </Link>
+            </div>
           </div>
         ) : (
           <ul className="mt-12 divide-y divide-line border-y border-line">
