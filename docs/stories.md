@@ -393,6 +393,78 @@ iteration when the file is stable.
 
 ---
 
+## S17 — Case detail `/app/cases/[id]`
+
+**Status:** in_progress
+**Estimate:** 1.5h
+**Depends on:** S4, S5, S7
+
+**Steps**
+- `/app/cases/[id]` — server component scoped to one case via id.
+  Render debtor info (name, email, phone, locale), case header
+  (amount, status pill, days open, paylink URL), and a chronological
+  timeline of `campaign_events` (channel, scheduled_at, fired_at,
+  status, provider_id, payload).
+- "Cancel campaign" button → server action that flips remaining
+  scheduled events to cancelled and closes the case.
+- "Mark as paid" button → server action for off-platform payments
+  (manual reconciliation) that closes the case + cancels future
+  events.
+- `createCaseAction` redirects here after creation instead of `/app`.
+
+**Acceptance**
+- After creating a case from `/app/cases/new`, the user lands here
+  and sees the schedule of all 7 future events with their templates.
+- Cancel and mark-paid actions update the timeline immediately.
+
+---
+
+## S18 — Bulk import `/app/cases/import`
+
+**Status:** in_progress
+**Estimate:** 2h
+**Depends on:** S4, S5, S6, S7, S9
+
+**Steps**
+- `/app/cases/import` — single page with a CSV file picker.
+- Parse client-side, render a preview table (rejecting rows that
+  fail E.164 phone or amount > 0).
+- Submit → server action loops `createCase` semantics for each row,
+  collecting any per-row errors. Reports counts: created, skipped,
+  failed.
+- Sample CSV downloadable from the page (`name,email,phone,amount,
+  currency,description,locale` header). FR + EN sample rows.
+- This is the SMB's real first-five-minutes experience — uploading
+  the existing delinquent list, not typing one row at a time.
+
+**Acceptance**
+- A 50-row CSV imports in under 30 seconds; campaign_events for each
+  case are scheduled at the right offsets.
+- Bad rows surface with row numbers + reason; good rows still create.
+
+---
+
+## S19 — Sharpen public copy (off with demo voice)
+
+**Status:** in_progress
+**Estimate:** 0.5h
+**Depends on:** —
+
+**Steps**
+- Remove "v.0.4 · Pre-seed" version chip from `TopBar`.
+- Replace "Public alpha · 50 seats" framing with production positioning
+  ("Free to start · 5 % on what's recovered").
+- `/welcome` subtitle from "60 seconds" → real onboarding promise.
+- Drop optional brand color / signature fields from /welcome to
+  shorten signup. They live in `/app/settings` post-launch.
+
+**Acceptance**
+- No "alpha", no "seats remaining", no version chip on `/`.
+- `/welcome` has 2 visible fields (business name, locale) and submit.
+- Build clean.
+
+---
+
 ## Backlog (post-launch, not in scope for 2026-05-01)
 
 - Stripe Connect Express for direct SMB payouts.
