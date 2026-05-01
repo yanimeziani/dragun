@@ -99,16 +99,66 @@ function buildVars(
   };
 }
 
-function bodyToHtml(body: string): string {
-  const escaped = body
+function escapeHtml(s: string): string {
+  return s
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function bodyToHtml(
+  body: string,
+  opts: {
+    orgName: string;
+    brandColor: string | null;
+    unsubscribeUrl: string;
+    locale: Locale;
+  },
+): string {
+  const escaped = escapeHtml(body);
   const paragraphs = escaped
     .split(/\n{2,}/)
-    .map((p) => `<p style="margin:0 0 1em 0;line-height:1.55">${p.replace(/\n/g, "<br/>")}</p>`)
+    .map(
+      (p) =>
+        `<p style="margin:0 0 16px 0;line-height:1.6;font-size:15px;color:#111">${p.replace(/\n/g, "<br/>")}</p>`,
+    )
     .join("");
-  return `<div style="font-family:system-ui,sans-serif;color:#111;max-width:600px">${paragraphs}</div>`;
+  const accent = opts.brandColor ?? "#E36A2C";
+  const unsubLabel =
+    opts.locale === "fr"
+      ? "Se désabonner des rappels"
+      : "Unsubscribe from reminders";
+  const poweredBy =
+    opts.locale === "fr"
+      ? "Recouvrement assuré par Dragun"
+      : "Recovery powered by Dragun";
+  return `<!DOCTYPE html>
+<html lang="${opts.locale}"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/></head>
+<body style="margin:0;padding:0;background:#f7f5f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;color:#111">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#f7f5f0">
+    <tr><td align="center" style="padding:32px 16px">
+      <table role="presentation" width="560" cellspacing="0" cellpadding="0" border="0" style="max-width:560px;width:100%;background:#fff;border:1px solid #e5e3dc">
+        <tr><td style="border-top:3px solid ${escapeHtml(accent)};padding:24px 28px 0 28px">
+          <div style="font-size:18px;font-weight:600;letter-spacing:-0.01em;color:#111">${escapeHtml(opts.orgName)}</div>
+        </td></tr>
+        <tr><td style="padding:20px 28px 28px 28px">${paragraphs}</td></tr>
+        <tr><td style="padding:0 28px 24px 28px;border-top:1px solid #e5e3dc;padding-top:16px;font-size:11px;line-height:1.7;color:#888">
+          <a href="${escapeHtml(opts.unsubscribeUrl)}" style="color:#888;text-decoration:underline">${unsubLabel}</a>
+          &nbsp;·&nbsp;
+          <span>${poweredBy}</span>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+}
+
+function siteOriginForUnsub(): string {
+  return (
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
+    "https://dragun.app"
+  );
 }
 
 export async function fireEvent(
@@ -148,13 +198,25 @@ export async function fireEvent(
 
   const { data: debtor } = await client
     .from("debtors")
-    .select("full_name, email, phone_e164, locale")
+    .select("id, full_name, email, phone_e164, locale, unsubscribed_at")
     .eq("case_id", caseRow.id)
     .limit(1)
     .maybeSingle();
 
   if (!debtor) {
     await markFailed(client, eventId, "no debtor for case");
+    return;
+  }
+
+  if (debtor.unsubscribed_at) {
+    await client
+      .from("campaign_events")
+      .update({
+        status: "cancelled",
+        fired_at: new Date().toISOString(),
+        payload: { reason: "debtor opted out" },
+      })
+      .eq("id", eventId);
     return;
   }
 
@@ -183,12 +245,23 @@ export async function fireEvent(
       if (!debtor.email) throw new Error("no debtor email");
       const fromEmail =
         process.env.RESEND_FROM_EMAIL ?? "Dragun <no-reply@dragun.app>";
+      const unsubscribeUrl = `${siteOriginForUnsub()}/u/${debtor.id}`;
+      const orgBrand = (org.brand ?? {}) as {
+        color?: string | null;
+        signature?: string | null;
+      };
       const r = await sendEmail({
         to: debtor.email,
         from: fromEmail,
         subject,
-        html: bodyToHtml(body),
-        text: body,
+        html: bodyToHtml(body, {
+          orgName: org.display_name,
+          brandColor: orgBrand.color ?? null,
+          unsubscribeUrl,
+          locale,
+        }),
+        text: `${body}\n\n— ${unsubscribeUrl}`,
+        replyTo: undefined,
       });
       providerId = r.id;
     } else if (event.channel === "sms") {
