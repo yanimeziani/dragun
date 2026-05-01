@@ -175,9 +175,14 @@ blocked-human). Flips to `done` after first prod round-trip.
 
 ## S8 — Case creation form `/app/cases/new`
 
-**Status:** pending
+**Status:** in_progress
 **Estimate:** 2h
 **Depends on:** S4, S5, S6, S9
+**Note:** Form + server action authored. Inserts case + debtor via
+cookie auth client (RLS member-scoped), schedules cadence via
+cadence.scheduleCampaign, fires day-0 immediately if toggled (using
+service-role for the campaign_events update). Redirects to /app
+(case detail page is a future story). Runtime depends on S4 schema.
 
 **Steps**
 - Form: debtor name, email, phone (E.164 validated), amount in
