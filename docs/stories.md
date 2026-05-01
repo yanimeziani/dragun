@@ -200,9 +200,13 @@ blocked-human). Flips to `done` after first prod round-trip.
 
 ## S9 — Cadence engine + REST channel clients
 
-**Status:** pending
+**Status:** in_progress
 **Estimate:** 3h
 **Depends on:** S1, S4
+**Note:** REST clients + cadence helpers + cron route authored.
+Runtime depends on Twilio creds (S1) and the campaign_events
+schema (S4). Flips to `done` after first prod cron tick fires
+a real send.
 
 **Steps**
 - `app/_lib/resend.ts` — `sendEmail({ to, from, subject, html })`
