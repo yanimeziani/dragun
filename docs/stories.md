@@ -98,7 +98,7 @@ either local stack is up or prod push lands.
 
 ## S5 — Locale system (cookie + helper + EN/FR maps)
 
-**Status:** pending
+**Status:** done
 **Estimate:** 2h
 
 **Steps**

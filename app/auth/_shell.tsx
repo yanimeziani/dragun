@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LocaleToggle } from "../_components/locale-toggle";
 
 function Mark({ className = "h-5 w-5" }: { className?: string }) {
   return (
@@ -40,12 +41,15 @@ export function AuthShell({
               Dragun
             </span>
           </Link>
-          <Link
-            href="/"
-            className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-bone-3 hover:text-bone"
-          >
-            ← Back to site
-          </Link>
+          <div className="flex items-center gap-4">
+            <LocaleToggle />
+            <Link
+              href="/"
+              className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-bone-3 hover:text-bone"
+            >
+              ← Back to site
+            </Link>
+          </div>
         </div>
       </header>
 
