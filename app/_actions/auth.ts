@@ -1,7 +1,6 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { createClient } from "@/app/_lib/supabase/server";
 import { withReqId } from "@/app/_lib/log";
@@ -83,7 +82,6 @@ export async function signInWithPassword(
     if (membership) target = "/app";
   }
 
-  revalidatePath("/", "layout");
   redirect(target);
 }
 
@@ -124,13 +122,11 @@ export async function signUpWithPassword(
     redirect("/auth/sign-in?check=email");
   }
 
-  revalidatePath("/", "layout");
   redirect("/welcome");
 }
 
 export async function signOut(): Promise<void> {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  revalidatePath("/", "layout");
   redirect("/");
 }
