@@ -128,7 +128,7 @@ export function SettingsForm({
             name="brandColor"
             type="text"
             defaultValue={org.brand?.color ?? ""}
-            placeholder="#E36A2C"
+            placeholder="#FF6A1A"
             pattern="^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$"
             className={inputCx}
           />

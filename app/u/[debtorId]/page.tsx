@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createServiceClient } from "@/app/_lib/supabase/service";
 import { UnsubscribeForm } from "@/app/_components/unsubscribe-form";
+import { DragunLogo } from "@/app/_components/logo";
 
 export const metadata: Metadata = {
   title: "Dragun · Unsubscribe",
@@ -43,25 +44,6 @@ const COPY = {
     poweredBy: "Recovery powered by Dragun",
   },
 } as const;
-
-function Mark({ className = "h-6 w-6" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.4"
-      strokeLinecap="square"
-      className={className}
-      aria-hidden
-    >
-      <path d="M3.5 4.5 H20.5" />
-      <path d="M12 4.5 V19.5" />
-      <path d="M6 13 L12 19.5 L18 13" />
-      <circle cx="12" cy="9" r="1.1" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
 
 type DebtorRow = {
   full_name: string;
@@ -104,10 +86,7 @@ export default async function UnsubscribePage({
   return (
     <main className="min-h-screen bg-ink overflow-x-hidden flex items-start sm:items-center">
       <div className="mx-auto max-w-[640px] px-4 sm:px-6 py-12 w-full">
-        <div className="flex items-center gap-3 text-bone">
-          <Mark className="h-6 w-6" />
-          <span className="font-display text-xl tracking-tight">Dragun</span>
-        </div>
+        <DragunLogo className="h-6 w-6" wordmarkClassName="text-xl" />
 
         <h1 className="mt-12 font-display text-[clamp(2rem,5vw,3.4rem)] leading-[1.04] tracking-tight text-bone break-words">
           {c.title}

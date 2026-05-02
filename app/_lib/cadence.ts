@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { sendEmail } from "./resend";
 import { sendSms, placeCall, escapeXml } from "./twilio";
+import { emailTokens } from "./colors";
 
 type Channel = "email" | "sms" | "call";
 type Locale = "fr" | "en";
@@ -121,10 +122,10 @@ function bodyToHtml(
     .split(/\n{2,}/)
     .map(
       (p) =>
-        `<p style="margin:0 0 16px 0;line-height:1.6;font-size:15px;color:#111">${p.replace(/\n/g, "<br/>")}</p>`,
+        `<p style="margin:0 0 16px 0;line-height:1.6;font-size:15px;color:${emailTokens.text}">${p.replace(/\n/g, "<br/>")}</p>`,
     )
     .join("");
-  const accent = opts.brandColor ?? "#E36A2C";
+  const accent = opts.brandColor ?? emailTokens.accent;
   const unsubLabel =
     opts.locale === "fr"
       ? "Se désabonner des rappels"
@@ -135,16 +136,16 @@ function bodyToHtml(
       : "Recovery powered by Dragun";
   return `<!DOCTYPE html>
 <html lang="${opts.locale}"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/></head>
-<body style="margin:0;padding:0;background:#f7f5f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;color:#111">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#f7f5f0">
+<body style="margin:0;padding:0;background:${emailTokens.bg};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;color:${emailTokens.text}">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:${emailTokens.bg}">
     <tr><td align="center" style="padding:32px 16px">
-      <table role="presentation" width="560" cellspacing="0" cellpadding="0" border="0" style="max-width:560px;width:100%;background:#fff;border:1px solid #e5e3dc">
+      <table role="presentation" width="560" cellspacing="0" cellpadding="0" border="0" style="max-width:560px;width:100%;background:${emailTokens.card};border:1px solid ${emailTokens.rule}">
         <tr><td style="border-top:3px solid ${escapeHtml(accent)};padding:24px 28px 0 28px">
-          <div style="font-size:18px;font-weight:600;letter-spacing:-0.01em;color:#111">${escapeHtml(opts.orgName)}</div>
+          <div style="font-size:18px;font-weight:600;letter-spacing:-0.01em;color:${emailTokens.text}">${escapeHtml(opts.orgName)}</div>
         </td></tr>
         <tr><td style="padding:20px 28px 28px 28px">${paragraphs}</td></tr>
-        <tr><td style="padding:0 28px 24px 28px;border-top:1px solid #e5e3dc;padding-top:16px;font-size:11px;line-height:1.7;color:#888">
-          <a href="${escapeHtml(opts.unsubscribeUrl)}" style="color:#888;text-decoration:underline">${unsubLabel}</a>
+        <tr><td style="padding:0 28px 24px 28px;border-top:1px solid ${emailTokens.rule};padding-top:16px;font-size:11px;line-height:1.7;color:${emailTokens.muted}">
+          <a href="${escapeHtml(opts.unsubscribeUrl)}" style="color:${emailTokens.muted};text-decoration:underline">${unsubLabel}</a>
           &nbsp;·&nbsp;
           <span>${poweredBy}</span>
         </td></tr>

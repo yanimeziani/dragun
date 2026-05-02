@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getLocale } from "./_lib/i18n";
+import { DragunLogo } from "./_components/logo";
 
 const COPY = {
   fr: {
@@ -18,34 +19,14 @@ const COPY = {
   },
 } as const;
 
-function Mark({ className = "h-6 w-6" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.4"
-      strokeLinecap="square"
-      className={className}
-      aria-hidden
-    >
-      <path d="M3.5 4.5 H20.5" />
-      <path d="M12 4.5 V19.5" />
-      <path d="M6 13 L12 19.5 L18 13" />
-      <circle cx="12" cy="9" r="1.1" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
 export default async function NotFound() {
   const locale = await getLocale();
   const c = COPY[locale];
   return (
     <main className="min-h-screen bg-ink overflow-x-hidden flex items-center">
       <div className="mx-auto max-w-[640px] px-4 sm:px-6 py-12 w-full">
-        <Link href="/" className="flex items-center gap-3 text-bone">
-          <Mark className="h-6 w-6" />
-          <span className="font-display text-xl tracking-tight">Dragun</span>
+        <Link href="/" className="text-bone">
+          <DragunLogo className="h-6 w-6" wordmarkClassName="text-xl" />
         </Link>
 
         <p className="mt-16 font-mono text-[11px] uppercase tracking-[0.24em] text-ember">

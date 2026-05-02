@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createClient } from "@/app/_lib/supabase/server";
+import { DragunMark } from "@/app/_components/logo";
 
 export const metadata: Metadata = {
   title: "Dragun · Thanks",
@@ -17,25 +18,6 @@ const COPY = {
     poweredBy: "Recovery powered by Dragun",
   },
 } as const;
-
-function Mark({ className = "h-6 w-6" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.4"
-      strokeLinecap="square"
-      className={className}
-      aria-hidden
-    >
-      <path d="M3.5 4.5 H20.5" />
-      <path d="M12 4.5 V19.5" />
-      <path d="M6 13 L12 19.5 L18 13" />
-      <circle cx="12" cy="9" r="1.1" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
 
 export default async function PaylinkThanksPage({
   params,
@@ -57,7 +39,7 @@ export default async function PaylinkThanksPage({
     <main className="min-h-screen bg-ink overflow-x-hidden flex items-center">
       <div className="mx-auto max-w-[640px] px-4 sm:px-6 py-12 w-full">
         <div className="flex items-center gap-3 text-bone">
-          <Mark className="h-6 w-6" />
+          <DragunMark className="h-6 w-6" alt="" />
           <span className="font-display text-xl tracking-tight">{orgName}</span>
         </div>
 

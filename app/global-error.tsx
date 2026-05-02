@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { tokens } from "./_lib/colors";
 
 export default function GlobalError({
   error,
@@ -19,8 +20,8 @@ export default function GlobalError({
         style={{
           margin: 0,
           padding: 0,
-          background: "#101012",
-          color: "#ECE4D2",
+          background: tokens.ink1,
+          color: tokens.bone,
           fontFamily:
             "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
           minHeight: "100vh",
@@ -36,7 +37,7 @@ export default function GlobalError({
               fontSize: 11,
               textTransform: "uppercase",
               letterSpacing: "0.24em",
-              color: "#E36A2C",
+              color: tokens.ember,
               margin: 0,
             }}
           >
@@ -63,7 +64,7 @@ export default function GlobalError({
                 fontSize: 11,
                 textTransform: "uppercase",
                 letterSpacing: "0.18em",
-                color: "#7c7264",
+                color: tokens.bone3,
               }}
             >
               Ref · {error.digest}
@@ -74,8 +75,8 @@ export default function GlobalError({
             onClick={reset}
             style={{
               marginTop: 32,
-              background: "#E36A2C",
-              color: "#101012",
+              background: tokens.ember,
+              color: tokens.ink1,
               border: "none",
               padding: "14px 24px",
               fontFamily: "monospace",

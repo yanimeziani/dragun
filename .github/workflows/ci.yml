@@ -1,0 +1,26 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: install
+        run: npm ci
+      - name: typecheck
+        run: npx tsc --noEmit
+      - name: lint
+        run: npx eslint .
+      # devDependencies have known transitive CVEs (supabase CLI -> tar);
+      # we audit production deps only at high+ severity.
+      - name: audit (prod, high+)
+        run: npm audit --omit=dev --audit-level=high

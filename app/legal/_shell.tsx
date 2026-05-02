@@ -1,26 +1,8 @@
 import Link from "next/link";
 import { LocaleToggle } from "../_components/locale-toggle";
+import { DragunLogo } from "../_components/logo";
 import type { LegalDoc } from "./_content/types";
 import type { Strings } from "../_lib/i18n";
-
-function Mark({ className = "h-5 w-5" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.4"
-      strokeLinecap="square"
-      className={className}
-      aria-hidden
-    >
-      <path d="M3.5 4.5 H20.5" />
-      <path d="M12 4.5 V19.5" />
-      <path d="M6 13 L12 19.5 L18 13" />
-      <circle cx="12" cy="9" r="1.1" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
 
 export function LegalShell({
   doc,
@@ -33,11 +15,8 @@ export function LegalShell({
     <main className="min-h-screen overflow-x-hidden">
       <header className="border-b border-line">
         <div className="mx-auto flex max-w-[1320px] items-center justify-between px-4 sm:px-6 py-4">
-          <Link href="/" className="flex items-center gap-2 sm:gap-3 text-bone">
-            <Mark className="h-5 w-5" />
-            <span className="font-display text-lg sm:text-xl tracking-tight">
-              Dragun
-            </span>
+          <Link href="/" className="text-bone">
+            <DragunLogo className="h-5 w-5" wordmarkClassName="text-lg sm:text-xl" />
           </Link>
           <div className="flex items-center gap-4">
             <LocaleToggle />
@@ -86,6 +65,9 @@ export function LegalShell({
           </Link>
           <Link href="/legal/disclosures" className="hover:text-bone">
             {strings.legal.disclosures}
+          </Link>
+          <Link href="/legal/security" className="hover:text-bone">
+            {strings.legal.security}
           </Link>
           <Link href="/" className="ml-auto hover:text-bone">
             ← {strings.nav.home}

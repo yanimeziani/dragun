@@ -7,6 +7,7 @@ import { createClient } from "../_lib/supabase/server";
 import { createServiceClient } from "../_lib/supabase/service";
 import { scheduleCampaign, fireEvent } from "../_lib/cadence";
 import { isLocale } from "../_lib/i18n";
+import { recordAudit } from "../_lib/audit";
 
 export type CreateCaseState =
   | { status: "idle" }
@@ -113,6 +114,21 @@ export async function createCaseAction(
     return { status: "error", error: `Schedule failed: ${String(err)}` };
   }
 
+  await recordAudit({
+    orgId: membership.org_id as string,
+    action: "case.create",
+    targetType: "case",
+    targetId: caseRow.id,
+    after: {
+      ref,
+      amount_cents: Math.round(amount * 100),
+      currency,
+      description: description || null,
+      // Don't record debtor PII in audit_events — only structural metadata.
+      debtor_locale: debtorLocale,
+    },
+  });
+
   if (sendNow) {
     const { data: dayZero } = await supabase
       .from("campaign_events")
@@ -143,7 +159,7 @@ export async function cancelCaseAction(formData: FormData): Promise<void> {
   const supabase = await createClient();
   const { data: caseRow } = await supabase
     .from("cases")
-    .select("id")
+    .select("id, org_id, status")
     .eq("id", caseId)
     .maybeSingle();
   if (!caseRow) return;
@@ -158,6 +174,15 @@ export async function cancelCaseAction(formData: FormData): Promise<void> {
     .from("cases")
     .update({ status: "closed", closed_at: new Date().toISOString() })
     .eq("id", caseId);
+
+  await recordAudit({
+    orgId: caseRow.org_id as string,
+    action: "case.cancel",
+    targetType: "case",
+    targetId: caseId,
+    before: { status: caseRow.status },
+    after: { status: "closed" },
+  });
 
   revalidatePath(`/app/cases/${caseId}`);
   revalidatePath("/app");
@@ -201,6 +226,20 @@ export async function markPaidAction(formData: FormData): Promise<void> {
     .from("cases")
     .update({ status: "paid", closed_at: new Date().toISOString() })
     .eq("id", caseId);
+
+  await recordAudit({
+    orgId: caseRow.org_id as string,
+    action: "case.markPaid",
+    targetType: "case",
+    targetId: caseId,
+    after: {
+      amount_cents: caseRow.amount_cents,
+      currency: caseRow.currency,
+      fee_cents: feeCents,
+      net_to_org_cents: netCents,
+      manual: true,
+    },
+  });
 
   revalidatePath(`/app/cases/${caseId}`);
   revalidatePath("/app");

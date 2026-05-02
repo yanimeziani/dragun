@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "../_lib/supabase/server";
 import { isLocale, type Locale } from "../_lib/i18n";
+import { recordAudit } from "../_lib/audit";
 
 export type CreateOrgState =
   | { status: "idle" }
@@ -75,7 +76,7 @@ export async function createOrganizationAction(
     signature: signature || null,
   };
 
-  const { error } = await supabase.rpc("create_organization", {
+  const { data: orgIdRaw, error } = await supabase.rpc("create_organization", {
     p_slug: slug,
     p_display_name: businessName,
     p_locale: locale,
@@ -84,6 +85,17 @@ export async function createOrganizationAction(
 
   if (error) {
     return { status: "error", error: error.message };
+  }
+
+  const orgId = typeof orgIdRaw === "string" ? orgIdRaw : null;
+  if (orgId) {
+    await recordAudit({
+      orgId,
+      action: "org.create",
+      targetType: "organization",
+      targetId: orgId,
+      after: { display_name: businessName, locale, slug },
+    });
   }
 
   revalidatePath("/", "layout");

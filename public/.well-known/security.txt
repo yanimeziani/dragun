@@ -1,0 +1,5 @@
+Contact: mailto:security@dragun.app
+Expires: 2027-05-02T00:00:00Z
+Preferred-Languages: en, fr
+Canonical: https://dragun.app/.well-known/security.txt
+Policy: https://dragun.app/legal/security
