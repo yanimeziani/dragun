@@ -310,7 +310,7 @@ events, marks case paid. Runtime needs Stripe creds.
 
 ## S13 — Bilingual landing `/`
 
-**Status:** in_progress
+**Status:** done
 **Estimate:** 1.5h
 **Progress note:** the landing is 1428 lines under heavy active editing
 by the user. Surgical additive contributions land first (locale toggle
@@ -334,6 +334,30 @@ iteration when the file is stable.
   toggle.
 - No English strings on the FR side, no French on the EN.
 - `npm run build` zero warnings.
+
+**Verification (2026-05-02)**
+- `npm run build` exits 0 with zero warning/error lines (grep -iE
+  'warning|error' on the full build output is empty).
+- Inline FR / EN COPY blocks live in `app/page.tsx` lines 18–261 (FR)
+  and 262–515 (EN); cross-contamination grep:
+  `awk 'NR>=18&&NR<=261' app/page.tsx | grep -nE "Sign in|Sign out|
+  Sign up|Dashboard|Privacy|Terms|Pricing|Get paid|Free to start"` →
+  no contamination (only FR rendering of those concepts), and the
+  reverse from the EN block returns zero matches.
+- Locale toggle wired into the landing header at line 623
+  (`<LocaleToggle />` inside the nav). Footer carries
+  `/legal/{privacy,terms,disclosures,security}` links (lines 1403–
+  1406); all four routes exist.
+- No `Atlas` / `atlas-athletic` / `lorem` references remain in
+  `app/page.tsx`.
+- `/demo?client=venice-gym` CTA from the original Steps list is not
+  added: the scripted `/demo` route was removed from the codebase,
+  so adding the CTA would break the "no broken links" requirement.
+  Architecture/product docs still reference the route — flagged for
+  human reconciliation, not acceptance-blocking here.
+- Full string lift into `landing.*` keys remains deferred per the
+  progress note; the inline COPY structure satisfies the bilingual
+  acceptance criteria as written.
 
 ---
 
