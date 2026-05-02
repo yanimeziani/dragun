@@ -24,17 +24,25 @@ prior spec (was S5).
 
 ---
 
-## S1 — Twilio account + verified destination
+## S1 — Telnyx account + Canadian long-code
 
 **Status:** blocked-human
 **Estimate:** 1h
-**Why blocked:** Twilio account creation needs payment card + ToS;
-verified caller-ID needs Mounir's OTP read-back.
+**Why blocked:** Telnyx account creation needs payment + KYC; TeXML
+voice requires a Connection ID configured against the voice URL.
 **Human steps (then flip to `pending`):**
-- Create Twilio account, buy a Canadian SMS+Voice number.
-- Add Mounir's mobile (E.164) to verified caller-IDs; run OTP today.
-- Capture creds into `.env.development.local` and Vercel env:
-  `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER`.
+- Create Telnyx account; complete self-serve KYC.
+- Order a Canadian long-code (Quebec area code preferred) capable of
+  SMS + Voice. Canadian long-code is exempt from US A2P 10DLC for
+  Canada-to-Canada A2P traffic — production-ready immediately.
+- Create a TeXML Application: Voice → TeXML Applications → New;
+  set the **Voice Webhook URL** to `https://dragun.app/api/telnyx/voice`,
+  capture the resulting Connection ID.
+- Generate an API key (Auth → API Keys → Create) — restrict scope if
+  possible. Capture the Ed25519 public key for webhook verification.
+- Capture into `.env.development.local` and Vercel env:
+  `TELNYX_API_KEY`, `TELNYX_FROM_NUMBER`, `TELNYX_TEXML_CONNECTION_ID`,
+  optional `TELNYX_MESSAGING_PROFILE_ID`, `TELNYX_PUBLIC_KEY`.
 
 ---
 
@@ -209,7 +217,7 @@ service-role for the campaign_events update). Redirects to /app
 **Estimate:** 3h
 **Depends on:** S1, S4
 **Note:** REST clients + cadence helpers + cron route authored.
-Runtime depends on Twilio creds (S1) and the campaign_events
+Runtime depends on Telnyx creds (S1) and the campaign_events
 schema (S4). Flips to `done` after first prod cron tick fires
 a real send.
 
@@ -228,7 +236,7 @@ a real send.
 
 **Acceptance**
 - A case created at T fires its day-0 email within 5 min in prod.
-- Twilio Debugger shows the SMS / call attempts with
+- Telnyx Debugger shows the SMS / call attempts with
   matching `provider_id` in `campaign_events.provider_id`.
 - Cancelling a case stops further sends.
 
@@ -504,7 +512,7 @@ iteration when the file is stable.
 ## Backlog (post-launch, not in scope for 2026-05-01)
 
 - Stripe Connect Express for direct SMB payouts.
-- Twilio 10DLC carrier registration for unrestricted Canadian SMS.
+- Telnyx 10DLC carrier registration for unrestricted Canadian SMS.
 - ElevenLabs / ConversationRelay for natural-voice calls.
 - Multi-user organizations + role-based permissions.
 - Org-level analytics (recovery rate, time-to-pay distribution).

@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { sendEmail } from "./resend";
-import { sendSms, placeCall, escapeXml } from "./twilio";
+import { sendSms, placeCall } from "./telnyx";
 import { emailTokens } from "./colors";
 
 type Channel = "email" | "sms" | "call";
@@ -267,8 +267,8 @@ export async function fireEvent(
       providerId = r.id;
     } else if (event.channel === "sms") {
       if (!debtor.phone_e164) throw new Error("no debtor phone");
-      const fromNumber = process.env.TWILIO_FROM_NUMBER;
-      if (!fromNumber) throw new Error("TWILIO_FROM_NUMBER not set");
+      const fromNumber = process.env.TELNYX_FROM_NUMBER;
+      if (!fromNumber) throw new Error("TELNYX_FROM_NUMBER not set");
       const r = await sendSms({
         to: debtor.phone_e164,
         from: fromNumber,
@@ -278,14 +278,25 @@ export async function fireEvent(
       status = r.status;
     } else if (event.channel === "call") {
       if (!debtor.phone_e164) throw new Error("no debtor phone");
-      const fromNumber = process.env.TWILIO_FROM_NUMBER;
-      if (!fromNumber) throw new Error("TWILIO_FROM_NUMBER not set");
+      const fromNumber = process.env.TELNYX_FROM_NUMBER;
+      if (!fromNumber) throw new Error("TELNYX_FROM_NUMBER not set");
+      const siteOrigin =
+        process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
+        "https://dragun.app";
       const language = locale === "fr" ? "fr-CA" : "en-CA";
-      const twiml = `<Response><Say voice="alice" language="${language}">${escapeXml(body)}</Say></Response>`;
+      // base64url-encode the script body so Telnyx can fetch a stateless
+      // TeXML doc containing it. Body is at most a few hundred chars; well
+      // under the URL length practical limit.
+      const t = Buffer.from(body, "utf8")
+        .toString("base64")
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/, "");
+      const twimlUrl = `${siteOrigin}/api/telnyx/voice?t=${t}&lang=${language}`;
       const r = await placeCall({
         to: debtor.phone_e164,
         from: fromNumber,
-        twiml,
+        twimlUrl,
       });
       providerId = r.sid;
       status = r.status;

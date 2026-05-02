@@ -9,7 +9,7 @@ system runs against his data.
 **Venue:** Venice Gym Charlesbourg. **Mounir's number:** in your
 contacts already → pull it now in E.164 form.
 
-- [ ] Add Mounir's mobile to Twilio's verified caller-IDs and
+- [ ] Add Mounir's mobile to Telnyx's verified caller-IDs and
       complete OTP today (cover with: "doing some carrier stuff").
       The surprise tomorrow is "watch *your* phone light up," not
       "let's verify a number first."
@@ -19,13 +19,13 @@ contacts already → pull it now in E.164 form.
       `supabase db push`. Verify all schema tables present.
 - [ ] All 12 env vars set in Vercel (Production + Preview):
       Supabase URL/publishable/service-role, Resend key/from/lead-to,
-      Twilio SID/token/from-number, Stripe secret/publishable/webhook.
+      Telnyx api-key/from-number/texml-connection-id, Stripe secret/publishable/webhook.
 - [ ] Treat Venice Gym's guest WiFi as hostile. Phone tether is the
       default. Test the tether against the laptop you'll demo from
       *before you leave*.
 - [ ] Charge laptop, phone, backup battery. Throw a USB-C cable in
       the bag. Bring earbuds or a small Bluetooth speaker so the
-      Twilio voice call is audible in a noisy gym lobby.
+      Telnyx voice call is audible in a noisy gym lobby.
 
 ## Hot-edit posture
 
@@ -50,7 +50,7 @@ setup supports this if you arrange it:
 
 - [ ] Open Vercel; confirm latest `main` is the production
       deployment, build green, cron registered.
-- [ ] Re-verify Mounir's number on Twilio if it's been > 24h since
+- [ ] Re-verify Mounir's number on Telnyx if it's been > 24h since
       the OTP.
 - [ ] Smoke the full live flow against your own verified phone:
       sign up a throwaway account, create an org, create a case,
@@ -67,7 +67,7 @@ setup supports this if you arrange it:
 
 - [ ] Hard-refresh the prod URL; confirm no stale build.
 - [ ] Tail Supabase logs (Studio → Logs).
-- [ ] Tail Twilio Debugger.
+- [ ] Tail Telnyx Mission Control (Messaging + Voice logs).
 - [ ] Tail Stripe events (`stripe listen --forward-to ...` if you
       brought the Stripe CLI; otherwise dashboard tab open).
 - [ ] Phone on silent + face-up so the room can see notifications
@@ -119,7 +119,7 @@ setup supports this if you arrange it:
 | Failure                              | Recover                                                                 |
 | ------------------------------------ | ----------------------------------------------------------------------- |
 | Email doesn't arrive in 30s          | Check Resend dashboard. If Resend is down, skip that channel and verbalize what *would* arrive. |
-| SMS doesn't arrive                   | Check Twilio Debugger. Most likely cause: number not verified.          |
+| SMS doesn't arrive                   | Check Telnyx Mission Control (Messaging logs). Most likely cause: from number not provisioned for SMS, or destination not on the messaging profile allowlist.          |
 | Call fails                           | Same as above. Pivot: "Let me play you the recording I made earlier."   |
 | Stripe Checkout 500s                 | Show the test mode in the dashboard, walk through manually.             |
 | Vercel deploy is broken              | Switch to `public/demo-fallback.mp4` (or Drive link). Keep narrating.   |

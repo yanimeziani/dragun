@@ -2,6 +2,20 @@
 
 **Date:** 2026-05-02 (post-hardening) · **Stage:** pre-launch · **Auditor of record:** none yet · **Type I observation start:** not begun
 
+> **2026-05-02 telephony migration:** SMS + voice provider switched from
+> Twilio to **Telnyx**. Sections in this doc + `soc2-problem-solution.md` +
+> `soc2-manops.md` that reference Twilio-specific control details
+> (HMAC-SHA1 signature on `/api/webhooks/twilio/status`, US A2P 10DLC path,
+> Twilio DPA filing) need a refresh pass:
+> - Webhook signature verification scheme is now **Ed25519** via
+>   `TELNYX_PUBLIC_KEY`. Inbound STOP/HELP/delivery routes must verify
+>   the `Telnyx-Signature-Ed25519` header.
+> - Canadian long-code is exempt from US A2P 10DLC for Canada-to-Canada
+>   traffic at launch volume; US 10DLC remains a post-launch milestone
+>   when US destinations are added.
+> - Telnyx DPA: re-file under §1.3 manops; previous Twilio DPA reference
+>   is stale.
+
 This is the post-hardening view. The first pass of this doc (kept in git
 history, commit before today's hardening pass) recorded the gap analysis;
 this revision records what has been closed, what remains, and the new

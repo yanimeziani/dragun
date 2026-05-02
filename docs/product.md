@@ -55,7 +55,7 @@ This is what `dragun.app` actually does on launch day:
   starts the 14-day campaign immediately (or scheduled).
 - **Cross-channel cadence engine.** A Vercel cron tick advances each
   open campaign and fires the next scheduled `campaign_event` via
-  Resend (email), Twilio (SMS), Twilio TwiML `<Say>` (voice). All
+  Resend (email), Telnyx (SMS), Telnyx TeXML `<Speak>` (voice). All
   templates have an EN and a FR variant.
 - **Debtor pay link.** `/p/<slug>` is a public page in the debtor's
   locale. Stripe Checkout (Apple Pay / Google Pay first) settles the
@@ -76,11 +76,11 @@ This is what `dragun.app` actually does on launch day:
   cohort. Dragun receives the full amount, pays out 95 % to the SMB
   by interac / wire weekly. Mounir signs an addendum that this is the
   v1 settlement path.
-- **10DLC SMS registration.** Twilio trial mode with verified
-  destinations only for live sends. Mounir's debtor's phone is
-  added to the verified list pre-meeting. Production carrier
-  registration is a 1–4 week post-launch process.
-- **ElevenLabs / conversational voice agents.** Twilio `<Say>`
+- **A2P US registration deferred.** Canada-to-Canada SMS via Telnyx
+  Canadian long-code is exempt from A2P 10DLC for the launch cohort.
+  US 10DLC registration is a 1–4 week post-launch process — required
+  before Dragun targets US debtors.
+- **ElevenLabs / conversational voice agents.** Telnyx TeXML `<Speak>`
   reads scripted FR / EN copy. Natural-voice upgrade is post-launch.
 - **Multi-user orgs.** One owner per organization; team invites are
   v2.

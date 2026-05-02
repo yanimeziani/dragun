@@ -32,7 +32,7 @@ const fr: LegalDoc = {
       body: [
         "Authenticité de la créance : vous attestez que les débiteurs que vous ajoutez vous doivent réellement les sommes indiquées, que la créance n'est pas contestée, et que vous avez le droit légal de les contacter à l'adresse courriel et au numéro de téléphone fournis.",
         "Consentement : vous respectez la Loi canadienne anti-pourriel (LCAP) au Canada, le RGPD et la directive ePrivacy en Europe, le PECR au Royaume-Uni, le TCPA aux États-Unis, et toute loi applicable en matière de communications commerciales et de protection des consommateurs.",
-        "Conformité : vous respectez les règles d'utilisation acceptable de Twilio, Resend et Stripe, ainsi que les obligations de divulgation locales (par exemple, identification de l'expéditeur, mention « STOP » pour SMS, enregistrement d'appel selon la juridiction).",
+        "Conformité : vous respectez les règles d'utilisation acceptable de Telnyx, Resend et Stripe, ainsi que les obligations de divulgation locales (par exemple, identification de l'expéditeur, mention « STOP » pour SMS, enregistrement d'appel selon la juridiction).",
         "Usages interdits : harcèlement, menaces, usurpation d'identité, fausses déclarations, intérêts usuraires, créances déjà confiées à une agence de recouvrement, créances faisant l'objet d'un litige, créances issues d'activités illégales.",
         "Vous indemnisez Dragun pour toute réclamation d'un débiteur, d'un fournisseur ou d'une autorité résultant d'un manquement à ces engagements.",
       ],
@@ -71,7 +71,7 @@ const fr: LegalDoc = {
     {
       heading: "Force majeure",
       body: [
-        "Aucune partie n'est responsable d'un manquement causé par un événement échappant à son contrôle raisonnable : pannes des fournisseurs (Supabase, Vercel, Stripe, Twilio, Resend), événements climatiques, conflits, mesures gouvernementales, attaques informatiques de masse.",
+        "Aucune partie n'est responsable d'un manquement causé par un événement échappant à son contrôle raisonnable : pannes des fournisseurs (Supabase, Vercel, Stripe, Telnyx, Resend), événements climatiques, conflits, mesures gouvernementales, attaques informatiques de masse.",
       ],
     },
     {
@@ -148,7 +148,7 @@ const en: LegalDoc = {
       body: [
         "Genuine debt: you confirm that the debtors you add genuinely owe you the amounts shown, that the debt is not disputed, and that you have the legal right to contact them at the email and phone provided.",
         "Consent: you comply with Canada's Anti-Spam Legislation (CASL), the GDPR and ePrivacy Directive in Europe, the UK PECR, the US TCPA, and any applicable law on commercial communications and consumer protection.",
-        "Compliance: you comply with the acceptable-use rules of Twilio, Resend, and Stripe, and with local disclosure obligations (e.g., sender identification, SMS opt-out language, call recording where required).",
+        "Compliance: you comply with the acceptable-use rules of Telnyx, Resend, and Stripe, and with local disclosure obligations (e.g., sender identification, SMS opt-out language, call recording where required).",
         "Prohibited use: harassment, threats, impersonation, false statements, usurious interest, debts already with a collection agency, disputed debts, debts arising from illegal activities.",
         "You indemnify Dragun against any claim from a debtor, vendor, or authority arising from a breach of these undertakings.",
       ],
@@ -187,7 +187,7 @@ const en: LegalDoc = {
     {
       heading: "Force majeure",
       body: [
-        "Neither party is liable for a failure caused by an event beyond its reasonable control: vendor outages (Supabase, Vercel, Stripe, Twilio, Resend), weather events, conflict, government action, mass cyber attacks.",
+        "Neither party is liable for a failure caused by an event beyond its reasonable control: vendor outages (Supabase, Vercel, Stripe, Telnyx, Resend), weather events, conflict, government action, mass cyber attacks.",
       ],
     },
     {

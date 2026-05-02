@@ -19,7 +19,8 @@
 | `/legal/terms`                 | Bilingual terms of service                                            | none | Static |
 | `/api/cron/cadence`            | Vercel cron — advances open campaigns                                 | cron | Edge   |
 | `/api/webhooks/stripe`         | Stripe Checkout / Connect events                                      | sig  | Server |
-| `/api/webhooks/twilio/status`  | Twilio delivery callbacks                                             | sig  | Server |
+| `/api/webhooks/telnyx/status`  | Telnyx delivery callbacks (Ed25519 signed)                            | sig  | Server |
+| `/api/telnyx/voice`            | TeXML responder for outbound voice scripts                            | none | Edge   |
 
 `org` auth = signed-in user with at least one row in `org_members`.
 
@@ -31,7 +32,7 @@ Four vendors. No more.
 | -------- | ------------------------------------ | ---------------------------------------------------------------------------------- |
 | Supabase | Postgres, auth, RLS                   | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY` |
 | Resend   | Transactional email                   | `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `LEAD_TO_EMAIL`                              |
-| Twilio   | SMS + outbound voice (`<Say>`)        | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER`                     |
+| Telnyx   | SMS + outbound voice (TeXML `<Speak>`) | `TELNYX_API_KEY`, `TELNYX_FROM_NUMBER`, `TELNYX_TEXML_CONNECTION_ID`, optional `TELNYX_MESSAGING_PROFILE_ID`, `TELNYX_PUBLIC_KEY` |
 | Stripe   | Pay link Checkout + webhook signature | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`  |
 
 ElevenLabs deferred. Stripe Connect Express deferred (manual SMB
@@ -99,7 +100,7 @@ create table public.campaign_events (
   scheduled_at  timestamptz not null,
   fired_at      timestamptz,
   status        text not null default 'scheduled', -- 'scheduled' | 'sent' | 'delivered' | 'opened' | 'failed' | 'cancelled'
-  provider_id   text,                              -- Resend message id / Twilio sid
+  provider_id   text,                              -- Resend message id / Telnyx sid
   payload       jsonb not null default '{}',
   created_at    timestamptz default now()
 );
@@ -263,7 +264,7 @@ docs/
 
 ## Constraints we will not violate
 
-- **No SDK churn.** Resend, Twilio, Stripe all called via REST `fetch`
+- **No SDK churn.** Resend, Telnyx, Stripe all called via REST `fetch`
   — except Stripe webhook signature verification, which uses the
   official Stripe SDK because hand-rolling HMAC is not worth the risk.
 - **No mock channels.** Everything inside `/app` and `/api/*` either
@@ -275,7 +276,7 @@ docs/
   `.env.*` files.
 - **RLS on every public table.** No public reads of org-scoped data.
 - **One vendor per concern.** Supabase for storage+auth, Resend for
-  email, Twilio for telephony, Stripe for money. No second of each.
+  email, Telnyx for telephony, Stripe for money. No second of each.
 
 ## Hosting
 
@@ -283,6 +284,6 @@ docs/
   Vercel cron registered for `/api/cron/cadence` (every 5 min).
 - **DB:** Supabase Cloud `dragun-prod`. Migrations applied via
   `supabase db push` from local. Local dev stack on ports 54340–54349.
-- **Twilio:** trial account, one Canadian number, verified destinations
+- **Telnyx:** trial account, one Canadian number, verified destinations
   list (Mounir's mobile + ours pre-meeting).
 - **Stripe:** test mode for the demo. Live mode keys swap in post-LOI.

@@ -11,7 +11,7 @@ on that promise. **Do not improvise during an incident — follow this doc.**
 | Sentry (`security@dragun.app` alerts) | Unhandled exceptions, error spikes, performance regressions |
 | Logflare (custom alerts on `kind:auth.signin.failed` rate, `kind:stripe.webhook.bad_signature`, `kind:csp.violation`) | Auth abuse, webhook tampering attempts, CSP violations indicating possible XSS |
 | Stripe Radar | Fraud signals on payments; transaction disputes |
-| Twilio fraud detection | Toll fraud, abnormal call volumes |
+| Telnyx fraud detection (Mission Control alerts) | Toll fraud, abnormal call volumes, blocked-route attempts |
 | Customer email (`security@dragun.app`, `privacy@dragun.app`) | Externally reported issues |
 | GitHub Dependabot | Dependency CVE disclosures |
 | Supabase / Vercel status pages | Subprocessor outages |

@@ -40,7 +40,7 @@ const fr: LegalDoc = {
     {
       heading: "Sous-traitants",
       body: [
-        "La liste complète des sous-traitants (Supabase, Vercel, Stripe, Resend, Twilio, Google OAuth, Sentry, Logflare, GitHub) est tenue à jour dans docs/subprocessors.md, avec leur portée de données, région et certifications SOC 2 / ISO.",
+        "La liste complète des sous-traitants (Supabase, Vercel, Stripe, Resend, Telnyx, Google OAuth, Sentry, Logflare, GitHub) est tenue à jour dans docs/subprocessors.md, avec leur portée de données, région et certifications SOC 2 / ISO.",
       ],
     },
     {
@@ -94,7 +94,7 @@ const en: LegalDoc = {
     {
       heading: "Subprocessors",
       body: [
-        "The full list (Supabase, Vercel, Stripe, Resend, Twilio, Google OAuth, Sentry, Logflare, GitHub) is maintained in docs/subprocessors.md with each vendor's data scope, region, and SOC 2 / ISO certifications.",
+        "The full list (Supabase, Vercel, Stripe, Resend, Telnyx, Google OAuth, Sentry, Logflare, GitHub) is maintained in docs/subprocessors.md with each vendor's data scope, region, and SOC 2 / ISO certifications.",
       ],
     },
     {

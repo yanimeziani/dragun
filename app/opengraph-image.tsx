@@ -102,7 +102,7 @@ export default async function OpenGraphImage() {
           }}
         >
           <div style={{ display: "flex" }}>
-            Resend · Twilio · Dragun voice agent
+            Telnyx · Resend · Dragun voice agent
           </div>
           <div
             style={{

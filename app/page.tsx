@@ -58,7 +58,7 @@ const COPY = {
       asideEmail: "Courriel",
       asideSms: "Texto",
       asideVoice: "Voix",
-      asideBuiltOn: "Conçu avec · Twilio · Resend · Agent vocal Dragun",
+      asideBuiltOn: "Conçu avec · Telnyx · Resend · Agent vocal Dragun",
     },
     problem: {
       label: "I. La math du paiement",
@@ -89,7 +89,7 @@ const COPY = {
         {
           roman: "Ⅰ.",
           name: "Texto",
-          vendor: "Twilio",
+          vendor: "Telnyx",
           window: "Jour 0 · 3",
           cadence: "2 relances",
           voice: "Court, doux, signé de votre marque. Lien de paiement en un clic.",
@@ -136,7 +136,7 @@ const COPY = {
       laneSms: "Texto",
       laneVoice: "Voix",
       vendorEmail: "Resend",
-      vendorSms: "Twilio",
+      vendorSms: "Telnyx",
       vendorVoice: "Agent",
       outcomeLabel: "Résultat",
       outcomePayLink: "Lien de paiement · J0",
@@ -162,7 +162,7 @@ const COPY = {
         {
           k: "10DLC / A2P",
           tag: "En traitement",
-          l: "Enregistrement marque + campagne en cours auprès de Twilio. Trafic actuel limité aux numéros vérifiés ; filtrage des opérateurs minimisé après approbation.",
+          l: "Enregistrement marque + campagne en cours auprès de Telnyx. Trafic actuel limité aux numéros vérifiés ; filtrage des opérateurs minimisé après approbation.",
         },
         {
           k: "SOC 2",
@@ -303,7 +303,7 @@ const COPY = {
       asideEmail: "Email",
       asideSms: "SMS",
       asideVoice: "Voice",
-      asideBuiltOn: "Built on · Twilio · Resend · Dragun voice agent",
+      asideBuiltOn: "Built on · Telnyx · Resend · Dragun voice agent",
     },
     problem: {
       label: "I. The math of getting paid",
@@ -334,7 +334,7 @@ const COPY = {
         {
           roman: "Ⅰ.",
           name: "SMS",
-          vendor: "Twilio",
+          vendor: "Telnyx",
           window: "Day 0 · 3",
           cadence: "2 nudges",
           voice: "Short, kind, branded. Pay link in one tap.",
@@ -381,7 +381,7 @@ const COPY = {
       laneSms: "SMS",
       laneVoice: "Voice",
       vendorEmail: "Resend",
-      vendorSms: "Twilio",
+      vendorSms: "Telnyx",
       vendorVoice: "Agent",
       outcomeLabel: "Outcome",
       outcomePayLink: "Pay link · Day 0",
@@ -407,7 +407,7 @@ const COPY = {
         {
           k: "10DLC / A2P",
           tag: "In review",
-          l: "Brand and campaign registration in progress with Twilio. Current traffic limited to verified numbers; carrier filtering minimised once approval lands.",
+          l: "Brand and campaign registration in progress with Telnyx. Current traffic limited to verified numbers; carrier filtering minimised once approval lands.",
         },
         {
           k: "SOC 2",
@@ -848,7 +848,7 @@ function Problem({ c }: { c: Copy }) {
 }
 
 /* ────────────────────────────────────────────────────────── */
-/*  Channels — Resend, Twilio, Voice                          */
+/*  Channels — Resend, Telnyx, Voice                          */
 /* ────────────────────────────────────────────────────────── */
 
 function Channels({ c }: { c: Copy }) {

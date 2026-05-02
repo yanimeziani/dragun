@@ -13,9 +13,9 @@ order).
 
 ## Pre-flight before launching the loop
 
-1. Mounir's number (in your contacts) added to Twilio verified
+1. Mounir's number (in your contacts) added to Telnyx verified
    caller-IDs and OTP completed. The loop cannot do this for you.
-2. Twilio + Supabase Cloud accounts exist and credentials are in
+2. Telnyx + Supabase Cloud accounts exist and credentials are in
    `.env.development.local` *and* in Vercel project env vars.
 3. `git status` is clean *for files the loop will touch*. The user
    may have parallel WIP on `app/page.tsx` (auth integration) — the

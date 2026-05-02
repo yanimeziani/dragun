@@ -9,7 +9,7 @@ quarterly (next: 2026-Q3). Cross-referenced from the privacy policy.
 | 2 | **Vercel** | Web hosting, edge runtime, image optimization | Global edge, primary `iad1` | Critical | DPA on file | SOC 2 Type II ([trust portal](https://vercel.com/trust)) | 2026-05-02 |
 | 3 | **Stripe** | Payments (paylinks + subscription billing) | Global | Critical | DPA bundled with TOS ([page](https://stripe.com/legal/dpa)) | SOC 1 Type II + SOC 2 Type II + PCI DSS Level 1 | 2026-05-02 |
 | 4 | **Resend** | Transactional email delivery | US/EU | High | DPA on request | SOC 2 Type II ([trust](https://resend.com/security)) | 2026-05-02 |
-| 5 | **Twilio** | SMS + voice agent | Global, US-anchored | High | DPA on file | SOC 2 Type II + ISO 27001 ([trust](https://www.twilio.com/legal)) | 2026-05-02 |
+| 5 | **Telnyx** | SMS + voice agent (TeXML) | US-anchored, Canadian PoPs | High | DPA on file | SOC 2 Type II + ISO 27001 + HIPAA ([trust](https://telnyx.com/security)) | 2026-05-02 |
 | 6 | **Google (OAuth)** | Sign-in identity provider (profile + email scopes only) | Global | Medium | Standard Google Cloud terms | SOC 2 Type II + ISO 27001/27017/27018 | 2026-05-02 |
 | 7 | **Sentry** | Error tracking (DSN-conditional, scrubs PII before send) | US | Medium | DPA on file | SOC 2 Type II ([trust](https://sentry.io/security/)) | 2026-05-02 |
 | 8 | **Logflare** | Log drain for Supabase + Vercel runtime logs | US | Medium | Subprocessor of Supabase; same DPA path | SOC 2 (via Supabase) | 2026-05-02 |
@@ -34,9 +34,10 @@ quarterly (next: 2026-Q3). Cross-referenced from the privacy policy.
 - **Stores:** rendered email HTML (subject + body) for delivery + retention per their plan
 - **Bounce handling:** webhook to be wired (post-launch)
 
-### Twilio
-- **Stores:** SMS body, call TwiML, recipient phone, status callbacks
-- **Subprocessor:** carriers (10DLC for US traffic — registration in progress, manops §1.4)
+### Telnyx
+- **Stores:** SMS body, call TeXML scripts, recipient phone, delivery webhooks
+- **Subprocessor:** carriers (Canadian long-code requires no extra registration for Canada-to-Canada A2P traffic; US 10DLC registration deferred to post-launch when US destinations are added)
+- **Auth:** bearer token (`TELNYX_API_KEY`) over TLS; webhook signatures verified via Ed25519 public key
 
 ### Google (OAuth)
 - **Stores:** OAuth client secret (Vercel envs); end-user identity claims passed back to Supabase Auth
