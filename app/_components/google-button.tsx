@@ -4,10 +4,12 @@ import { useTransition } from "react";
 import { signInWithGoogle } from "../_actions/auth";
 
 export function GoogleButton({
-  children = "Continue with Google",
+  label = "Continue with Google",
+  loadingLabel = "Opening Google…",
   variant = "primary",
 }: {
-  children?: React.ReactNode;
+  label?: string;
+  loadingLabel?: string;
   variant?: "primary" | "ghost";
 }) {
   const [pending, start] = useTransition();
@@ -55,7 +57,7 @@ export function GoogleButton({
           d="M9 18c2.5 0 4.6-.8 6.1-2.2l-3.4-2.6c-.9.6-2.1 1-2.7 1-2.1 0-3.8-1.4-4.6-3.4L1 13.4C2.5 16.2 5.5 18 9 18z"
         />
       </svg>
-      <span>{pending ? "Opening Google…" : children}</span>
+      <span>{pending ? loadingLabel : label}</span>
     </button>
   );
 }

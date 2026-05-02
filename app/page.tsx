@@ -214,6 +214,7 @@ const COPY = {
       unauthSub:
         "Continuez avec Google, ou avec courriel et mot de passe. Votre tableau de bord est prêt dès la connexion.",
       googleCta: "Continuer avec Google",
+      googleOpening: "Ouverture de Google…",
       emailCta: "Utiliser le courriel",
       already: "Déjà membre ?",
       alreadyLink: "Connexion →",
@@ -458,6 +459,7 @@ const COPY = {
       unauthSub:
         "Continue with Google, or use email and password. Your dashboard is ready the moment you sign in.",
       googleCta: "Continue with Google",
+      googleOpening: "Opening Google…",
       emailCta: "Use email instead",
       already: "Already a member?",
       alreadyLink: "Sign in →",
@@ -1245,7 +1247,7 @@ function AuthCta({
       </p>
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-        <GoogleButton variant="primary">{c.auth.googleCta}</GoogleButton>
+        <GoogleButton variant="primary" label={c.auth.googleCta} loadingLabel={c.auth.googleOpening} />
         <Link
           href="/auth/sign-up"
           className="group inline-flex items-center justify-center gap-3 border border-bone/30 px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone-2 hover:border-ember hover:text-ember transition-colors"

@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { AuthForm } from "@/app/_components/auth-form";
 import { AuthShell } from "../_shell";
+import { getStrings } from "@/app/_lib/i18n";
 
-export const metadata: Metadata = {
-  title: "Sign in · Dragun",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const s = await getStrings();
+  return { title: s.auth.signInMetaTitle };
+}
 
 export default async function SignInPage({
   searchParams,
@@ -12,20 +14,22 @@ export default async function SignInPage({
   searchParams: Promise<{ check?: string; error?: string }>;
 }) {
   const sp = await searchParams;
+  const s = await getStrings();
   const notice =
     sp.check === "email"
-      ? "Check your inbox to confirm your email, then come back here to sign in."
+      ? s.auth.signInNoticeCheckEmail
       : sp.error === "auth"
-      ? "Sign-in didn't complete. Try again."
+      ? s.auth.signInNoticeAuthError
       : undefined;
 
   return (
     <AuthShell
-      title="Welcome back."
-      subtitle="Sign in"
+      title={s.auth.signInPageTitle}
+      subtitle={s.auth.signInSubtitle}
       notice={notice}
+      strings={s.auth}
     >
-      <AuthForm mode="sign-in" />
+      <AuthForm mode="sign-in" strings={s.auth} />
     </AuthShell>
   );
 }

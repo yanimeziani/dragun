@@ -1,15 +1,22 @@
 import type { Metadata } from "next";
 import { AuthForm } from "@/app/_components/auth-form";
 import { AuthShell } from "../_shell";
+import { getStrings } from "@/app/_lib/i18n";
 
-export const metadata: Metadata = {
-  title: "Create account · Dragun",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const s = await getStrings();
+  return { title: s.auth.signUpMetaTitle };
+}
 
-export default function SignUpPage() {
+export default async function SignUpPage() {
+  const s = await getStrings();
   return (
-    <AuthShell title="Create your account." subtitle="Free to start · 5 % on recovered">
-      <AuthForm mode="sign-up" />
+    <AuthShell
+      title={s.auth.signUpPageTitle}
+      subtitle={s.auth.signUpSubtitle}
+      strings={s.auth}
+    >
+      <AuthForm mode="sign-up" strings={s.auth} />
     </AuthShell>
   );
 }
