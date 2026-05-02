@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createClient } from "../_lib/supabase/server";
 import { signOut } from "../_actions/auth";
 import { getLocale, getStrings, type Locale, type Strings } from "../_lib/i18n";
@@ -99,15 +100,17 @@ export default async function DashboardPage() {
   const strings = await getStrings();
   const s = strings.dashboard;
 
-  // Auth + membership are guaranteed by app/app/layout.tsx.
+  // Layout enforces auth, but pages render in parallel with layouts in Next 16,
+  // so we must re-check here to avoid null-deref before the layout's redirect lands.
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  if (!user) redirect("/auth/sign-in");
 
   const { data: membership } = await supabase
     .from("org_members")
     .select("org_id, organizations(id, display_name, locale)")
-    .eq("user_id", user!.id)
+    .eq("user_id", user.id)
     .limit(1)
     .maybeSingle();
 
@@ -321,7 +324,7 @@ export default async function DashboardPage() {
         )}
 
         <p className="mt-12 font-mono text-[11px] uppercase tracking-[0.2em] text-bone-3">
-          {user!.email}
+          {user.email}
         </p>
       </section>
     </main>

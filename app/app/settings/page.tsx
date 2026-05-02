@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createClient } from "@/app/_lib/supabase/server";
 import { signOut } from "@/app/_actions/auth";
 import { getLocale, getStrings, type Locale } from "@/app/_lib/i18n";
@@ -89,9 +90,10 @@ export default async function SettingsPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  // Layout enforces auth, but pages render in parallel with layouts in Next 16,
+  // so we must re-check here to avoid null-deref before the layout's redirect lands.
+  if (!user) redirect("/auth/sign-in");
 
-  // Auth + membership are guaranteed by app/app/layout.tsx, but the org
-  // query here uses the canonical RPC for cross-table reads.
   const { data: orgRowsRaw } = await supabase
     .from("organizations")
     .select("id, display_name, locale, brand, payout_email")
@@ -147,7 +149,7 @@ export default async function SettingsPage() {
         )}
 
         <p className="mt-12 font-mono text-[11px] uppercase tracking-[0.2em] text-bone-3">
-          {user!.email}
+          {user.email}
         </p>
       </section>
     </main>

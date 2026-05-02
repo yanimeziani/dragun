@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createClient } from "@/app/_lib/supabase/server";
 import { getLocale, getStrings, type Locale } from "@/app/_lib/i18n";
 import { LocaleToggle } from "@/app/_components/locale-toggle";
@@ -29,16 +30,18 @@ function Mark({ className = "h-5 w-5" }: { className?: string }) {
 }
 
 export default async function NewCasePage() {
-  // Auth + membership are guaranteed by app/app/layout.tsx.
+  // Layout enforces auth, but pages render in parallel with layouts in Next 16,
+  // so we must re-check here to avoid null-deref before the layout's redirect lands.
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  if (!user) redirect("/auth/sign-in");
 
   const { data: membership } = await supabase
     .from("org_members")
     .select("organizations(locale)")
-    .eq("user_id", user!.id)
+    .eq("user_id", user.id)
     .limit(1)
     .maybeSingle();
 
