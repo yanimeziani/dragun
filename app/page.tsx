@@ -1392,9 +1392,6 @@ function Footer({ c }: { c: Copy }) {
         <div className="mt-16 sm:mt-20 select-none overflow-hidden">
           <div className="kern-display font-display text-[clamp(3.5rem,22vw,18rem)] leading-none tracking-[-0.03em] text-bone/90 break-words">
             DRAGUN
-            <span className="text-ember glow-ember">
-              †
-            </span>
           </div>
         </div>
 
