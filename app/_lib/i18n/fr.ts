@@ -33,7 +33,7 @@ export const fr: Strings = {
   },
   onboarding: {
     title: "Bienvenue chez Dragun",
-    subtitle: "Configurons votre entreprise. 60 secondes.",
+    subtitle: "Configurons votre entreprise. Votre premier rappel amical part dès aujourd'hui.",
     businessName: "Nom de l'entreprise",
     businessNamePlaceholder: "Venice Gym Charlesbourg",
     defaultLocale: "Langue par défaut des communications",
@@ -82,9 +82,11 @@ export const fr: Strings = {
     privacy: "Confidentialité",
     terms: "Conditions",
     disclosures: "Divulgations",
+    security: "Sécurité",
     privacyTitle: "Politique de confidentialité",
     termsTitle: "Conditions d'utilisation",
     disclosuresTitle: "Divulgations",
+    securityTitle: "Sécurité",
   },
   errors: {
     invalidEmail: "Adresse courriel invalide.",

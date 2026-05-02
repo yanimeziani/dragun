@@ -33,7 +33,7 @@ export const en: Strings = {
   },
   onboarding: {
     title: "Welcome to Dragun",
-    subtitle: "Let's set up your business. 60 seconds.",
+    subtitle: "Let's set up your business. Your first friendly reminder goes out today.",
     businessName: "Business name",
     businessNamePlaceholder: "Atlas Athletic",
     defaultLocale: "Default language for customer communications",
@@ -82,9 +82,11 @@ export const en: Strings = {
     privacy: "Privacy",
     terms: "Terms",
     disclosures: "Disclosures",
+    security: "Security",
     privacyTitle: "Privacy policy",
     termsTitle: "Terms of service",
     disclosuresTitle: "Disclosures",
+    securityTitle: "Security",
   },
   errors: {
     invalidEmail: "Invalid email address.",
