@@ -884,9 +884,9 @@ function Channels({ c }: { c: Copy }) {
               <h3 className="mt-5 sm:mt-6 font-display text-4xl sm:text-5xl tracking-tight text-bone">
                 {card.name}
               </h3>
-              <p className="mt-4 max-w-[34ch] text-bone-2 text-sm sm:text-base">{card.voice}</p>
+              <p className="mt-4 max-w-[34ch] text-bone-2 text-base sm:text-lg leading-relaxed">{card.voice}</p>
 
-              <ul className="mt-7 sm:mt-8 space-y-2 border-t border-line pt-5 text-sm text-bone-2">
+              <ul className="mt-7 sm:mt-8 space-y-2 border-t border-line pt-5 text-sm sm:text-base text-bone-2 leading-relaxed">
                 {card.detail.map((d) => (
                   <li key={d} className="flex gap-3">
                     <span className="mt-2 h-px w-3 shrink-0 bg-bone-3" />
@@ -945,7 +945,7 @@ function Mechanism({ c }: { c: Copy }) {
           <h2 className="mt-4 max-w-[24ch] font-display text-[clamp(2rem,5vw,4.2rem)] leading-[1.04] tracking-tight text-bone break-words">
             {c.mechanism.title}
           </h2>
-          <p className="mt-6 max-w-[60ch] text-bone-2 text-sm sm:text-base">{c.mechanism.body}</p>
+          <p className="mt-6 max-w-[60ch] text-bone-2 text-base sm:text-lg leading-relaxed">{c.mechanism.body}</p>
         </Reveal>
 
         <div className="mt-12 sm:mt-16 border border-line bg-ink-1/40 overflow-hidden">
@@ -979,7 +979,7 @@ function Mechanism({ c }: { c: Copy }) {
               className="grid grid-cols-[88px_1fr] sm:grid-cols-[120px_1fr] border-b border-line last:border-b-0"
             >
               <div className="flex flex-col justify-center border-r border-line px-3 sm:px-4 py-4 sm:py-5">
-                <span className="font-display text-lg sm:text-xl text-bone">
+                <span className="font-sans text-base sm:text-lg font-medium text-bone">
                   {lane.name}
                 </span>
                 <span className="font-mono text-[10px] sm:text-[11.5px] uppercase tracking-[0.18em] text-bone-3">
@@ -1059,7 +1059,7 @@ function Compliance({ c }: { c: Copy }) {
               <br />
               <em>{c.compliance.titleLine2}</em>
             </h2>
-            <p className="mt-6 max-w-[40ch] text-bone-2 text-sm sm:text-base">
+            <p className="mt-6 max-w-[40ch] text-bone-2 text-base sm:text-lg leading-relaxed">
               {c.compliance.body}
             </p>
           </Reveal>
@@ -1075,7 +1075,7 @@ function Compliance({ c }: { c: Copy }) {
                       {it.tag}
                     </span>
                   </div>
-                  <p className="mt-4 text-bone-2 text-sm sm:text-base">{it.l}</p>
+                  <p className="mt-4 text-bone-2 text-base sm:text-lg leading-relaxed">{it.l}</p>
                 </div>
               ))}
             </div>
@@ -1113,10 +1113,10 @@ function Distribution({
               <br />
               <em>{c.distribution.titleLine2}</em>
             </h2>
-            <p className="mt-6 max-w-[44ch] text-bone-2 text-sm sm:text-base">
+            <p className="mt-6 max-w-[44ch] text-bone-2 text-base sm:text-lg leading-relaxed">
               {c.distribution.body1}
             </p>
-            <p className="mt-4 max-w-[44ch] text-bone-2 text-sm sm:text-base">
+            <p className="mt-4 max-w-[44ch] text-bone-2 text-base sm:text-lg leading-relaxed">
               {c.distribution.body2}
             </p>
           </Reveal>
@@ -1150,7 +1150,7 @@ function Distribution({
                     <span className="font-mono text-[10.5px] sm:text-[11.5px] uppercase tracking-[0.18em] text-bone-3">
                       {k}
                     </span>
-                    <span className="text-bone-2 text-sm sm:text-base">{v}</span>
+                    <span className="text-bone-2 text-base sm:text-lg leading-relaxed">{v}</span>
                   </li>
                 ))}
               </ul>
@@ -1173,7 +1173,7 @@ function Distribution({
               <br />
               <em className="text-bone-2">{c.distribution.formTitleB}</em>
             </h3>
-            <p className="mt-5 max-w-[40ch] text-bone-2 text-sm sm:text-base">
+            <p className="mt-5 max-w-[40ch] text-bone-2 text-base sm:text-lg leading-relaxed">
               {c.distribution.formBody}
             </p>
             <ul className="mt-8 space-y-3 font-mono text-[12px] sm:text-sm uppercase tracking-[0.18em] text-bone-2">
@@ -1211,7 +1211,7 @@ function AuthCta({
         <p className="mt-3 font-display text-xl sm:text-2xl leading-snug break-words">
           {c.auth.authedTitle(displayName)}
         </p>
-        <p className="mt-2 max-w-[44ch] text-bone-2 text-sm sm:text-base">
+        <p className="mt-2 max-w-[44ch] text-bone-2 text-base sm:text-lg leading-relaxed">
           {c.auth.authedSub}
         </p>
         <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -1242,7 +1242,7 @@ function AuthCta({
       <p className="mt-3 font-display text-xl sm:text-2xl leading-snug text-bone break-words">
         {c.auth.unauthTitle}
       </p>
-      <p className="mt-3 max-w-[44ch] text-bone-2 text-sm sm:text-base">
+      <p className="mt-3 max-w-[44ch] text-bone-2 text-base sm:text-lg leading-relaxed">
         {c.auth.unauthSub}
       </p>
 
@@ -1334,7 +1334,7 @@ function Investor({ c }: { c: Copy }) {
                     <dt className="font-mono text-[11px] sm:text-[11.5px] uppercase tracking-[0.18em] text-bone-3">
                       {d.k}
                     </dt>
-                    <dd className="mt-1 font-display text-lg sm:text-xl text-bone break-words">
+                    <dd className="mt-1 font-sans text-base sm:text-lg font-medium text-bone break-words">
                       {d.v}
                     </dd>
                   </div>
@@ -1364,7 +1364,7 @@ function Footer({ c }: { c: Copy }) {
             <a href="#" className="text-bone">
               <DragunLogo className="h-6 w-6" wordmarkClassName="text-2xl" />
             </a>
-            <p className="mt-5 max-w-[44ch] text-bone-2 text-sm sm:text-base">
+            <p className="mt-5 max-w-[44ch] text-bone-2 text-base sm:text-lg leading-relaxed">
               {c.footer.blurb}
             </p>
           </div>
