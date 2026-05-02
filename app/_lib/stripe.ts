@@ -1,4 +1,5 @@
 import { createHmac, timingSafeEqual } from "crypto";
+import type { PaidPlanId } from "./plans";
 
 const STRIPE_API = "https://api.stripe.com/v1";
 
@@ -10,6 +11,16 @@ export type CheckoutArgs = {
   paylinkSlug: string;
   locale: "fr" | "en";
   origin: string;
+};
+
+export type SubscriptionCheckoutArgs = {
+  priceId: string;
+  orgId: string;
+  plan: PaidPlanId;
+  origin: string;
+  locale: "fr" | "en";
+  customerEmail?: string;
+  existingCustomerId?: string;
 };
 
 export async function createCheckoutSession(
@@ -57,6 +68,81 @@ export async function createCheckoutSession(
 
   const data = (await r.json()) as { id: string; url: string };
   return { url: data.url, id: data.id };
+}
+
+export async function createSubscriptionCheckoutSession(
+  args: SubscriptionCheckoutArgs,
+): Promise<{ url: string; id: string }> {
+  const apiKey = process.env.STRIPE_SECRET_KEY;
+  if (!apiKey) throw new Error("STRIPE_SECRET_KEY not set");
+
+  const params = new URLSearchParams();
+  params.set("mode", "subscription");
+  params.set("line_items[0][price]", args.priceId);
+  params.set("line_items[0][quantity]", "1");
+  params.set(
+    "success_url",
+    `${args.origin}/app/settings?billing=success`,
+  );
+  params.set("cancel_url", `${args.origin}/pricing?billing=cancelled`);
+  params.set("client_reference_id", args.orgId);
+  params.set("metadata[org_id]", args.orgId);
+  params.set("metadata[plan]", args.plan);
+  params.set("subscription_data[metadata][org_id]", args.orgId);
+  params.set("subscription_data[metadata][plan]", args.plan);
+  params.set("locale", args.locale === "fr" ? "fr" : "en");
+  params.set("allow_promotion_codes", "true");
+  if (args.existingCustomerId) {
+    params.set("customer", args.existingCustomerId);
+  } else if (args.customerEmail) {
+    params.set("customer_email", args.customerEmail);
+  }
+
+  const r = await fetch(`${STRIPE_API}/checkout/sessions`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: params.toString(),
+  });
+
+  if (!r.ok) {
+    const txt = await r.text();
+    throw new Error(`Stripe subscription checkout ${r.status}: ${txt}`);
+  }
+
+  const data = (await r.json()) as { id: string; url: string };
+  return { url: data.url, id: data.id };
+}
+
+export async function createBillingPortalSession(args: {
+  customerId: string;
+  origin: string;
+}): Promise<{ url: string }> {
+  const apiKey = process.env.STRIPE_SECRET_KEY;
+  if (!apiKey) throw new Error("STRIPE_SECRET_KEY not set");
+
+  const params = new URLSearchParams();
+  params.set("customer", args.customerId);
+  params.set("return_url", `${args.origin}/app/settings`);
+
+  const r = await fetch(`${STRIPE_API}/billing_portal/sessions`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: params.toString(),
+  });
+
+  if (!r.ok) {
+    const txt = await r.text();
+    throw new Error(`Stripe billing portal ${r.status}: ${txt}`);
+  }
+
+  const data = (await r.json()) as { url: string };
+  return { url: data.url };
 }
 
 export function verifyWebhookSignature(

@@ -1,5 +1,13 @@
 import type { Metadata } from "next";
+import { Lora } from "next/font/google";
 import "./globals.css";
+
+const lora = Lora({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  variable: "--font-lora",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Dragun — Friendly invoice follow-up for small businesses",
@@ -25,7 +33,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={lora.variable}>
       <body>{children}</body>
     </html>
   );

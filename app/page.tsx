@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { GoogleButton } from "./_components/google-button";
 import { LocaleToggle } from "./_components/locale-toggle";
+import { Reveal } from "./_components/reveal";
+import { Wick } from "./_components/wick";
+import { CountUp } from "./_components/count-up";
+import { PricingSection } from "./_components/pricing-section";
+import { DragunLogo } from "./_components/logo";
 import { createClient } from "./_lib/supabase/server";
 import { signOut } from "./_actions/auth";
 import { getLocale } from "./_lib/i18n";
@@ -36,10 +41,11 @@ const COPY = {
       tagline: "Relance amicale pour les PME · Fondé en 2026",
       titleLine1: "Encaissez à temps.",
       titleLine2: "Restez en bons termes.",
-      body: "Dragun est le bureau qui relance vos factures impayées — par courriel, texto et un agent vocal amical — pour que vous gardiez le client et soyez payé. Vous tenez la boutique. Nous gérons le moment gênant.",
+      body: "Dragun est le bureau qui relance vos factures impayées — par texto, courriel et un agent vocal amical — pour que vous gardiez le client et soyez payé. Vous tenez la boutique. Nous gérons le moment gênant.",
       ctaPrimary: "Commencer gratuitement",
       ctaSecondaryAuthed: "Ouvrir le tableau de bord",
       ctaSecondaryUnauth: "Commencer gratuitement",
+      ctaMicro: "Sans carte de crédit · 5 min · Annulez à tout moment",
       asideLabel: "Dragun · Coup d'œil",
       asideLive: "En ligne",
       asideHead1: "Une boîte.",
@@ -52,7 +58,7 @@ const COPY = {
       asideEmail: "Courriel",
       asideSms: "Texto",
       asideVoice: "Voix",
-      asideBuiltOn: "Conçu avec · Resend · Twilio · Agent vocal Dragun",
+      asideBuiltOn: "Conçu avec · Twilio · Resend · Agent vocal Dragun",
     },
     problem: {
       label: "I. La math du paiement",
@@ -63,6 +69,10 @@ const COPY = {
       headlineSuffix: "sur le dollar reviennent.",
       bigStat: "42 %",
       bigStat2: "12 ¢",
+      bigStatNum: 42,
+      bigStatSuffix: " %",
+      bigStat2Num: 12,
+      bigStat2Suffix: " ¢",
       stat1Big: "825 G$",
       stat1Label: "Factures impayées détenues par les PME nord-américaines",
       stat2Big: "31 h / mois",
@@ -78,22 +88,9 @@ const COPY = {
       cards: [
         {
           roman: "Ⅰ.",
-          name: "Courriel",
-          vendor: "Resend",
-          window: "Jour 0 → 7",
-          cadence: "3 rappels",
-          voice: "Chaleureux, transactionnel, dans la voix de votre marque.",
-          detail: [
-            "Alignement DKIM, SPF et DMARC",
-            "Réponses regroupées vers votre équipe",
-            "Sujets variables et chauffe-expéditeur",
-          ],
-        },
-        {
-          roman: "Ⅱ.",
           name: "Texto",
           vendor: "Twilio",
-          window: "Jour 5 → 14",
+          window: "Jour 0 · 3",
           cadence: "2 relances",
           voice: "Court, doux, signé de votre marque. Lien de paiement en un clic.",
           detail: [
@@ -103,10 +100,23 @@ const COPY = {
           ],
         },
         {
+          roman: "Ⅱ.",
+          name: "Courriel",
+          vendor: "Resend",
+          window: "Jour 7",
+          cadence: "1 rappel formel",
+          voice: "Chaleureux, transactionnel, dans la voix de votre marque.",
+          detail: [
+            "Alignement DKIM, SPF et DMARC",
+            "Réponses regroupées vers votre équipe",
+            "Trace écrite pour votre dossier",
+          ],
+        },
+        {
           roman: "Ⅲ.",
           name: "Voix",
           vendor: "Agent Dragun",
-          window: "Jour 10 →",
+          window: "Jour 14 → 27",
           cadence: "Jusqu'à 3 appels",
           voice: "Un agent amical. Écoute, aide, laisse une trace claire.",
           detail: [
@@ -120,7 +130,7 @@ const COPY = {
     mechanism: {
       label: "III. Le rythme de trente jours",
       title: "Un rythme. Début amical, rappels doux, fin polie.",
-      body: "Les rappels se déroulent automatiquement entre courriel, texto et voix. Vous voyez chaque action dans un seul registre ; vos clients entendent une seule voix, cohérente et amicale.",
+      body: "Les rappels se déroulent automatiquement entre texto, courriel et voix. Vous voyez chaque action dans un seul registre ; vos clients entendent une seule voix, cohérente et amicale.",
       laneLabel: "Voie",
       laneEmail: "Courriel",
       laneSms: "Texto",
@@ -151,13 +161,13 @@ const COPY = {
         },
         {
           k: "10DLC / A2P",
-          tag: "Enregistré",
-          l: "Expéditeur enregistré pour le trafic application-vers-personne. Filtrage des opérateurs minimisé par la validation marque et campagne.",
+          tag: "En traitement",
+          l: "Enregistrement marque + campagne en cours auprès de Twilio. Trafic actuel limité aux numéros vérifiés ; filtrage des opérateurs minimisé après approbation.",
         },
         {
           k: "SOC 2",
-          tag: "En cours",
-          l: "Type I en préparation. Contrôles alignés AICPA TSC. Journal d'audit par facture, conservé sept ans.",
+          tag: "Planifié",
+          l: "Programme aligné AICPA TSC. Engagement d'audit Type I prévu post-lancement. Journal d'audit administratif activé, conservé douze mois.",
         },
       ],
     },
@@ -177,8 +187,8 @@ const COPY = {
       timeline: [
         ["J0", "Inscrivez-vous · configurez votre entreprise en 5 min"],
         ["J0", "Ajoutez un client ou téléversez votre liste CSV"],
-        ["J0", "Le premier courriel amical part le jour même"],
-        ["J7+", "L'agent vocal entre en jeu à mesure que la facture vieillit"],
+        ["J0", "Le premier texto amical part le jour même"],
+        ["J14+", "L'agent vocal entre en jeu à mesure que la facture vieillit"],
       ],
       formLabel: "Commencer",
       formTitleA: "Lancez votre registre",
@@ -215,6 +225,7 @@ const COPY = {
       body:
         "Nous bouclons une ronde pré-amorçage pour étendre l'agent vocal et le maillage de conformité. La data room — économies unitaires, plan de mise en marché, posture de conformité — est disponible sur demande aux investisseurs qualifiés.",
       investorEmail: "investors@dragun.app",
+      investorMicro: "Pré-amorçage · SAFE · Investisseurs qualifiés QC + É.-U.",
       foundersLink: "Parler à un fondateur",
       cardLabel: "Ronde · Pré-amorçage",
       cardOpen: "Ouverte",
@@ -231,7 +242,7 @@ const COPY = {
     },
     footer: {
       blurb:
-        "Le bureau amical pour vous faire payer. Courriel, texto et voix — un rythme, un registre, un dépôt bancaire.",
+        "Le bureau amical pour vous faire payer. Texto, courriel et voix — un rythme, un registre, un dépôt bancaire.",
       platform: "Plateforme",
       contact: "Contact",
       howItWorks: "Comment ça marche",
@@ -245,6 +256,7 @@ const COPY = {
       privacy: "Confidentialité",
       terms: "Conditions",
       disclosures: "Divulgations",
+      security: "Sécurité",
     },
   },
   en: {
@@ -273,10 +285,11 @@ const COPY = {
       tagline: "Friendly invoice follow-up for small businesses · Est. 2026",
       titleLine1: "Get paid on time.",
       titleLine2: "Stay friends.",
-      body: "Dragun is the back-office that follows up on your unpaid invoices — across email, SMS and a friendly voice agent — so you keep the customer and still get paid. You run the shop. We handle the awkward part.",
+      body: "Dragun is the back-office that follows up on your unpaid invoices — across SMS, email and a friendly voice agent — so you keep the customer and still get paid. You run the shop. We handle the awkward part.",
       ctaPrimary: "Start free",
       ctaSecondaryAuthed: "Open dashboard",
       ctaSecondaryUnauth: "Start free",
+      ctaMicro: "No credit card · 5 min onboarding · Cancel anytime",
       asideLabel: "Dragun · At a glance",
       asideLive: "Live",
       asideHead1: "One inbox.",
@@ -289,7 +302,7 @@ const COPY = {
       asideEmail: "Email",
       asideSms: "SMS",
       asideVoice: "Voice",
-      asideBuiltOn: "Built on · Resend · Twilio · Dragun voice agent",
+      asideBuiltOn: "Built on · Twilio · Resend · Dragun voice agent",
     },
     problem: {
       label: "I. The math of getting paid",
@@ -300,6 +313,10 @@ const COPY = {
       headlineSuffix: "on the dollar comes back.",
       bigStat: "42%",
       bigStat2: "12¢",
+      bigStatNum: 42,
+      bigStatSuffix: "%",
+      bigStat2Num: 12,
+      bigStat2Suffix: "¢",
       stat1Big: "$825B",
       stat1Label: "Outstanding invoices held by US small businesses",
       stat2Big: "31 hrs / mo",
@@ -315,22 +332,9 @@ const COPY = {
       cards: [
         {
           roman: "Ⅰ.",
-          name: "Email",
-          vendor: "Resend",
-          window: "Day 0 → 7",
-          cadence: "3 reminders",
-          voice: "Warm, transactional, written in your brand voice.",
-          detail: [
-            "DKIM, SPF & DMARC alignment",
-            "Threaded replies routed to your team",
-            "Variable subject + sender warm-up",
-          ],
-        },
-        {
-          roman: "Ⅱ.",
           name: "SMS",
           vendor: "Twilio",
-          window: "Day 5 → 14",
+          window: "Day 0 · 3",
           cadence: "2 nudges",
           voice: "Short, kind, branded. Pay link in one tap.",
           detail: [
@@ -340,10 +344,23 @@ const COPY = {
           ],
         },
         {
+          roman: "Ⅱ.",
+          name: "Email",
+          vendor: "Resend",
+          window: "Day 7",
+          cadence: "1 formal reminder",
+          voice: "Warm, transactional, written in your brand voice.",
+          detail: [
+            "DKIM, SPF & DMARC alignment",
+            "Threaded replies routed to your team",
+            "A written record for your file",
+          ],
+        },
+        {
           roman: "Ⅲ.",
           name: "Voice",
           vendor: "Dragun agent",
-          window: "Day 10 →",
+          window: "Day 14 → 27",
           cadence: "Up to 3 calls",
           voice: "A friendly agent. Listens, helps, leaves a clear record.",
           detail: [
@@ -357,7 +374,7 @@ const COPY = {
     mechanism: {
       label: "III. The thirty-day rhythm",
       title: "One rhythm. Friendly start, gentle reminders, polite finish.",
-      body: "Reminders unfold automatically across email, SMS and voice. You see every touch in a single ledger; your customers hear one consistent, friendly tone.",
+      body: "Reminders unfold automatically across SMS, email and voice. You see every touch in a single ledger; your customers hear one consistent, friendly tone.",
       laneLabel: "Lane",
       laneEmail: "Email",
       laneSms: "SMS",
@@ -388,13 +405,13 @@ const COPY = {
         },
         {
           k: "10DLC / A2P",
-          tag: "Registered",
-          l: "Sender registered for application-to-person traffic. Carrier filtering minimised through brand & campaign vetting.",
+          tag: "In review",
+          l: "Brand and campaign registration in progress with Twilio. Current traffic limited to verified numbers; carrier filtering minimised once approval lands.",
         },
         {
           k: "SOC 2",
-          tag: "In progress",
-          l: "Type I in process. Controls aligned to AICPA TSC. Audit log on every invoice, retained for seven years.",
+          tag: "Planned",
+          l: "Program aligned to AICPA TSC. Type I audit engagement scheduled post-launch. Administrative-action audit log live, retained twelve months.",
         },
       ],
     },
@@ -414,8 +431,8 @@ const COPY = {
       timeline: [
         ["D0", "Sign up · onboard your business in 5 minutes"],
         ["D0", "Add a customer or upload your list as CSV"],
-        ["D0", "First friendly email goes out the same day"],
-        ["D7+", "Voice agent joins in as invoices age"],
+        ["D0", "First friendly text goes out the same day"],
+        ["D14+", "Voice agent joins in as invoices age"],
       ],
       formLabel: "Start free",
       formTitleA: "Run your ledger",
@@ -452,6 +469,7 @@ const COPY = {
       body:
         "We're closing a pre-seed round to extend the voice agent and the compliance lattice. The data room — including unit economics, the go-to-market plan, and our compliance posture — is available on request to qualified investors.",
       investorEmail: "investors@dragun.app",
+      investorMicro: "Pre-seed · SAFE · QC + US qualified investors",
       foundersLink: "Talk to a founder",
       cardLabel: "Round · Pre-seed",
       cardOpen: "Open",
@@ -468,7 +486,7 @@ const COPY = {
     },
     footer: {
       blurb:
-        "The friendly back-office for getting paid. Email, SMS and voice — one rhythm, one ledger, one bank deposit.",
+        "The friendly back-office for getting paid. SMS, email and voice — one rhythm, one ledger, one bank deposit.",
       platform: "Platform",
       contact: "Contact",
       howItWorks: "How it works",
@@ -482,6 +500,7 @@ const COPY = {
       privacy: "Privacy",
       terms: "Terms",
       disclosures: "Disclosures",
+      security: "Security",
     },
   },
 };
@@ -522,6 +541,7 @@ export default async function Home() {
       <Channels c={c} />
       <Mechanism c={c} />
       <Compliance c={c} />
+      <PricingSection locale={locale} authed={Boolean(user)} />
       <Distribution c={c} authed={Boolean(user)} displayName={displayName} />
       <Investor c={c} />
       <Footer c={c} />
@@ -533,24 +553,6 @@ export default async function Home() {
 /*  Brand mark                                                */
 /* ────────────────────────────────────────────────────────── */
 
-function Mark({ className = "h-5 w-5" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.4"
-      strokeLinecap="square"
-      className={className}
-      aria-hidden
-    >
-      <path d="M3.5 4.5 H20.5" />
-      <path d="M12 4.5 V19.5" />
-      <path d="M6 13 L12 19.5 L18 13" />
-      <circle cx="12" cy="9" r="1.1" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
 
 /* ────────────────────────────────────────────────────────── */
 /*  Top status bar                                            */
@@ -591,23 +593,23 @@ function Nav({
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-ink/80 backdrop-blur">
       <nav className="mx-auto flex max-w-[1320px] items-center justify-between gap-4 px-4 sm:px-6 py-4">
-        <a href="#" className="flex items-center gap-2 sm:gap-3 text-bone min-w-0">
-          <Mark className="h-5 w-5 shrink-0" />
-          <span className="font-display text-lg sm:text-xl tracking-tight">Dragun</span>
-          <span className="hidden xl:inline font-mono text-[11.5px] uppercase tracking-[0.22em] text-bone-3">
-            {c.nav.tagline}
-          </span>
+        <a href="#" className="text-bone">
+          <DragunLogo
+            className="h-5 w-5"
+            wordmarkClassName="text-lg sm:text-xl"
+            tagline={c.nav.tagline}
+          />
         </a>
         <ul className="hidden lg:flex items-center gap-5 xl:gap-8 font-mono text-[12px] xl:text-sm uppercase tracking-[0.18em] text-bone-2">
-          <li><a href="#mechanism" className="hover:text-bone">{c.nav.howItWorks}</a></li>
-          <li><a href="#compliance" className="hover:text-bone">{c.nav.compliance}</a></li>
-          <li><a href="#start" className="hover:text-bone">{c.nav.pricing}</a></li>
-          <li><a href="#investor" className="hover:text-bone">{c.nav.investors}</a></li>
+          <li><a href="#mechanism" className="link-rule hover:text-bone">{c.nav.howItWorks}</a></li>
+          <li><a href="#compliance" className="link-rule hover:text-bone">{c.nav.compliance}</a></li>
+          <li><a href="#pricing" className="link-rule hover:text-bone">{c.nav.pricing}</a></li>
+          <li><a href="#investor" className="link-rule hover:text-bone">{c.nav.investors}</a></li>
         </ul>
         <ul className="hidden md:flex lg:hidden items-center gap-5 font-mono text-[12px] uppercase tracking-[0.18em] text-bone-2">
-          <li><a href="#mechanism" className="hover:text-bone">{c.nav.howShort}</a></li>
-          <li><a href="#compliance" className="hover:text-bone">{c.nav.complianceShort}</a></li>
-          <li><a href="#start" className="hover:text-bone">{c.nav.startShort}</a></li>
+          <li><a href="#mechanism" className="link-rule hover:text-bone">{c.nav.howShort}</a></li>
+          <li><a href="#compliance" className="link-rule hover:text-bone">{c.nav.complianceShort}</a></li>
+          <li><a href="#start" className="link-rule hover:text-bone">{c.nav.startShort}</a></li>
         </ul>
         <Link
           href="/auth/sign-up"
@@ -671,12 +673,7 @@ function Hero({ c, authed }: { c: Copy; authed: boolean }) {
       {/* faint grid */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.06]"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, rgba(236,228,210,1) 1px, transparent 1px), linear-gradient(to bottom, rgba(236,228,210,1) 1px, transparent 1px)",
-          backgroundSize: "120px 120px",
-        }}
+        className="grid-faint pointer-events-none absolute inset-0 opacity-[0.06]"
       />
 
       <div className="relative mx-auto max-w-[1320px] px-6 pt-24 pb-32 md:pt-32 md:pb-44">
@@ -686,7 +683,7 @@ function Hero({ c, authed }: { c: Copy; authed: boolean }) {
               <span className="text-ember">●</span>&nbsp;&nbsp;{c.hero.tagline}
             </p>
             <h1
-              className="rise font-display mt-8 text-[clamp(2.6rem,9vw,9.5rem)] leading-[0.92] tracking-[-0.02em] text-bone break-words"
+              className="rise kern-display font-display mt-8 text-[clamp(2.6rem,9vw,9.5rem)] leading-[0.92] tracking-[-0.02em] text-bone break-words"
               style={{ animationDelay: "0.08s" }}
             >
               {c.hero.titleLine1}
@@ -706,19 +703,25 @@ function Hero({ c, authed }: { c: Copy; authed: boolean }) {
             >
               <Link
                 href="/auth/sign-up"
-                className="group inline-flex items-center gap-3 bg-ember px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-ink transition-colors hover:bg-bone"
+                className="cta-primary group inline-flex items-center gap-3 bg-ember px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-ink hover:bg-ember-hot"
               >
                 {c.hero.ctaPrimary}
                 <span className="transition-transform group-hover:translate-x-1">→</span>
               </Link>
               <a
                 href={authed ? "/app" : "/auth/sign-up"}
-                className="group inline-flex items-center gap-3 border border-bone/50 px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone hover:border-ember hover:text-ember transition-colors"
+                className="group inline-flex items-center gap-3 border border-bone/30 px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone-2 hover:border-ember hover:text-ember transition-colors"
               >
                 {authed ? c.hero.ctaSecondaryAuthed : c.hero.ctaSecondaryUnauth}
                 <span className="transition-transform group-hover:translate-x-1">→</span>
               </a>
             </div>
+            <p
+              className="rise mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-bone-3"
+              style={{ animationDelay: "0.36s" }}
+            >
+              {c.hero.ctaMicro}
+            </p>
           </div>
 
           {/* At-a-glance card */}
@@ -766,13 +769,13 @@ function Hero({ c, authed }: { c: Copy; authed: boolean }) {
                   {c.hero.asideArc}
                 </div>
                 <div className="mt-3 flex h-1.5 w-full overflow-hidden rounded-[1px] bg-ink-3">
-                  <span className="h-full bg-bone" style={{ width: "33.33%" }} />
                   <span className="h-full bg-ember" style={{ width: "33.33%" }} />
+                  <span className="h-full bg-bone" style={{ width: "33.33%" }} />
                   <span className="h-full bg-moss" style={{ width: "33.34%" }} />
                 </div>
                 <div className="mt-2 flex justify-between font-mono text-[11.5px] uppercase tracking-[0.18em] text-bone-3">
-                  <span>{c.hero.asideEmail}</span>
                   <span>{c.hero.asideSms}</span>
+                  <span>{c.hero.asideEmail}</span>
                   <span>{c.hero.asideVoice}</span>
                 </div>
               </div>
@@ -797,7 +800,8 @@ function Problem({ c }: { c: Copy }) {
     <section className="relative">
       <div className="mx-auto max-w-[1320px] px-6 py-24 md:py-44">
         <div className="grid gap-12 lg:gap-16 lg:grid-cols-12">
-          <div className="lg:col-span-4">
+          <Reveal className="lg:col-span-4">
+            <Wick />
             <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
               {c.problem.label}
             </p>
@@ -806,12 +810,17 @@ function Problem({ c }: { c: Copy }) {
               <br />
               <em>{c.problem.introB}</em>
             </p>
-          </div>
+          </Reveal>
           <div className="lg:col-span-8 lg:pl-12">
             <p className="font-display text-[clamp(2rem,5vw,4.4rem)] leading-[1.08] tracking-tight text-bone break-words">
-              <span className="text-ember">{c.problem.bigStat}</span> {c.problem.headlinePrefix}{" "}
-              {c.problem.headlineMid}{" "}
-              <span className="text-ember">{c.problem.bigStat2}</span> {c.problem.headlineSuffix}
+              <span className="italic text-ember">
+                <CountUp to={c.problem.bigStatNum} suffix={c.problem.bigStatSuffix} />
+              </span>{" "}
+              {c.problem.headlinePrefix} {c.problem.headlineMid}{" "}
+              <span className="italic text-ember">
+                <CountUp to={c.problem.bigStat2Num} suffix={c.problem.bigStat2Suffix} />
+              </span>{" "}
+              {c.problem.headlineSuffix}
             </p>
             <div className="mt-10 sm:mt-12 grid gap-8 border-t border-line pt-8 sm:grid-cols-2 md:grid-cols-3">
               {[
@@ -844,11 +853,12 @@ function Channels({ c }: { c: Copy }) {
   return (
     <section
       id="channels"
-      className="relative border-t border-line bg-ink-1/30"
+      className="seam-top relative bg-ink-1/30"
     >
       <div className="mx-auto max-w-[1320px] px-6 py-24 md:py-36">
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <Reveal className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
+            <Wick />
             <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
               {c.channels.label}
             </p>
@@ -857,13 +867,13 @@ function Channels({ c }: { c: Copy }) {
             </h2>
           </div>
           <p className="max-w-md font-sans text-bone-2">{c.channels.sub}</p>
-        </div>
+        </Reveal>
 
         <div className="mt-12 sm:mt-16 grid gap-px bg-line border border-line md:grid-cols-3">
           {c.channels.cards.map((card) => (
             <article
               key={card.name}
-              className="group relative bg-ink p-6 sm:p-8 transition-colors hover:bg-ink-1"
+              className="card-lift group relative bg-ink p-6 sm:p-8 hover:bg-ink-1"
             >
               <div className="flex items-baseline justify-between font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-bone-3">
                 <span>{card.roman} {card.name}</span>
@@ -903,35 +913,38 @@ function Mechanism({ c }: { c: Copy }) {
   const days = 30;
   const lanes = [
     {
-      name: c.mechanism.laneEmail,
-      vendor: c.mechanism.vendorEmail,
-      color: "var(--color-bone)",
-      hits: [0, 3, 7, 14, 21],
-    },
-    {
       name: c.mechanism.laneSms,
       vendor: c.mechanism.vendorSms,
       color: "var(--color-ember)",
-      hits: [5, 10, 18],
+      hits: [0, 3],
+    },
+    {
+      name: c.mechanism.laneEmail,
+      vendor: c.mechanism.vendorEmail,
+      color: "var(--color-bone)",
+      hits: [7],
     },
     {
       name: c.mechanism.laneVoice,
       vendor: c.mechanism.vendorVoice,
       color: "var(--color-moss)",
-      hits: [12, 19, 26],
+      hits: [14, 21, 27],
     },
   ];
 
   return (
     <section id="mechanism" className="relative">
       <div className="mx-auto max-w-[1320px] px-6 py-24 md:py-36">
-        <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
-          {c.mechanism.label}
-        </p>
-        <h2 className="mt-4 max-w-[24ch] font-display text-[clamp(2rem,5vw,4.2rem)] leading-[1.04] tracking-tight text-bone break-words">
-          {c.mechanism.title}
-        </h2>
-        <p className="mt-6 max-w-[60ch] text-bone-2 text-sm sm:text-base">{c.mechanism.body}</p>
+        <Reveal>
+          <Wick />
+          <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
+            {c.mechanism.label}
+          </p>
+          <h2 className="mt-4 max-w-[24ch] font-display text-[clamp(2rem,5vw,4.2rem)] leading-[1.04] tracking-tight text-bone break-words">
+            {c.mechanism.title}
+          </h2>
+          <p className="mt-6 max-w-[60ch] text-bone-2 text-sm sm:text-base">{c.mechanism.body}</p>
+        </Reveal>
 
         <div className="mt-12 sm:mt-16 border border-line bg-ink-1/40 overflow-hidden">
           {/* Day axis */}
@@ -975,6 +988,7 @@ function Mechanism({ c }: { c: Copy }) {
                 <div className="absolute left-0 right-0 top-1/2 h-px -translate-y-1/2 bg-line" />
                 {lane.hits.map((d, i) => {
                   const pct = (d / days) * 100;
+                  const isLast = i === lane.hits.length - 1;
                   return (
                     <div
                       key={i}
@@ -982,11 +996,18 @@ function Mechanism({ c }: { c: Copy }) {
                       style={{ left: `${pct}%` }}
                     >
                       <div
-                        className="h-3 w-3 -translate-x-1/2 rounded-full"
-                        style={{
-                          background: lane.color,
-                          boxShadow: `0 0 0 4px ${lane.color}22`,
-                        }}
+                        className={`h-3 w-3 -translate-x-1/2 rounded-full ${isLast ? "dot-pulse" : ""}`}
+                        style={
+                          isLast
+                            ? ({
+                                background: lane.color,
+                                ["--lane-color" as string]: lane.color,
+                              } as React.CSSProperties)
+                            : {
+                                background: lane.color,
+                                boxShadow: `0 0 0 4px ${lane.color}22`,
+                              }
+                        }
                       />
                       <div className="hidden md:block absolute left-1/2 mt-3 -translate-x-1/2 whitespace-nowrap font-mono text-[11.5px] uppercase tracking-[0.18em] text-bone-3">
                         D{d} · #{i + 1}
@@ -1026,7 +1047,8 @@ function Compliance({ c }: { c: Copy }) {
     <section id="compliance" className="relative">
       <div className="mx-auto max-w-[1320px] px-6 py-24 md:py-36">
         <div className="grid gap-12 lg:gap-16 lg:grid-cols-12">
-          <div className="lg:col-span-4">
+          <Reveal className="lg:col-span-4">
+            <Wick />
             <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
               {c.compliance.label}
             </p>
@@ -1038,11 +1060,11 @@ function Compliance({ c }: { c: Copy }) {
             <p className="mt-6 max-w-[40ch] text-bone-2 text-sm sm:text-base">
               {c.compliance.body}
             </p>
-          </div>
+          </Reveal>
           <div className="lg:col-span-8 lg:pl-12">
             <div className="grid gap-px border border-line bg-line md:grid-cols-2">
               {c.compliance.items.map((it) => (
-                <div key={it.k} className="bg-ink p-6 sm:p-7">
+                <div key={it.k} className="card-lift bg-ink p-6 sm:p-7">
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
                     <span className="font-display text-2xl sm:text-3xl text-bone break-words">
                       {it.k}
@@ -1076,10 +1098,11 @@ function Distribution({
   displayName: string | null;
 }) {
   return (
-    <section className="relative border-t border-line bg-ink-1/40">
+    <section className="seam-top relative bg-ink-1/40">
       <div className="mx-auto max-w-[1320px] px-6 py-24 md:py-36">
         <div className="grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-5">
+          <Reveal className="lg:col-span-5">
+            <Wick />
             <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
               {c.distribution.label}
             </p>
@@ -1094,7 +1117,7 @@ function Distribution({
             <p className="mt-4 max-w-[44ch] text-bone-2 text-sm sm:text-base">
               {c.distribution.body2}
             </p>
-          </div>
+          </Reveal>
 
           <div className="lg:col-span-7 lg:pl-10">
             <div className="border border-line">
@@ -1138,7 +1161,8 @@ function Distribution({
           id="start"
           className="mt-20 sm:mt-24 grid gap-12 border-t border-line pt-12 sm:pt-16 lg:grid-cols-12"
         >
-          <div className="lg:col-span-5">
+          <Reveal className="lg:col-span-5">
+            <Wick />
             <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
               {c.distribution.formLabel}
             </p>
@@ -1157,7 +1181,7 @@ function Distribution({
                 </li>
               ))}
             </ul>
-          </div>
+          </Reveal>
           <div className="lg:col-span-7">
             <AuthCta c={c} authed={authed} displayName={displayName} />
           </div>
@@ -1191,14 +1215,14 @@ function AuthCta({
         <div className="mt-6 flex flex-wrap items-center gap-3">
           <Link
             href="/app"
-            className="group inline-flex items-center gap-3 bg-ember px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-ink transition-colors hover:bg-bone"
+            className="cta-primary group inline-flex items-center gap-3 bg-ember px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-ink hover:bg-ember-hot"
           >
             {c.auth.ctaDashboard}
             <span className="transition-transform group-hover:translate-x-1">→</span>
           </Link>
           <Link
             href="/app/cases/import"
-            className="group inline-flex items-center gap-3 border border-bone/50 px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone hover:border-ember hover:text-ember transition-colors"
+            className="group inline-flex items-center gap-3 border border-bone/30 px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone-2 hover:border-ember hover:text-ember transition-colors"
           >
             {c.auth.ctaImport}
             <span className="transition-transform group-hover:translate-x-1">→</span>
@@ -1224,7 +1248,7 @@ function AuthCta({
         <GoogleButton variant="primary">{c.auth.googleCta}</GoogleButton>
         <Link
           href="/auth/sign-up"
-          className="group inline-flex items-center justify-center gap-3 border border-bone/40 px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone hover:border-ember hover:text-ember transition-colors"
+          className="group inline-flex items-center justify-center gap-3 border border-bone/30 px-5 sm:px-6 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone-2 hover:border-ember hover:text-ember transition-colors"
         >
           {c.auth.emailCta}
           <span className="transition-transform group-hover:translate-x-1">→</span>
@@ -1249,18 +1273,21 @@ function Investor({ c }: { c: Copy }) {
   return (
     <section
       id="investor"
-      className="relative overflow-hidden border-t border-line"
+      className="seam-top relative overflow-hidden"
     >
       <div className="ember-floor" aria-hidden style={{ bottom: "-65%" }} />
       <div className="relative mx-auto max-w-[1320px] px-6 py-24 md:py-44">
-        <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
-          {c.investor.label}
-        </p>
-        <h2 className="mt-4 max-w-[18ch] font-display text-[clamp(2.25rem,7vw,7rem)] leading-[0.98] tracking-tight text-bone break-words">
-          {c.investor.titleLine1}
-          <br />
-          <em className="text-bone-2">{c.investor.titleLine2}</em>
-        </h2>
+        <Reveal>
+          <Wick />
+          <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.24em] sm:tracking-[0.28em] text-bone-3">
+            {c.investor.label}
+          </p>
+          <h2 className="mt-4 max-w-[18ch] font-display text-[clamp(2.25rem,7vw,7rem)] leading-[0.98] tracking-tight text-bone break-words">
+            {c.investor.titleLine1}
+            <br />
+            <em className="text-bone-2">{c.investor.titleLine2}</em>
+          </h2>
+        </Reveal>
 
         <div className="mt-12 sm:mt-14 grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-7">
@@ -1271,22 +1298,25 @@ function Investor({ c }: { c: Copy }) {
             <div className="mt-8 sm:mt-10 flex flex-wrap items-center gap-3 sm:gap-4">
               <a
                 href="mailto:investors@dragun.app?subject=Dragun%20%E2%80%94%20investor%20memo"
-                className="group inline-flex max-w-full items-center gap-3 bg-ember px-5 sm:px-7 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-ink transition-colors hover:bg-bone break-all"
+                className="cta-primary group inline-flex max-w-full items-center gap-3 bg-ember px-5 sm:px-7 py-3.5 sm:py-4 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-ink hover:bg-ember-hot break-all"
               >
                 {c.investor.investorEmail}
                 <span className="transition-transform group-hover:translate-x-1">→</span>
               </a>
               <a
                 href="mailto:founders@dragun.app?subject=Dragun%20%E2%80%94%20founders"
-                className="group inline-flex items-center gap-3 border-b border-bone/40 pb-1 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone-2 transition-colors hover:text-bone hover:border-bone"
+                className="group inline-flex items-center gap-3 border-b border-bone/30 pb-1 font-mono text-xs sm:text-sm uppercase tracking-[0.22em] text-bone-2 transition-colors hover:text-bone hover:border-bone"
               >
                 {c.investor.foundersLink}
               </a>
             </div>
+            <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-bone-3">
+              {c.investor.investorMicro}
+            </p>
           </div>
 
           <aside className="lg:col-span-5">
-            <div className="border border-line bg-ink-1/70 p-5 sm:p-7">
+            <div className="card-lift border border-line bg-ink-1/70 p-5 sm:p-7">
               <div className="flex items-center justify-between font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-bone-3">
                 <span>{c.investor.cardLabel}</span>
                 <span className="text-ember">{c.investor.cardOpen}</span>
@@ -1329,9 +1359,8 @@ function Footer({ c }: { c: Copy }) {
       <div className="mx-auto max-w-[1320px] px-6 pt-16 sm:pt-20 pb-10">
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-7">
-            <a href="#" className="flex items-center gap-3 text-bone">
-              <Mark className="h-6 w-6" />
-              <span className="font-display text-2xl tracking-tight">Dragun</span>
+            <a href="#" className="text-bone">
+              <DragunLogo className="h-6 w-6" wordmarkClassName="text-2xl" />
             </a>
             <p className="mt-5 max-w-[44ch] text-bone-2 text-sm sm:text-base">
               {c.footer.blurb}
@@ -1341,17 +1370,17 @@ function Footer({ c }: { c: Copy }) {
             <div>
               <div className="text-bone-3">{c.footer.platform}</div>
               <ul className="mt-3 space-y-2">
-                <li><a href="#mechanism" className="hover:text-bone">{c.footer.howItWorks}</a></li>
-                <li><a href="#compliance" className="hover:text-bone">{c.footer.compliance}</a></li>
-                <li><a href="#start" className="hover:text-bone">{c.footer.pricing}</a></li>
+                <li><a href="#mechanism" className="link-rule hover:text-bone">{c.footer.howItWorks}</a></li>
+                <li><a href="#compliance" className="link-rule hover:text-bone">{c.footer.compliance}</a></li>
+                <li><a href="#pricing" className="link-rule hover:text-bone">{c.footer.pricing}</a></li>
               </ul>
             </div>
             <div className="min-w-0">
               <div className="text-bone-3">{c.footer.contact}</div>
               <ul className="mt-3 space-y-2 break-words">
-                <li><a href="mailto:investors@dragun.app" className="hover:text-bone">{c.footer.investors}</a></li>
-                <li><a href="mailto:founders@dragun.app" className="hover:text-bone">{c.footer.founders}</a></li>
-                <li><a href="mailto:hello@dragun.app" className="hover:text-bone">{c.footer.owners}</a></li>
+                <li><a href="mailto:investors@dragun.app" className="link-rule hover:text-bone">{c.footer.investors}</a></li>
+                <li><a href="mailto:founders@dragun.app" className="link-rule hover:text-bone">{c.footer.founders}</a></li>
+                <li><a href="mailto:hello@dragun.app" className="link-rule hover:text-bone">{c.footer.owners}</a></li>
               </ul>
             </div>
           </div>
@@ -1359,8 +1388,11 @@ function Footer({ c }: { c: Copy }) {
 
         {/* Wordmark */}
         <div className="mt-16 sm:mt-20 select-none overflow-hidden">
-          <div className="font-display text-[clamp(3.5rem,22vw,18rem)] leading-none tracking-[-0.03em] text-bone/90 break-words">
-            DRAGUN<span className="text-ember">†</span>
+          <div className="kern-display font-display text-[clamp(3.5rem,22vw,18rem)] leading-none tracking-[-0.03em] text-bone/90 break-words">
+            DRAGUN
+            <span className="text-ember glow-ember">
+              †
+            </span>
           </div>
         </div>
 
@@ -1368,9 +1400,10 @@ function Footer({ c }: { c: Copy }) {
           <span>{c.footer.copyright}</span>
           <span>{c.footer.tagline}</span>
           <span className="flex flex-wrap gap-4 sm:gap-5">
-            <Link href="/legal/privacy" className="hover:text-bone">{c.footer.privacy}</Link>
-            <Link href="/legal/terms" className="hover:text-bone">{c.footer.terms}</Link>
-            <Link href="/legal/disclosures" className="hover:text-bone">{c.footer.disclosures}</Link>
+            <Link href="/legal/privacy" className="link-rule hover:text-bone">{c.footer.privacy}</Link>
+            <Link href="/legal/terms" className="link-rule hover:text-bone">{c.footer.terms}</Link>
+            <Link href="/legal/disclosures" className="link-rule hover:text-bone">{c.footer.disclosures}</Link>
+            <Link href="/legal/security" className="link-rule hover:text-bone">{c.footer.security}</Link>
           </span>
         </div>
       </div>
