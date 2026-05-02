@@ -451,7 +451,7 @@ iteration when the file is stable.
 
 ## S19 — Sharpen public copy (off with demo voice)
 
-**Status:** in_progress
+**Status:** done
 **Estimate:** 0.5h
 **Depends on:** —
 
@@ -467,6 +467,13 @@ iteration when the file is stable.
 - No "alpha", no "seats remaining", no version chip on `/`.
 - `/welcome` has 2 visible fields (business name, locale) and submit.
 - Build clean.
+
+**Verification (2026-05-02)**
+- `grep -nE 'alpha|seats|v\.0\.4' app/page.tsx` → 0 matches.
+- `app/_components/onboarding-form.tsx` has exactly 2 named inputs:
+  `businessName` and `locale`.
+- `tsc --noEmit` clean (verified during SOC-hardening pass on the same
+  tree state).
 
 ---
 

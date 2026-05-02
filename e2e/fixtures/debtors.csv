@@ -1,0 +1,4 @@
+ref,full_name,email,phone,amount_cents,currency,description
+INV-1001,Alice Tremblay,alice.test@example.com,+15145551001,42500,CAD,Invoice 1001 - April services
+INV-1002,Benoit Roy,benoit.test@example.com,+15145551002,128000,CAD,Invoice 1002 - Equipment lease
+INV-1003,Camille Lavoie,camille.test@example.com,+15145551003,7600,CAD,Invoice 1003 - Late fee

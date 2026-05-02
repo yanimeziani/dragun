@@ -51,11 +51,23 @@ export async function signInWithPassword(
     return { status: "error", error: "Password is at least 8 characters." };
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { status: "error", error: error.message };
 
+  const userId = data.user?.id;
+  let target = "/welcome";
+  if (userId) {
+    const { data: membership } = await supabase
+      .from("org_members")
+      .select("org_id")
+      .eq("user_id", userId)
+      .limit(1)
+      .maybeSingle();
+    if (membership) target = "/app";
+  }
+
   revalidatePath("/", "layout");
-  redirect("/welcome");
+  redirect(target);
 }
 
 export async function signUpWithPassword(
